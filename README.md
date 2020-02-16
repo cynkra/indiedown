@@ -1,4 +1,4 @@
-# cidown
+# indiedown
 
 Individual RMarkdown Templates
 
