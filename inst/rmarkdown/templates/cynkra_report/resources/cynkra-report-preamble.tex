@@ -1,0 +1,152 @@
+% various latex packages
+
+% striped tables
+\PassOptionsToPackage{table}{xcolor}
+\definecolor{cynkrablue}{rgb}{0.1215686, 0.3960784, 0.7176471}
+% ermöglicht es von Schrift umflossene Bilder und Tabellen einzufügen
+\usepackage{wrapfig}
+% extended implementation of the array and tabular environments
+\usepackage{array}
+% embedd graphics
+\usepackage{graphicx}
+\setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+% verbatim with URL-sensitive line breaks
+\usepackage{url}
+% units. E.g., \unitfrac{m}{s}
+\usepackage{units}
+% cross-references to according to the “type” of cross-reference
+\usepackage{cleveref}
+
+% full widht table (with kable)
+\usepackage{tabu}
+% provides the H float modifier
+\usepackage{float}
+% caption always comes out above the body of the float
+\floatstyle{plaintop}
+\restylefloat{figure}
+% control caption
+\usepackage[bf, position=top, justification=justified, singlelinecheck=false]{caption}
+\renewcommand{\captionfont}{\small}%
+
+% Increase the number of simultaneous LaTeX floats
+\usepackage{morefloats}
+
+% smaller section headings
+\usepackage[small]{titlesec}
+
+% Simple argument parsing
+\usepackage{xparse}
+
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  % default (non xetex) fonts
+  \usepackage[sfdefault, light]{roboto}
+  \usepackage{inconsolata}
+
+  % euro symbol, using a package
+  \usepackage{eurosym}
+
+\else  % if luatex or xelatex
+  \makeatletter
+  \@ifpackageloaded{fontspec}{}{\usepackage{fontspec}}
+  \makeatother
+  \makeatletter
+  \@ifpackageloaded{soul}{
+     \renewcommand\allcapsspacing[1]{{\addfontfeature{LetterSpace=15}#1}}
+     \renewcommand\smallcapsspacing[1]{{\addfontfeature{LetterSpace=10}#1}}
+   }{}
+  \makeatother
+  % euro symbol, handled by xelatex
+  \newcommand{\euro}{€}
+
+  % fruttiger and dejavue sans mono
+    \setmainfont{FrutigerNeueLT}[
+      Ligatures={Common}, Variant=01,
+      Path=$fonts-path$/,
+      UprightFont=FrutigerNeueLTPro-Thin.otf,
+      BoldFont=FrutigerNeueLTPro-Book.otf,
+      ItalicFont=FrutigerNeueLTCom-ThinIt.ttf,
+      BoldItalicFont=FrutigerNeueLTCom-Medium.ttf,
+      Scale=1
+    ]
+    \setmonofont{DejaVuSansMono}[
+      Path=$fonts-path$/,
+      UprightFont=DejaVuSansMono.ttf,
+      Scale=0.8
+    ]
+\fi
+
+% for protrusion (even margins) and expansion (fewer/better hyphenations)
+\hyphenpenalty=7500
+% https://tex.stackexchange.com/a/335088/8057
+\pretolerance=5000
+\tolerance=9000
+% Do not set \lefthyphenmin, \righthyphenmin, or \<lang>hyphenmins
+% (https://tex.stackexchange.com/a/235279/8057):
+% These values add too much space between words.
+
+\setlength{\columnsep}{10mm} % Column separation width
+
+\tabulinesep=1.1mm
+
+
+% omit default title page
+\renewcommand\maketitle{}
+
+% Required for indentation fix and polyglossia caption setup
+\usepackage{etoolbox}
+
+% avoid small caps in french figure and table captions
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \babelprovide{french}
+  \renewcommand\frenchfigurename{Figure}
+  \renewcommand\frenchtablename{Table}
+\else
+  \gappto\captionsfrench{
+    \renewcommand{\figurename}{Figure}
+    \renewcommand{\tablename}{Table}
+  }
+\fi
+
+% Support for kableExtra package
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+
+% Fix for indentation of first paragraph in two-column mode
+\makeatletter
+\apptocmd{\@topnewpage}{\@afterheading}{}{}
+\makeatother
+
+% Prepare to add scaled down logo to first page of chapter (see default header-includes)
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt} % Remove rule under header
+
+% Add page number
+\fancyfoot[c]{\small \textcolor{Gray}{\thepage}}
+\setlength{\footskip}{3\baselineskip} % Adjust spacing between text body and footer
+
+% Customize size, spacing, and color of headings
+\titleformat{\chapter}[block]{\normalfont\huge\bfseries\color{cynkrablue}}{\thechapter\hspace{0.1em}}{0.5em}{\huge}
+\titlespacing*{\chapter}{0pt}{2\baselineskip}{2\baselineskip}
+\titleformat{\section}{\normalfont\bfseries\color{cynkrablue}\fontsize{15}{18}\selectfont}{\thesection}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.25\baselineskip}{0.65\baselineskip}
+\titleformat{\subsection}{\normalfont\bfseries\color{cynkrablue}\fontsize{13}{15}\selectfont}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\normalfont\color{cynkrablue}\fontsize{12}{14}\selectfont}{\thesubsection}{1em}{}
+
+% Make bullet points smaller and blue
+\renewcommand\labelitemi{{\color{cynkrablue}$\vcenter{\hbox{\tiny$\bullet$}}$}}
+
+% Customize figure and table captions
+\usepackage{caption}
+\DeclareCaptionFont{cicaption}{\fontsize{11}{13}\selectfont}
+\captionsetup{font={color=cynkrablue,cicaption}, labelfont={bf}}
+
+

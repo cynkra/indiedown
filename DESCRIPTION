@@ -1,0 +1,14 @@
+Package: indiedown
+Type: Package
+Title: Individual RMardown Templates
+Version: 0.0.1
+Maintainer: Christoph Sax <christoph@cynkra.com>
+Description: Provides R Markdown output formats to use with individual style
+LazyData: TRUE
+Imports:
+    htmltools,
+    knitr (>= 1.12),
+    rmarkdown,
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.0.2
+Encoding: UTF-8

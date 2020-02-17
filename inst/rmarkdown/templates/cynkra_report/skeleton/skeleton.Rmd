@@ -1,0 +1,93 @@
+---
+title           : "Report-Titel"
+subtitle        : "Untertitel"
+author          : ["cynkra GmbH", "Kirill Müller", "Christoph Sax"]
+date            : "`r format(Sys.time(), '%d. %B %Y')`"
+
+unsplash_id     : "9zCZc7lc_54"
+fontsize        : "10pt"
+numbersections  : true
+colorlinks      : false
+lang            : "de-DE"         # de-DE, en-US, it-CH, fr-CH
+
+logo            : true
+twocolumn       : true
+wide            : false
+# toc             : true
+
+header-includes:
+  - \hyphenation{Se-kun-där-schlüssel}
+  - \hyphenation{Test-um-ge-bung-en}
+
+output:
+  indiedown::cynkra_report
+---
+
+
+```{r, include = FALSE}
+.md <- rmarkdown::metadata
+if (.md$twocolumn){
+  width <- 4; height <- 3.5
+} else {
+    if (.md$wide) {
+    width <- 8.5; height <- 3.38
+  } else {
+    width <- 7.25; height <- 3.5
+  }
+}
+knitr::opts_chunk$set(
+  fig.width  = width,
+  fig.height = height,
+  fig.pos    = "h",
+  cache      = FALSE,
+  message    = FALSE,
+  echo       = FALSE,
+  tidy       = FALSE
+)
+
+# Frutiger in R
+# https://stackoverflow.com/questions/36453126/embedding-fonts-in-ggplot2-charts-in-rmarkdown-documents
+# knitr::opts_chunk$set(dev = "cairo_pdf")
+
+library(extrafont)
+# on first run, fonts need to be imported
+# font_import(system.file(package = "cynkradown", "fonts"))
+# fonts()  # to see if it worked
+options(cynkra_family = "Frutiger LT Pro 45 Light")
+
+# basic packages, typically use in a cynkradown document
+library(tidyverse)
+library(cynkradown)
+# a more flexible way to create tables, using kable and kableExtra
+library(knitr)
+library(kableExtra)
+options(knitr.table.format = "latex")
+```
+
+
+```{r}
+# cd_header_report()
+```
+
+
+\chapter{YAML Header}
+
+# YAML Header
+
+YAML Optionen koennen durch ein  (`#`) auskommentiert werden. Das template
+unterstützt Deutsch, Englisch, Italienisch und Französisch. Um die
+Dokumentsprache inklusive Adresse, Tabellenbeschriftungen und Grafiken auf
+Englisch zu setzen, muss der YAML Header folgendermassen abgeändert werden:
+
+## Markdown
+
+R Markdown Dokumente werden -- Überraschung! -- in Markdown verfasst. Mehr
+Details dazu findet man [hier](https://www.rstudio.com/wp-
+content/uploads/2015/03/rmarkdown-reference.pdf).
+
+Die Basis-Formatierungen umfassen, **fett**, *kursiv* und `fixe Breite`.
+Aber man kann auch fast alles machen \uwave{was mit \LaTeX\ möglich ist.}
+Schreibt man `r round(rnorm(1), 4)`, so evaluiert R den Code, womit man leicht
+Dokumente erstellen kann, welche immer die neusten Zahlen enthalten.[^fn]
+
+
