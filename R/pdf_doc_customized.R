@@ -1,7 +1,7 @@
 #' @export
 cynkra_report = function(
   fig_width = 4, fig_height = 2.5, fig_crop = TRUE, dev = "pdf",
-  highlight = "default", latex_engine = "lualatex", template = NULL, ...
+  highlight = "default", latex_engine = "lualatex", template = NULL, asset = NULL, ...
 ) {
   format <- cynkra_pdf("report", fig_width, fig_height, fig_crop, dev, highlight,
                        latex_engine, template = template, ...)
@@ -11,6 +11,11 @@ cynkra_report = function(
     format$pandoc$args,
     "--variable", "subparagraph:yes"
   )
+
+  # for now, needed in modify_yaml()
+  .font_path <<- system.file("fonts", package = asset)
+  .preamble_path <<- template_resources(package = asset, "cynkra_report", "cynkra-report-preamble.tex")
+  .logo_path <<- system.file("res", package = asset)
 
   pre_processor <- function(metadata, input_file, runtime, knit_meta, files_dir, output_dir) {
     # save files dir (for generating intermediates)
@@ -26,7 +31,7 @@ cynkra_report = function(
 cynkra_pdf = function(
   documentclass = c("article", "book", "report"), fig_width = 4, fig_height = 2.5,
   fig_crop = TRUE, dev = "pdf", highlight = "default", latex_engine = "lualatex",
-  template = template_resources("cynkra_handout", "cynkra-handout.tex"), ...
+  template = NULL, ...
 ) {
 
   # resolve default highlight
@@ -166,21 +171,21 @@ modify_yaml <- function(input_file, metadata) {
 
   # add default preamble includes
   header_includes <- readLines(
-    template_resources("cynkra_report", "cynkra-report-preamble.tex"),
+    .preamble_path,
     encoding = "UTF-8"
   )
 
-  # insert path to package-supplied resources
+  # # insert path to package-supplied resources
   header_includes <- gsub(
     "\\$fonts-path\\$",
-    system.file("fonts", package = getPackageName()),
+    .font_path,   # global, for now
     header_includes
   )
 
   # add logo to first chapter pages
   header_includes <- c(
     header_includes,
-    paste0("\\fancypagestyle{plain}{\\fancyhf{}\\renewcommand{\\headrulewidth}{0pt}\\fancyfoot[c]{\\small \\textcolor{Gray}{\\thepage}}\\setlength{\\headheight}{2\\baselineskip}\\fancyhead[r]{\\includegraphics[width=1.75cm,keepaspectratio]{", file.path(system.file("res", package = getPackageName()), "logo_small.pdf"), "}}}")
+    paste0("\\fancypagestyle{plain}{\\fancyhf{}\\renewcommand{\\headrulewidth}{0pt}\\fancyfoot[c]{\\small \\textcolor{Gray}{\\thepage}}\\setlength{\\headheight}{2\\baselineskip}\\fancyhead[r]{\\includegraphics[width=1.75cm,keepaspectratio]{", file.path(.logo_path, "logo_small.pdf"), "}}}")
   )
 
   # add conditional preamble includes
