@@ -1,15 +1,28 @@
 #' @export
-pdf_document_with_asset = function(asset, ...) {
-
-  ans <- rmarkdown::pdf_document(...)
+pdf_document_with_asset = function(asset, includes = NULL, ...) {
 
   # or find a better way to do this
   .path_assets <<- system.file("assets", package = asset)
 
-  # browser()
+  # file preamble
+  file_preamble <- file.path(.path_assets, "preamle.tex")
+  if (file.exists(file_preamble)) {
+    if (is.null(includes)) {
+      includes <- includes(in_header = file_preamble)
+    } else {
+      if ("in_header" %in% names(includes)) {
+        warning("The use of 'includes, in_header' overwrites preamble.tex from asset and may mess up the layout.")
+      } else {
+        includes$in_header <- file_preamble
+      }
+    }
+  }
+
+  ans <- rmarkdown::pdf_document(includes = includes, ...)
 
   # use pre_processor from asset package or pre_processor_basic, if not present
-  if (.path_assets != "") {
+  file_pre_processor <- file.path(.path_assets, "pre_processor.R")
+  if (file.exists(file_pre_processor)) {
     env <- environment()
     source(file.path(.path_assets, "pre_processor.R"), env)
     stopifnot(exists("pre_processor", envir = env))
