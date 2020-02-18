@@ -5,20 +5,15 @@ author          : ["cynkra GmbH", "Kirill Müller", "Christoph Sax"]
 date            : "`r format(Sys.time(), '%d. %B %Y')`"
 
 # documentclass   : book
-classoption:
-- twocolumn
-
-output:
-  rmarkdown::pdf_document:
-    latex_engine: lualatex
-    includes:
-      in_header: asset-preamble.tex
 
 
-#      before_body: doc-prefix.tex
-#      after_body: doc-suffix.tex
 
 
+# defaults (should be set by asset)
+classoption: twocolumn
+indent: true
+# linestretch: 1.05
+compact-title: true
 
 # custom fonts (requires 'latex_engine: lualatex')
 mainfont: FrutigerNeueLTPro-Thin.otf
@@ -30,7 +25,18 @@ mainfontoptions:
 - BoldItalicFont=FrutigerNeueLTCom-Medium.ttf
 
 
-subparagraph: yes
+output:
+  rmarkdown::pdf_document:
+    latex_engine: lualatex
+    includes:
+      in_header: asset-preamble.tex
+
+#      before_body: doc-prefix.tex
+#      after_body: doc-suffix.tex
+
+
+
+subparagraph: yes  # needed for titlesec
 
 lang: en-US
 
@@ -64,6 +70,11 @@ quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
 consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
 cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
 proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
 
 ## Markdown
 
