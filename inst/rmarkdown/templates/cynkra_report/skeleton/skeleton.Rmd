@@ -20,54 +20,9 @@ header-includes:
   - \hyphenation{Test-um-ge-bung-en}
 
 output:
-  indiedown::cynkra_report
+  indiedown::cynkra_report:
+    asset: cynkradown
 ---
-
-
-```{r, include = FALSE}
-.md <- rmarkdown::metadata
-if (.md$twocolumn){
-  width <- 4; height <- 3.5
-} else {
-    if (.md$wide) {
-    width <- 8.5; height <- 3.38
-  } else {
-    width <- 7.25; height <- 3.5
-  }
-}
-knitr::opts_chunk$set(
-  fig.width  = width,
-  fig.height = height,
-  fig.pos    = "h",
-  cache      = FALSE,
-  message    = FALSE,
-  echo       = FALSE,
-  tidy       = FALSE
-)
-
-# Frutiger in R
-# https://stackoverflow.com/questions/36453126/embedding-fonts-in-ggplot2-charts-in-rmarkdown-documents
-# knitr::opts_chunk$set(dev = "cairo_pdf")
-
-library(extrafont)
-# on first run, fonts need to be imported
-# font_import(system.file(package = "cynkradown", "fonts"))
-# fonts()  # to see if it worked
-options(cynkra_family = "Frutiger LT Pro 45 Light")
-
-# basic packages, typically use in a cynkradown document
-library(tidyverse)
-library(cynkradown)
-# a more flexible way to create tables, using kable and kableExtra
-library(knitr)
-library(kableExtra)
-options(knitr.table.format = "latex")
-```
-
-
-```{r}
-# cd_header_report()
-```
 
 
 \chapter{YAML Header}
