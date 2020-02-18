@@ -1,5 +1,6 @@
 .DS_Store
 inst/rmarkdown/templates/cynkra_report/skeleton/*.log
 inst/rmarkdown/templates/cynkra_report/skeleton/*.pdf
-inst/rmarkdown/templates/cynkra_report/skeleton/*.tex
+inst/rmarkdown/templates/cynkra_report/skeleton/skeleton.tex
+inst/rmarkdown/templates/cynkra_report/skeleton/skeleton2.tex
 
