@@ -12,9 +12,15 @@ output:
   rmarkdown::pdf_document:
     latex_engine: lualatex
 
+# custom fonts (requires 'latex_engine: lualatex')
 mainfont: FrutigerNeueLTPro-Thin.otf
 mainfontoptions:
 - Path=/Library/Frameworks/R.framework/Versions/3.6/Resources/library/cynkradown/fonts/
+- BoldFont=FrutigerNeueLTPro-Book.otf
+- ItalicFont=FrutigerNeueLTCom-ThinIt.ttf
+- BoldItalicFont=FrutigerNeueLTCom-ThinIt.ttf
+- BoldItalicFont=FrutigerNeueLTCom-Medium.ttf
+
 
 lang: en-US
 ---
