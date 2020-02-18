@@ -1,0 +1,50 @@
+---
+title           : "Report-Titel"
+subtitle        : "Untertitel"
+author          : ["cynkra GmbH", "Kirill Müller", "Christoph Sax"]
+date            : "`r format(Sys.time(), '%d. %B %Y')`"
+
+# documentclass   : book
+classoption:
+- twocolumn
+
+output:
+  rmarkdown::pdf_document:
+    latex_engine: lualatex
+
+mainfont: FrutigerNeueLTPro-Thin.otf
+mainfontoptions:
+- Path=/Library/Frameworks/R.framework/Versions/3.6/Resources/library/cynkradown/fonts/
+
+lang: en-US
+---
+
+
+
+# YAML Header
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+## Markdown
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+| The limerick packs laughs anatomical
+| In space that is quite economical.
+|    But the good ones I've seen
+|    So seldom are clean
+| And the clean ones so seldom are comical
+
+| 200 Main St.
+| Berkeley, CA 94718
+
