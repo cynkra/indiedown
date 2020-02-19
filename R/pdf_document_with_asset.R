@@ -5,7 +5,7 @@ pdf_document_with_asset = function(asset, includes = NULL, ...) {
   .path_assets <<- system.file("assets", package = asset)
 
   # file preamble
-  file_preamble <- file.path(.path_assets, "preamle.tex")
+  file_preamble <- file.path(.path_assets, "preamble.tex")
   if (file.exists(file_preamble)) {
     if (is.null(includes)) {
       includes <- includes(in_header = file_preamble)
