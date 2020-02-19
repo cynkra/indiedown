@@ -2,10 +2,10 @@
 pdf_document_with_asset = function(asset, includes = NULL, ...) {
 
   # or find a better way to do this
-  .path_assets <<- system.file("assets", package = asset)
+  .path_asset <<- system.file(package = asset)
 
   # file preamble
-  file_preamble <- file.path(.path_assets, "preamble.tex")
+  file_preamble <- file.path(.path_asset, "assets", "preamble.tex")
   if (file.exists(file_preamble)) {
     if (is.null(includes)) {
       includes <- includes(in_header = file_preamble)
@@ -21,10 +21,10 @@ pdf_document_with_asset = function(asset, includes = NULL, ...) {
   ans <- rmarkdown::pdf_document(includes = includes, ...)
 
   # use pre_processor from asset package or pre_processor_basic, if not present
-  file_pre_processor <- file.path(.path_assets, "pre_processor.R")
+  file_pre_processor <- file.path(.path_asset, "assets", "pre_processor.R")
   if (file.exists(file_pre_processor)) {
     env <- environment()
-    source(file.path(.path_assets, "pre_processor.R"), env)
+    source(file.path(file_pre_processor), env)
     stopifnot(exists("pre_processor", envir = env))
   } else {
     pre_processor <- pre_processor_basic
@@ -41,13 +41,12 @@ pre_processor_basic <- function(metadata, input_file, runtime, knit_meta, files_
 }
 
 apply_default_yaml <- function() {
-  path_assets <- .path_assets
 
   # add default preamble includes
-  defaults_txt <- readLines(file.path(path_assets, "default.yaml"), encoding = "UTF-8")
+  defaults_txt <- readLines(file.path(.path_asset, "assets", "default.yaml"), encoding = "UTF-8")
 
   # replace <path_assets> by package path
-  defaults_txt <- gsub("<path_assets>", path_assets, defaults_txt, fixed = TRUE)
+  defaults_txt <- gsub("<path_asset>", .path_asset, defaults_txt, fixed = TRUE)
 
   defaults <- yaml::yaml.load(defaults_txt)
 
