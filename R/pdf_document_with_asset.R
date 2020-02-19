@@ -42,7 +42,14 @@ pre_processor_basic <- function(metadata, input_file, runtime, knit_meta, files_
 
 apply_default_yaml <- function() {
   path_assets <- .path_assets
-  defaults <- yaml::read_yaml(file.path(path_assets, "default.yaml"))
+
+  # add default preamble includes
+  defaults_txt <- readLines(file.path(path_assets, "default.yaml"), encoding = "UTF-8")
+
+  # replace <path_assets> by package path
+  defaults_txt <- gsub("<path_assets>", path_assets, defaults_txt, fixed = TRUE)
+
+  defaults <- yaml::yaml.load(defaults_txt)
 
   # do not apply asset defaults if variable set in document
   defaults_applied <- defaults[setdiff(names(defaults), names(metadata))]
