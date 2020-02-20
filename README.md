@@ -11,4 +11,5 @@ Individual RMarkdown Templates
 - customdown
 - downdown
 - templatedown
+- formatdown
 ...
