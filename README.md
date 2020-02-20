@@ -10,4 +10,5 @@ Individual RMarkdown Templates
 - mydown
 - customdown
 - downdown
+- templatedown
 ...
