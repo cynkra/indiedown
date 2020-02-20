@@ -1,6 +1,6 @@
 # indiedown
 
-Individual RMarkdown Templates
+Individual RMarkdown PDF Templates
 
 
 
