@@ -13,7 +13,7 @@ pdf_document_with_asset = function(path, includes = NULL, ...) {
     writeLines(txt, file_preamble)
 
     if (is.null(includes)) {
-      includes <- includes(in_header = file_preamble)
+      includes <- rmarkdown::includes(in_header = file_preamble)
     } else {
       if ("in_header" %in% names(includes)) {
         warning("The use of 'includes, in_header' overwrites preamble.tex from asset and may mess up the layout.")

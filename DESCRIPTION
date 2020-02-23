@@ -3,12 +3,11 @@ Type: Package
 Title: Individual RMardown Templates
 Version: 0.0.1
 Maintainer: Christoph Sax <christoph@cynkra.com>
-Description: Provides R Markdown output formats to use with individual style
+Description: Easy Generation of Individual RMardown Templates
 LazyData: TRUE
 Imports:
-    htmltools,
     knitr (>= 1.12),
-    rmarkdown,
+    rmarkdown
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.0.2
 Encoding: UTF-8
