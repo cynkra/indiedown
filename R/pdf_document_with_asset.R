@@ -86,6 +86,10 @@ list_to_pandoc_args <- function(list) {
 
   vars <- paste0(names(list),":",unlist(list))
 
-  # zip in '--variable' before each element, use unlikely temp separator string
-  unlist(strsplit(paste("--variable", vars, sep = "Fwh0VauLpwa7"), split = "Fwh0VauLpwa7",  fixed = TRUE))
+  zip <- function(x, y) {
+    x <- rep_len(x, length(y))
+    m <- matrix(c(x, y), nrow = 2, byrow = TRUE)
+    as.vector(m)
+  }
+  zip("--variable", vars)
 }
