@@ -4,8 +4,6 @@ pdf_document_with_asset = function(path, includes = NULL, ...) {
   # or find a better way to do this
   .path_asset <<- path
 
-  # .path_asset <<- system.file(package = asset)
-
   # file preamble
   file_preamble <- file.path(.path_asset, "preamble.tex")
   if (file.exists(file_preamble)) {
