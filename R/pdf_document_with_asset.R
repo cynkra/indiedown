@@ -5,8 +5,13 @@ pdf_document_with_asset = function(path, includes = NULL, ...) {
   .path_asset <<- path
 
   # file preamble
-  file_preamble <- file.path(.path_asset, "preamble.tex")
-  if (file.exists(file_preamble)) {
+  if (file.exists(file.path(.path_asset, "preamble.tex"))) {
+    # replace <path_asset>
+    file_preamble <- tempfile(fileext = ".txt")
+    txt <- readLines(file.path(.path_asset, "preamble.tex"), encoding = "UTF-8")
+    txt <- gsub("<path_asset>", .path_asset, txt, fixed = TRUE)
+    writeLines(txt, file_preamble)
+
     if (is.null(includes)) {
       includes <- includes(in_header = file_preamble)
     } else {
