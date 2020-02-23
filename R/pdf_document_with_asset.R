@@ -39,26 +39,37 @@ pdf_document_with_asset = function(path, includes = NULL, ...) {
 
 
 pre_processor_basic <- function(metadata, input_file, runtime, knit_meta, files_dir, output_dir) {
-  args <- apply_default_yaml()
+  args <- apply_default_yaml(metadata = metadata)
 }
 
-apply_default_yaml <- function() {
+apply_default_yaml <- function(metadata) {
 
-  # add default preamble includes
-  defaults_txt <- readLines(file.path(.path_asset, "default.yaml"), encoding = "UTF-8")
-
-  # replace <path_assets> by package path
-  defaults_txt <- gsub("<path_asset>", .path_asset, defaults_txt, fixed = TRUE)
-
-  defaults <- yaml::yaml.load(defaults_txt)
+  defaults <- read_yaml_and_replace(file.path(.path_asset, "default.yaml"))
 
   # do not apply asset defaults if variable set in document
   defaults_applied <- defaults[setdiff(names(defaults), names(metadata))]
 
   args <- list_to_pandoc_args(defaults_applied)
+
+  # pandoc ignores 'header-includes' if includes$in_header is specified
+  # https://github.com/jgm/pandoc/issues/3139
+  # we can still use `header-includes` by passing it as a command line option to pandoc
+  if(!is.null(metadata$`header-includes`)) {
+    args <- c(args, "--variable", paste0("header-includes:", paste(metadata$`header-includes`, collapse = "\n")))
+  }
+
   args
 }
 
+read_yaml_and_replace <- function(file) {
+  # add default preamble includes
+  defaults_txt <- readLines(file, encoding = "UTF-8")
+
+  # replace <path_assets> by package path
+  defaults_txt <- gsub("<path_asset>", .path_asset, defaults_txt, fixed = TRUE)
+
+  defaults <- yaml::yaml.load(defaults_txt)
+}
 
 # list <- list(
 #   indent = TRUE,
@@ -78,7 +89,7 @@ list_to_pandoc_args <- function(list) {
 
   vars <- paste0(names(list),":",unlist(list))
 
-  # zip in '--variable' before each element
-  unlist(strsplit(paste("--variable", vars, sep = "$$TEMPSEP$$"), split = "$$TEMPSEP$$",  fixed = TRUE))
+  # zip in '--variable' before each element, use unlikely temp separator string
+  unlist(strsplit(paste("--variable", vars, sep = "Fwh0VauLpwa7"), split = "Fwh0VauLpwa7",  fixed = TRUE))
 
 }
