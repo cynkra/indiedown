@@ -1,9 +1,9 @@
 Package: indiedown
 Type: Package
-Title: Individual RMardown Templates
+Title: Individual RMarkdown Templates
 Version: 0.0.1
 Maintainer: Christoph Sax <christoph@cynkra.com>
-Description: Easy Generation of Individual RMardown Templates
+Description: Easy Generation of Customized RMardown Templates
 LazyData: TRUE
 Imports:
     knitr (>= 1.12),

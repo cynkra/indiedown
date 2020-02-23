@@ -1,3 +1,3 @@
 # indiedown
 
-Individual RMarkdown PDF Templates
+Easy Generation of Customized RMardown Templates
