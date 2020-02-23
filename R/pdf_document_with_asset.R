@@ -40,14 +40,18 @@ pdf_document_with_asset = function(path, includes = NULL, ...) {
 
 }
 
-
 pre_processor_basic <- function(metadata, input_file, runtime, knit_meta, files_dir, output_dir) {
   args <- apply_default_yaml(metadata = metadata)
 }
 
 apply_default_yaml <- function(metadata) {
 
-  defaults <- read_yaml_and_replace(file.path(.path_asset, "default.yaml"))
+  defaults_txt <- readLines(file.path(.path_asset, "default.yaml"), encoding = "UTF-8")
+
+  # replace <path_assets> by package path
+  defaults_txt <- gsub("<path_asset>", .path_asset, defaults_txt, fixed = TRUE)
+
+  defaults <- yaml::yaml.load(defaults_txt)
 
   # do not apply asset defaults if variable set in document
   defaults_applied <- defaults[setdiff(names(defaults), names(metadata))]
@@ -62,16 +66,6 @@ apply_default_yaml <- function(metadata) {
   }
 
   args
-}
-
-read_yaml_and_replace <- function(file) {
-  # add default preamble includes
-  defaults_txt <- readLines(file, encoding = "UTF-8")
-
-  # replace <path_assets> by package path
-  defaults_txt <- gsub("<path_asset>", .path_asset, defaults_txt, fixed = TRUE)
-
-  defaults <- yaml::yaml.load(defaults_txt)
 }
 
 # list <- list(
@@ -94,5 +88,4 @@ list_to_pandoc_args <- function(list) {
 
   # zip in '--variable' before each element, use unlikely temp separator string
   unlist(strsplit(paste("--variable", vars, sep = "Fwh0VauLpwa7"), split = "Fwh0VauLpwa7",  fixed = TRUE))
-
 }
