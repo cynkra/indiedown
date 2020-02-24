@@ -12,7 +12,7 @@ Currently a private repo on GitHub, pull and install.
 
 Template assets are stored in a folder `indiedown`. The folder is usually located in the `inst` folder of an R package, but could be put to any location.
 
-The folder contains all the necessary information to customize your markdown template. Below is a description of its elements:
+The folder contains all the necessary information to customize your markdown template. It can contain basic pandoc settings, additional LaTeX settings and dynamic pandoc settings.
 
 ### Basic Settings
 
