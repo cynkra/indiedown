@@ -6,14 +6,17 @@ Easy Generation of Customized RMarkdown Templates
 
 Currently a private repo on GitHub, pull and install.
 
+## Assets
 
-## `indiedown` Asset Folder
+**Location:** `indiedown` (folder)
 
 Template assets are stored in a folder `indiedown`. The folder is usually located in the `inst` folder of an R package, but could be put to any location.
 
 The folder contains all the necessary information to customize your markdown template. Below is a description of its elements:
 
-### `default.yaml` (required)
+### Basic Settings
+
+**Location:** `default.yaml` (required)
 
 `default.yaml` is the only required element of an indiedown template.
 It specifies the default pandoc options used by your template.
@@ -26,7 +29,9 @@ For a detailed description of all pandoc options, see the 'Variables for LaTeX' 
 `default.yaml`, as well as `preamble.tex` supports substitution of the variable `<asset_path>`, which is explained below.
 
 
-### `preamble.tex` (optional)
+### Additional LaTeX Settings 
+
+**Location:** `preamble.tex` (optional, advanced)
 
 Sometimes, pandoc options are just not enough. While pandoc allows you to directly apply single LaTeX commands in the YAML header (using `headers-include`), `preamble.tex` offers a more convenient way to include LaTeX commands at the beginning of your document.
 
@@ -38,7 +43,9 @@ For most customizations, it is recommended to turn off the default LaTeX title p
 `\renewcommand\maketitle{}`. Creating your own title page via LaTeX commands in the RMarkdown script or by a customized R function is a much easier and more flexible way to create a customized title page.
 
 
-### `pre_processor.R` (optional, advanced)
+### Dynamic Settings 
+
+**Location:** `pre_processor.R` (optional, advanced)
 
 In a few cases, pandoc options should be set dynamically.
 E.g., the geometry of a document should depend on whether it uses two columns or just one.
@@ -57,7 +64,7 @@ Whenever you mention `<asset_path>` in one of your files, it will be substituted
 Most customized styles will include some additional assets, such as a logo or a special font. Assets can be put into arbitrary named folders. To access the assets from `default.yaml` or `preamble.tex`, simply use `<asset_path>/myasset` and the path will be correctly resolved by indiedown.
 
 
-## Functions outside of the `indiedown`Folder
+## Other Elements
 
 ### Calling function
 
