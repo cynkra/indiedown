@@ -7,7 +7,7 @@ pdf_document_with_asset = function(path, includes = NULL, ...) {
   # file preamble
   if (file.exists(file.path(.path_asset, "preamble.tex"))) {
     # replace <path_asset>
-    file_preamble <- tempfile(fileext = ".txt")
+    file_preamble <- tempfile(fileext = ".tex")
     txt <- readLines(file.path(.path_asset, "preamble.tex"), encoding = "UTF-8")
     txt <- gsub("<path_asset>", .path_asset, txt, fixed = TRUE)
     writeLines(txt, file_preamble)
