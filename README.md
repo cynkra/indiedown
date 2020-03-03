@@ -1,10 +1,15 @@
 # indiedown: Individual RMarkdown Templates
 
-Easy Generation of Customized RMarkdown Templates
+Easy Generation of Customized RMarkdown Templates.
+
+**This is a very early version. Use at your own peril!**
 
 ## Installation
 
-Currently a private repo on GitHub, pull and install.
+```r
+# install.packages("remotes")
+remotes::install_github("christophsax/indiedown")
+```
 
 ## Assets
 
