@@ -54,7 +54,7 @@ For most customizations, it is recommended to turn off the default LaTeX title p
 
 In a few cases, pandoc options should be set dynamically.
 E.g., the geometry of a document should depend on whether it uses two columns or just one.
-`pre_processor.R` allow you do dynamically modify pandoc options, using plain R.
+`pre_processor.R` allows you to dynamically modify pandoc options, using plain R.
 See the example script for how to use it.
 
 
@@ -66,7 +66,7 @@ Whenever you mention `<asset_path>` in one of your files, it will be substituted
 
 ### Including Additional Assets
 
-Most customized styles will include some additional assets, such as a logo or a special font. Assets can be put into arbitrary named folders. To access the assets from `default.yaml` or `preamble.tex`, simply use `<asset_path>/myasset` and the path will be correctly resolved by indiedown.
+Most customized styles will include some additional assets, such as a logo or a special font. Assets can be put into arbitrarily named folders. To access the assets from `default.yaml` or `preamble.tex`, simply use `<asset_path>/myasset` and the path will be correctly resolved by indiedown.
 
 
 ## Other Elements
