@@ -9,5 +9,5 @@ Imports:
     knitr (>= 1.12),
     rmarkdown
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Encoding: UTF-8

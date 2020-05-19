@@ -2,3 +2,5 @@
 
 export(path_asset)
 export(pdf_document_with_asset)
+export(use_indie_fonts)
+export(use_indie_skeleton)

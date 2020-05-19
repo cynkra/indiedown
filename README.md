@@ -11,6 +11,26 @@ Easy Generation of Customized RMarkdown Templates.
 remotes::install_github("christophsax/indiedown")
 ```
 
+## Create an individual RMarkdown template
+
+```r
+library(indiedown)
+
+# create_indie_package("mydown")
+usethis::create_package("mydown")
+use_indie_skeleton()
+
+use_indie_fonts(
+  id = "open-sans",
+  variants = c("regular", "300italic", "700", "700italic")
+)
+
+use_indie_fonts()
+
+```
+
+
+
 ## Assets
 
 **Location:** `indiedown` (folder)
@@ -34,7 +54,7 @@ For a detailed description of all pandoc options, see the 'Variables for LaTeX' 
 `default.yaml`, as well as `preamble.tex` supports substitution of the variable `<asset_path>`, which is explained below.
 
 
-### Additional LaTeX Settings 
+### Additional LaTeX Settings
 
 **Location:** `preamble.tex` (optional, advanced)
 
@@ -48,7 +68,7 @@ For most customizations, it is recommended to turn off the default LaTeX title p
 `\renewcommand\maketitle{}`. Creating your own title page via LaTeX commands in the RMarkdown script or by a customized R function is a much easier and more flexible way to create a customized title page.
 
 
-### Dynamic Settings 
+### Dynamic Settings
 
 **Location:** `pre_processor.R` (optional, advanced)
 
