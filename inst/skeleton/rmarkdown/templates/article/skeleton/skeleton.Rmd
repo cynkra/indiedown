@@ -1,0 +1,63 @@
+---
+title           : "Report-Title"
+subtitle        : "Subtile"
+author          : ["My-Name", "Our-Team"]
+
+documentclass   : article   # article (default) report
+fontsize        : 11pt      # 10pt 11pt (default) 12pt
+numbersections  : true
+
+output          : mydown::mydown
+---
+
+
+```{r, include = FALSE}
+library(knitr)
+library(kableExtra)
+library(tidyverse)
+library(agdown)
+cd_knit_chunk_opts()
+```
+
+```{r}
+cd_header_simple()
+```
+
+# R Markdown
+
+R Markdown Dokumente werden in Markdown verfasst. Mehr Details dazu findet man
+[hier](https://www.rstudio.com/wp-
+content/uploads/2015/03/rmarkdown-reference.pdf).
+
+Die Basis-Formatierungen umfassen, **fett**, *kursiv* und `fixe Breite`.
+Aber man kann auch fast alles machen \uwave{was mit \LaTeX\ möglich ist.}
+Schreibt man `r round(rnorm(1), 4)`, so evaluiert R den Code, womit man leicht
+Dokumente erstellen kann, welche immer die neuesten Zahlen enthalten.[^fn]
+
+[^fn]: Inklusive Fussnoten.
+
+
+```{r}
+kable(
+  mtcars[1:5,],
+  linesep = "",
+  booktabs = TRUE
+) %>%
+kable_styling(
+  font_size = 9,
+  latex_options = "HOLD_position"
+)
+```
+
+
+# Unterabschnitt
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+
+
