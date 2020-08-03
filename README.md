@@ -2,13 +2,13 @@
 
 Easy Generation of Customized RMarkdown Templates.
 
-**This is a very early version. Use at your own peril!**
+**This is an early version. Use at your own peril!**
 
 ## Installation
 
 ```r
 # install.packages("remotes")
-remotes::install_github("christophsax/indiedown")
+remotes::install_github("cynkra/indiedown")
 ```
 
 ## Create an individual RMarkdown template
