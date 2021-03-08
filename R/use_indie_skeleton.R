@@ -1,23 +1,18 @@
 #' @export
 use_indie_skeleton <- function(path = ".", overwrite = FALSE) {
+
+  # pernaps use this
+  # usethis::create_package()
+
+  # and call the function create_indiedown_package()
+
   path_skeleton <- system.file("skeleton", package = "indiedown")
 
   fs::dir_copy(
-    path = fs::path(path_skeleton, "indiedown"),
-    new_path = fs::path(path, "inst"),
-    overwrite = overwrite
-  )
-  fs::dir_copy(
-    path = fs::path(path_skeleton, "rmarkdown"),
-    new_path = fs::path(path, "inst"),
-    overwrite = overwrite
-  )
-  fs::dir_copy(
-    path = fs::path(path_skeleton, "R"),
+    path = fs::path(path_skeleton),
     new_path = fs::path(path),
     overwrite = overwrite
   )
-
 
   con_pkg <- file(file.path(path, "DESCRIPTION"), "r")
   pkgdescription_function <- readLines(con = con_pkg, n = 1)
