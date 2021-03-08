@@ -2,12 +2,6 @@
 use_indie_skeleton <- function(path = ".", overwrite = FALSE) {
   path_skeleton <- system.file("skeleton", package = "indiedown")
 
-  # path_indiedown <- fs::path(path, "inst", "indiedown")
-  # path_rmarkdown <- fs::path(path, "inst", "rmarkdown")
-
-  # usethis::use_directory(path_indiedown)
-  # usethis::use_directory(path_rmarkdown)
-
   fs::dir_copy(
     path = fs::path(path_skeleton, "indiedown"),
     new_path = fs::path(path, "inst"),
@@ -18,6 +12,23 @@ use_indie_skeleton <- function(path = ".", overwrite = FALSE) {
     new_path = fs::path(path, "inst"),
     overwrite = overwrite
   )
+  fs::dir_copy(
+    path = fs::path(path_skeleton, "R"),
+    new_path = fs::path(path),
+    overwrite = overwrite
+  )
+
+
+  con_pkg <- file(file.path(path, "DESCRIPTION"), "r")
+  pkgdescription_function <- readLines(con = con_pkg, n = 1)
+  pkg_name <- sub("Package: (.+)", "\\1", pkgdescription_function[1])
+  print(pkg_name)
+  con <- file(file.path(path, "R", "pkg_name.R"), "r")
+  pkgname_function <- readLines(con = con, n = -1)
+  close(con)
+  pkgname_function[4] <- sub("pkg_name", pkg_name, pkgname_function[4])
+  cat(pkgname_function, file = file.path(path, "R", paste0(pkg_name, ".R")), sep = "\n")
+  fs::file_delete(file.path(path, "R", "pkg_name.R"))
 
 }
 
