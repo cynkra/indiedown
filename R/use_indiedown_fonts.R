@@ -1,7 +1,7 @@
 # regular, italic, bold, italic
-# use_indie_fonts(id = "lora", variants = c("regular", "italic", "700", "700italic"))
+# use_indiedown_fonts(id = "lora", variants = c("regular", "italic", "700", "700italic"))
 #' @export
-use_indie_fonts <- function(path = ".",
+use_indiedown_fonts <- function(path = ".",
   id = "roboto",
   variants = c("regular", "300italic", "700", "700italic")) {
 
