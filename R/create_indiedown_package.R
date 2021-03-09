@@ -3,8 +3,8 @@
 #' @export
 #' @examples
 #'
-#' create_indiedown_package(file.path(tempdir(), "mydown"))
-create_indiedown_package <- function(path = ".", overwrite = FALSE) {
+#' use_indiedown_skeleton(file.path(tempdir(), "mydown"))
+use_indiedown_skeleton <- function(path = ".", overwrite = FALSE) {
 
   # pernaps use this
   # usethis::create_package()
