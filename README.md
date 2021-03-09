@@ -25,7 +25,7 @@ use_indiedown_fonts(
 )
 ```
 
-### Apply aritrary modification at three entry points (optional)
+### Apply custom modification at three entry points (optional)
 
 - Set defaults (such as fonts or geometry) in the YAML header at `inst/indedown/default.ymal`
 - Tweak LaTeX settings at `inst/indedown/pramble.tex`
@@ -33,7 +33,7 @@ use_indiedown_fonts(
 
 See the vignette for details.
 
-### Create a new RMarkdown from your template in RStudio.
+### Use your RMarkdown template in RStudio
 
 
 
