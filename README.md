@@ -8,7 +8,7 @@ Start by installing indiedown:
 remotes::install_github("cynkra/indiedown")
 ```
 
-### Minute 1: Create an individual RMarkdown template
+### Create an individual RMarkdown template
 
 ```r
 library(indiedown)
@@ -16,7 +16,7 @@ usethis::create_package("mydown")
 use_indiedown_skeleton()
 ```
 
-### Minute 2: Add a custom font:
+### Add a custom font (optional)
 
 ```r
 use_indiedown_fonts(
@@ -25,7 +25,7 @@ use_indiedown_fonts(
 )
 ```
 
-### Minute 3: Apply aritrary modification at three entry points:
+### Apply aritrary modification at three entry points (optional)
 
 - Set defaults (such as fonts or geometry) in the YAML header at `inst/indedown/default.ymal`
 - Tweak LaTeX settings at `inst/indedown/pramble.tex`
@@ -33,7 +33,7 @@ use_indiedown_fonts(
 
 See the vignette for details.
 
-### Minute 10: Create a new RMarkdown from your template in RStudio.
+### Create a new RMarkdown from your template in RStudio.
 
 
 
