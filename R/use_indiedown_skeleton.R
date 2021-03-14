@@ -11,33 +11,38 @@
 #' path <- file.path(tempdir(), "mydown")
 #'
 #' # set up empty R Package 'mydown'
-#' # with open = TRUE (default), it switches to the new project
-#' usethis::create_package(path, open = FALSE)
-#'
-#' # add indiedown assets
-#' use_indiedown_skeleton(path, overwrite = TRUE)
+#' create_indiedown_package(path, overwrite = TRUE)
 #'
 #' @importFrom fs dir_copy file_move
-use_indiedown_skeleton <- function(path = ".", overwrite = FALSE) {
+create_indiedown_package <- function(path, overwrite = FALSE) {
 
   pkg_name <- basename(path)
 
+  path_seleton <- system.file("skeleton", package = "indiedown")
+
   fs::dir_copy(
-    path = system.file("skeleton", package = "indiedown"),
-    new_path = path,
-    overwrite = overwrite
+    path_seleton,
+    path,
+    overwrite = TRUE
+  )
+
+  files <- c(
+    file.path(path, "inst", "rmarkdown", "templates", "report", "skeleton", "skeleton.Rmd"),
+    file.path(path, "R", "indiedown_pdf_document.R"),
+    file.path(path, "man", "<<pkg_name>>.Rd"),
+    file.path(path, "DESCRIPTION"),
+    file.path(path, "NAMESPACE")
   )
 
   gsub_in_file(
     pattern = "<<pkg_name>>",
     replacement = pkg_name,
-    file = file.path(path, "inst", "rmarkdown", "templates", "report", "skeleton", "skeleton.Rmd")
+    file = files
   )
 
-  gsub_in_file(
-    pattern = "<<pkg_name>>",
-    replacement = pkg_name,
-    file = file.path(path, "R", "indiedown_pdf_document.R")
+  file.rename(
+    file.path(path, "man", "<<pkg_name>>.Rd"),
+    gsub("<<pkg_name>>", pkg_name, file.path(path, "man", "<<pkg_name>>.Rd"), fixed = TRUE)
   )
 
   usethis::ui_done("set up indiedown skeleton")

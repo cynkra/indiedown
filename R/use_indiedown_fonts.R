@@ -2,14 +2,12 @@
 #'
 #' Download and use Google fonts, using the *gfonts* package.
 #'
-#' @inheritParams use_indiedown_skeleton
+#' @inheritParams create_indiedown_package
 #' @inheritParams gfonts::download_font
 #' @examples
 #' \donttest{
 #' path <- file.path(tempdir(), "mydown")
-#' usethis::create_package(path, open = FALSE)
-#' # add indiedown assets
-#' use_indiedown_skeleton(path, overwrite = TRUE)
+#' create_indiedown_package(path, overwrite = TRUE)
 #' # Use Lora, instead of default Roboto
 #' use_indiedown_gfonts(
 #'   path = path,

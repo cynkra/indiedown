@@ -30,21 +30,17 @@ We want to create our own, customized RMarkdown template and keep it as an R pac
 
 Start by creating an empty R package. Use `create_package()` from the *usethis* package or you create a new package project in RStudio.
 
-```r
-usethis::create_package("mydown")
-```
-
 We add a basic indiedown template as follows:
 
 ```r
 library(indiedown)
-use_indiedown_skeleton()
+indiedown::create_indiedown_package("mydown")
 ```
 
-We can now build *mydown*, using 'build and reload' in the RStudio or via command line:
+We can now build *mydown*, using 'build and reload' in the RStudio or via command line, using the *devtools* package:
 
 ```r
-devtools::install()
+devtools::install("mydown")
 ```
 
 With *mydown* built and installed, our new template is available in RStudio.
