@@ -1,5 +1,11 @@
 #' Skeleton for a Customized RMarkdown Template
 #'
+#' Set up the packages structre for an indiedown-based customized RMarkdown
+#' template. See `vignette("intro")` for a more detailed usage example.
+#'
+#' @param path Package path
+#' @param overwrite Should existing assets be overwritten?
+#'
 #' @export
 #' @examples
 #' path <- file.path(tempdir(), "mydown")
@@ -11,6 +17,7 @@
 #' # add indiedown assets
 #' use_indiedown_skeleton(path, overwrite = TRUE)
 #'
+#' @importFrom fs dir_copy file_move
 use_indiedown_skeleton <- function(path = ".", overwrite = FALSE) {
 
   pkg_name <- basename(path)
@@ -34,7 +41,6 @@ use_indiedown_skeleton <- function(path = ".", overwrite = FALSE) {
   )
 
   usethis::ui_done("set up indiedown skeleton")
-
   usethis::ui_info(paste("see ... for how to customize", pkg_name))
 
 }

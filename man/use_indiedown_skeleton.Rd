@@ -6,8 +6,14 @@
 \usage{
 use_indiedown_skeleton(path = ".", overwrite = FALSE)
 }
+\arguments{
+\item{path}{Package path}
+
+\item{overwrite}{Should existing assets be overwritten?}
+}
 \description{
-Skeleton for a Customized RMarkdown Template
+Set up the packages structre for an indiedown-based customized RMarkdown
+template. See \code{vignette("intro")} for a more detailed usage example.
 }
 \examples{
 path <- file.path(tempdir(), "mydown")
@@ -18,6 +24,5 @@ usethis::create_package(path, open = FALSE)
 
 # add indiedown assets
 use_indiedown_skeleton(path, overwrite = TRUE)
-
 
 }
