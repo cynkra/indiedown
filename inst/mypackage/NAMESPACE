@@ -2,5 +2,9 @@
 
 export(cd_page_title)
 export(default)
+export(indiedown_glue)
+export(indiedown_path)
+export(indiedown_path_tex)
+export(indiedown_pdf_document_with_asset)
 export(mypackage)
 importFrom(glue,glue)
