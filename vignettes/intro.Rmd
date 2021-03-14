@@ -1,5 +1,5 @@
 ---
-title: "customize"
+title: "Introduction to Indiedown"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Introduction to Indiedown}
@@ -16,7 +16,8 @@ knitr::opts_chunk$set(
 
 # indiedown: Individual RMarkdown PDF Templates
 
-indiedown makes it easy to generate a customized RMarkdown PDF template.
+indiedown makes it easy to generate a customized RMarkdown PDF templates that follow the principles of your corporate design.
+
 Start by installing indiedown:
 
 ```r
@@ -26,21 +27,21 @@ remotes::install_github("cynkra/indiedown")
 
 ## Create an customized RMarkdown template
 
-To create your own, customized RMarkdown template, start by creating an indiedown template package:
+To create your own, customized RMarkdown template, start by creating an indiedown template package, called `mydown`:
 
 ```r
 indiedown::create_indiedown_package("mydown")
 ```
 
-We can now build *mydown*, using 'build and reload' in the RStudio or via command line, using the *devtools* package:
+This creates a package skeleton at `./mydown`. You can build build *mydown*, using 'build and reload' in the RStudio or via the command line, as folows:
 
 ```r
 devtools::install("mydown")
 ```
 
-With *mydown* built and installed, our new template is available in RStudio.
+With *mydown* built and installed, our new template is available in RStudio (after a restart):
 
-It looks like this:
+![](fig/rstudio.png){ width=50% }
 
 
 
@@ -79,10 +80,3 @@ This should make it compliant with future releases of Pandoc and RMarkdown.
 ### Write Keep Corporate Design Elements
 
 Keep all corporate design elements as R code. This keeps the tex code simple and allows flexible extensions.
-
-
-
-
-
-
-
