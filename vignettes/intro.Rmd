@@ -44,7 +44,7 @@ use_indiedown_skeleton()
 We can now build *mydown*, using 'build and reload' in the RStudio or via command line:
 
 ```r
-pkgbuild::build()
+devtools::install()
 ```
 
 With *mydown* built and installed, our new template is available in RStudio.
