@@ -16,9 +16,8 @@
 #' @importFrom fs dir_copy file_move
 create_indiedown_package <- function(path, overwrite = FALSE) {
 
-  pkg_name <- basename(path)
 
-  path_seleton <- system.file("skeleton", package = "indiedown")
+  path_seleton <- system.file("mypackage", package = "indiedown")
 
   fs::dir_copy(
     path_seleton,
@@ -26,23 +25,25 @@ create_indiedown_package <- function(path, overwrite = FALSE) {
     overwrite = TRUE
   )
 
+  pkg_name <- basename(path)
+
   files <- c(
     file.path(path, "inst", "rmarkdown", "templates", "report", "skeleton", "skeleton.Rmd"),
     file.path(path, "R", "indiedown_pdf_document.R"),
-    file.path(path, "man", "<<pkg_name>>.Rd"),
+    file.path(path, "man", "mypackage.Rd"),
     file.path(path, "DESCRIPTION"),
     file.path(path, "NAMESPACE")
   )
 
   gsub_in_file(
-    pattern = "<<pkg_name>>",
+    pattern = "mypackage",
     replacement = pkg_name,
     file = files
   )
 
   file.rename(
-    file.path(path, "man", "<<pkg_name>>.Rd"),
-    gsub("<<pkg_name>>", pkg_name, file.path(path, "man", "<<pkg_name>>.Rd"), fixed = TRUE)
+    file.path(path, "man", "mypackage.Rd"),
+    file.path(path, "man", paste0(pkg_name, ".Rd"))
   )
 
   usethis::ui_done("set up indiedown skeleton")
