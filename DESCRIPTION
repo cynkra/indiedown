@@ -2,14 +2,38 @@ Package: indiedown
 Type: Package
 Title: Individual RMarkdown Templates
 Version: 0.0.1
-Maintainer: Christoph Sax <christoph@cynkra.com>
-Description: Easy Generation of Customized RMardown Templates
+Authors@R: c(
+    person(given = "Christoph",
+           family = "Sax",
+           role = c("aut", "cre"),
+           email = "christoph.sax@gmail.com",
+           comment = c(ORCID = "0000-0002-7192-7044")),
+    person(given = "Kirill",
+           family = "Müller",
+           role = c("aut"),
+           comment = c(ORCID = "0000-0002-1416-3412")),
+    person(given = "Angelica",
+           family = "Becerra",
+           role = c("aut")),
+    person(given = "Frederik",
+           family = "Aust",
+           role = c("aut")),
+    person(given = "cynkra GmbH",
+       role = c("fnd", "cph"),
+       email = "mail@cynkra.com"))
+Description: Simplifies the generation of customized RMarkdown templates. Provides a package skeleton with instructions for customizations.
 LazyData: TRUE
 Imports:
     knitr (>= 1.12),
     rmarkdown,
-    usethis
+    gfonts,
+    fs
+Suggests:
+    usethis,
+    testthat (>= 3.0.0)
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Encoding: UTF-8
 VignetteBuilder: knitr
+Config/testthat/edition: 3
+License: MIT + file LICENSE
