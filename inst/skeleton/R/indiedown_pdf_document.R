@@ -2,7 +2,7 @@
 
 #' Customized RMarkdown Document
 #'
-#' `<<pkg_name>>()` is the main function of <<pkg_name>>. Use as
+#' `<<pkg_name>>()` is the main function of the <<pkg_name>> package. Use as
 #' `output: <<pkg_name>>::<<pkg_name>>` in the RMarkdown YAML header.
 #'
 #' @export

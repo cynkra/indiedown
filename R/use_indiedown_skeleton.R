@@ -11,22 +11,29 @@
 #' # add indiedown assets
 #' use_indiedown_skeleton(path, overwrite = TRUE)
 #'
-#'
 use_indiedown_skeleton <- function(path = ".", overwrite = FALSE) {
 
   pkg_name <- basename(path)
 
-  path_skeleton <- system.file("skeleton", package = "indiedown")
-
   fs::dir_copy(
-    path = fs::path(path_skeleton),
-    new_path = fs::path(path),
+    path = system.file("skeleton", package = "indiedown"),
+    new_path = path,
     overwrite = overwrite
   )
 
-  usethis::ui_done("set up indiedown skeleton")
+  gsub_in_file(
+    pattern = "<<pkg_name>>",
+    replacement = pkg_name,
+    file = file.path(path, "inst", "rmarkdown", "templates", "report", "skeleton", "skeleton.Rmd")
+  )
 
-  use_indiedown_pdf_document(path, overwrite = overwrite)
+  gsub_in_file(
+    pattern = "<<pkg_name>>",
+    replacement = pkg_name,
+    file = file.path(path, "R", "indiedown_pdf_document.R")
+  )
+
+  usethis::ui_done("set up indiedown skeleton")
 
   usethis::ui_info(paste("see ... for how to customize", pkg_name))
 
