@@ -1,6 +1,7 @@
 # indiedown: Individual RMarkdown PDF Templates
 
 indiedown allows you to generate a customized RMarkdown PDF template in a few basic steps.
+
 Start by installing indiedown:
 
 ```r
@@ -8,35 +9,21 @@ Start by installing indiedown:
 remotes::install_github("cynkra/indiedown")
 ```
 
-### Create an individual RMarkdown template
+To create your own, customized RMarkdown template, start by creating an indiedown template package, called `mydown`:
 
 ```r
-library(indiedown)
-usethis::create_package("mydown")
-use_indiedown_skeleton()
+indiedown::create_indiedown_package("mydown")
 ```
 
-### Add a custom font (optional)
+This creates a package skeleton at `./mydown`. You can build build *mydown*, using 'build and reload' in the RStudio or via the command line, as folows:
 
 ```r
-use_indiedown_fonts(
-  id = "open-sans",
-  variants = c("regular", "300italic", "700", "700italic")
-)
+devtools::install("mydown")
 ```
 
-### Apply custom modification at three entry points (optional)
+With *mydown* built and installed, our new template is available in RStudio (after a restart).
 
-- Set defaults (such as fonts or geometry) in the YAML header at `inst/indedown/default.ymal`
-- Tweak LaTeX settings at `inst/indedown/pramble.tex`
-- Apply dynamic adjustments in `pre_processor.R` (advanced)
+See `vignette("intro")` for a more detailed tutorial.
 
-See the vignette for details.
-
-### Use your RMarkdown template in RStudio
-
-
-
-
-
+See `vignette("customize")` for how to customize your template.
 
