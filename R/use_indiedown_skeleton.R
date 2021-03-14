@@ -41,7 +41,7 @@ use_indiedown_skeleton <- function(path = ".", overwrite = FALSE) {
   )
 
   usethis::ui_done("set up indiedown skeleton")
-  usethis::ui_info(paste("see ... for how to customize", pkg_name))
+  usethis::ui_info(paste('see `vignette("intro")` for how to customize', pkg_name))
 
 }
 
