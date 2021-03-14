@@ -1,17 +1,20 @@
-#' Create a Customized RMarkdown Template
+#' Skeleton for a Customized RMarkdown Template
 #'
 #' @export
 #' @examples
+#' path <- file.path(tempdir(), "mydown")
 #'
-#' use_indiedown_skeleton(file.path(tempdir(), "mydown"))
+#' # set up empty R Package 'mydown'
+#' # with open = TRUE (default), it switches to the new project
+#' usethis::create_package(path, open = FALSE)
+#'
+#' # add indiedown assets
+#' use_indiedown_skeleton(path, overwrite = TRUE)
+#'
+#'
 use_indiedown_skeleton <- function(path = ".", overwrite = FALSE) {
 
-  # pernaps use this
-  # usethis::create_package()
-
-  # and call the function create_indiedown_package()
-
-  package_name <- basename(path)
+  pkg_name <- basename(path)
 
   path_skeleton <- system.file("skeleton", package = "indiedown")
 
@@ -21,21 +24,11 @@ use_indiedown_skeleton <- function(path = ".", overwrite = FALSE) {
     overwrite = overwrite
   )
 
-  con_pkg <- file(file.path(path, "DESCRIPTION"), "r")
-  pkgdescription_function <- readLines(con = con_pkg, n = 1)
-  pkg_name <- sub("Package: (.+)", "\\1", pkgdescription_function[1])
-  print(pkg_name)
-  con <- file(file.path(path, "R", "pkg_name.R"), "r")
-  pkgname_function <- readLines(con = con, n = -1)
-  close(con)
-  pkgname_function[4] <- sub("pkg_name", pkg_name, pkgname_function[4])
-  cat(pkgname_function, file = file.path(path, "R", paste0(pkg_name, ".R")), sep = "\n")
-  fs::file_delete(file.path(path, "R", "pkg_name.R"))
+  usethis::ui_done("set up indiedown skeleton")
 
+  use_indiedown_pdf_document(path, overwrite = overwrite)
 
-  usethis::ui_done("indiedown package created")
-
-  usethis::ui_info("see ... for how to customize", package_name)
+  usethis::ui_info(paste("see ... for how to customize", pkg_name))
 
 }
 
