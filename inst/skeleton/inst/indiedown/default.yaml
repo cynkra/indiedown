@@ -1,3 +1,5 @@
+# indiedown: customize defaults in YAML header here
+
 indent: false
 compact-title: true
 subparagraph: true  # needed for titlesec
