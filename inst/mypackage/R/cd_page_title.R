@@ -22,8 +22,12 @@ cd_page_title <- function(title = default(rmarkdown::metadata$title, "Title"),
   \vspace*{-3.65cm}\makebox[\textwidth]{\includegraphics[width=\paperwidth]{<<logo_path>>}}
 \end{center}
 
-\noindent \Huge <<title>>}}
-\noindent \huge <<subtitle>>}}
+\noindent \Huge <<title>>
+\noindent \huge <<subtitle>>
+
+\normalsize
+
+\noindent <<date>>
 
 \clearpage
     )"

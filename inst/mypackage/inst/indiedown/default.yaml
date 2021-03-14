@@ -10,7 +10,7 @@ fontsize: "11pt"
 
 mainfont: regular.ttf
 mainfontoptions:
-- Path=<path_asset>/fonts/
+- Path=<<indiedown_path>>/fonts/
 - BoldFont=bold.ttf
 - ItalicFont=italic.ttf
 - BoldItalicFont=bolditalic.ttf

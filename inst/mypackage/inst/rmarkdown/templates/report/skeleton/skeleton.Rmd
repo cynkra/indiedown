@@ -1,6 +1,6 @@
 ---
 title           : "Report-Title"
-subtitle        : "Subtile"
+subtitle        : "Subtitle"
 author          : ["My-Name", "Our-Team"]
 
 documentclass   : article   # article (default) report

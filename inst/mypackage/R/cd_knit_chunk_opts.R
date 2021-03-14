@@ -1,5 +1,5 @@
 #' @export
-cd_knit_chunk_opts <- function(metadata = rmarkdown::metadata,
+cd_knit_chunk_opts <- function(twocolumn = default(metadata$twocolumn, FALSE),
                                fig.width = NULL,
                                fig.height = NULL,
                                fig.pos = "h",
@@ -9,7 +9,7 @@ cd_knit_chunk_opts <- function(metadata = rmarkdown::metadata,
                                tidy = FALSE
                                ) {
 
-  if (metadata$twocolumn) {
+  if (twocolumn) {
     fig.width <- default(fig.width, 4)
     fig.height <- default(fig.height, 3.5)
   } else {
