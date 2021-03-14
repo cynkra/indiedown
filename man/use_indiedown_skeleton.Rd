@@ -12,7 +12,7 @@ use_indiedown_skeleton(path = ".", overwrite = FALSE)
 \item{overwrite}{Should existing assets be overwritten?}
 }
 \description{
-Set up the packages structre for an indiedown-based customized RMarkdown
+Set up the packages structure for an indiedown-based customized RMarkdown
 template. See \code{vignette("intro")} for a more detailed usage example.
 }
 \examples{

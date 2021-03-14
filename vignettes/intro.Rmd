@@ -28,7 +28,7 @@ remotes::install_github("cynkra/indiedown")
 
 We want to create our own, customized RMarkdown template and keep it as an R package, *mydown*.
 
-Start by creating an empty R package. Use `create_package()` from the *usethis* package or you create a new package project in Rstudio.
+Start by creating an empty R package. Use `create_package()` from the *usethis* package or you create a new package project in RStudio.
 
 ```r
 usethis::create_package("mydown")
@@ -56,7 +56,7 @@ It looks like this:
 indiedown does not modify the default `.tex` template of Pandoc. Instead, all modifications are applied on top of it.
 This should make it compliant with future releases of Pandoc and RMarkdown.
 
-There are three possible entry points ot customize an indiedown skeleton:
+There are three possible entry points to customize an indiedown skeleton:
 
 - Set defaults (such as fonts or geometry) in the YAML header at `inst/indedown/default.ymal`
 - Tweak LaTeX settings at `inst/indedown/pramble.tex`

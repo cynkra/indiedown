@@ -23,6 +23,7 @@ Authors@R: c(
        email = "mail@cynkra.com"))
 Description: Simplifies the generation of customized RMarkdown templates. Provides a package skeleton with instructions for customizations.
 LazyData: TRUE
+Depends: R (>= 4.0.0)
 Imports:
     knitr (>= 1.12),
     rmarkdown,
@@ -30,10 +31,12 @@ Imports:
     fs
 Suggests:
     usethis,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    spelling
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Encoding: UTF-8
 VignetteBuilder: knitr
 Config/testthat/edition: 3
 License: MIT + file LICENSE
+Language: en-US
