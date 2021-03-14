@@ -17,13 +17,20 @@ cd_page_title <- function(title = default(rmarkdown::metadata$title, "Title"),
   indiedown_glue(
     # R >=4, raw strings allow to write LaTeX without escaping \ etc
     r"(
-\vspace*{-1.8cm}
+\vspace*{-1cm}
 \begin{center}
-  \vspace*{-3.65cm}\makebox[\textwidth]{\includegraphics[width=\paperwidth]{<<logo_path>>}}
+  \makebox[\textwidth]{\includegraphics[width=0.1\paperwidth]{<<logo_path>>}}
 \end{center}
 
+
+\vspace*{2cm}
+
 \noindent \Huge <<title>>
+
 \noindent \huge <<subtitle>>
+
+\vspace*{2cm}
+
 
 \normalsize
 

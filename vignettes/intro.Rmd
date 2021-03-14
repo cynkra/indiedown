@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 # indiedown: Individual RMarkdown PDF Templates
 
-indiedown allows you to generate a customized RMarkdown PDF template in a few basic steps.
+indiedown makes it easy to generate a customized RMarkdown PDF template.
 Start by installing indiedown:
 
 ```r
@@ -24,16 +24,11 @@ Start by installing indiedown:
 remotes::install_github("cynkra/indiedown")
 ```
 
-## Create an individual RMarkdown template
+## Create an customized RMarkdown template
 
-We want to create our own, customized RMarkdown template and keep it as an R package, *mydown*.
-
-Start by creating an empty R package. Use `create_package()` from the *usethis* package or you create a new package project in RStudio.
-
-We add a basic indiedown template as follows:
+To create your own, customized RMarkdown template, start by creating an indiedown template package:
 
 ```r
-library(indiedown)
 indiedown::create_indiedown_package("mydown")
 ```
 
@@ -47,6 +42,8 @@ With *mydown* built and installed, our new template is available in RStudio.
 
 It looks like this:
 
+
+
 ## Apply custom modification at three entry points
 
 indiedown does not modify the default `.tex` template of Pandoc. Instead, all modifications are applied on top of it.
@@ -55,10 +52,12 @@ This should make it compliant with future releases of Pandoc and RMarkdown.
 There are three possible entry points to customize an indiedown skeleton:
 
 - Set defaults (such as fonts or geometry) in the YAML header at `inst/indedown/default.ymal`
+
 - Tweak LaTeX settings at `inst/indedown/pramble.tex`
+
 - Apply dynamic adjustments in `pre_processor.R` (advanced)
 
-See the `vignette("customize")` for more details.
+See the `vignette("customize")` for details.
 
 
 ## Corporate Design Elements
@@ -67,10 +66,12 @@ Indiedown packages use R functions to generate LaTeX code for customization.
 
 For most customizations, it is recommended to turn off the default LaTeX title page, and create your own title page via LaTeX commands. The basic repertory are the LaTeX commands `\large`, `\Large`, `\LARGE`, `\huge`, etc., along witch `vspace{1ex}`, but all LaTeX trickery can be applied. The LaTeX helper functions should be put to the `R` folder of your package.
 
+The function `cd_page_title()` creates an example title page that can be adjusted to your needs. Note that the example uses raw strings, which are only available in R >= 4. They make it easy to write LaTeX code directly in R. See details in `?indiedown_glue` for methods that work well with R < 4.
+
 
 ## Principles of Indiedown
 
-### Extend Pandoc .tex, do not substitute it
+### Extend Pandoc .tex, do not substitute
 
 indiedown does not modify the default `.tex` template of Pandoc. Instead, all modifications are applied on top of it.
 This should make it compliant with future releases of Pandoc and RMarkdown.
