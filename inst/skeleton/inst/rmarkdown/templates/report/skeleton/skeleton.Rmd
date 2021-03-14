@@ -7,7 +7,7 @@ documentclass   : article   # article (default) report
 fontsize        : 11pt      # 10pt 11pt (default) 12pt
 numbersections  : true
 
-output          : <<pkg_name>>::indiedown_pdf_document
+output          : <<pkg_name>>::<<pkg_name>>
 ---
 
 
