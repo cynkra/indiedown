@@ -2,5 +2,5 @@
 
 export(cd_page_title)
 export(default)
-export(<<pkg_name>>)
+export(mypackage)
 importFrom(glue,glue)
