@@ -1,5 +1,9 @@
 gsub_in_file <- function(pattern, replacement, file, fixed = TRUE) {
-  txt <- readLines(con = file(file))
+
+  con <- file(file)
+  on.exit(close(con))
+  txt <- readLines(con = con)
   txt <- gsub(pattern, replacement, txt, fixed = fixed)
-  writeLines(txt, con = file(file))
+  writeLines(txt, con = con)
+
 }
