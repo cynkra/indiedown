@@ -1,6 +1,6 @@
 # indiedown: Individual RMarkdown PDF Templates
 
-indiedown allows you to generate a customized RMarkdown PDF template in 10 minutes.
+indiedown allows you to generate a customized RMarkdown PDF template in a few basic steps.
 Start by installing indiedown:
 
 ```r

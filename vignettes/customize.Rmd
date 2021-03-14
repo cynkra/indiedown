@@ -2,7 +2,7 @@
 title: "customize"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{cusomize}
+  %\VignetteIndexEntry{Customize Individual RMarkdown Templates}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
