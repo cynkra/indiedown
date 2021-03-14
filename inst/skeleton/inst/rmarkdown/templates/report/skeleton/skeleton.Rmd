@@ -20,7 +20,7 @@ cd_knit_chunk_opts()
 ```
 
 ```{r}
-cd_header_simple()
+cd_page_title()
 ```
 
 # Customized RMarkdown Template
