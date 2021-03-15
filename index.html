@@ -91,18 +91,20 @@
 <!-- badges: end -->
 <p>indiedown allows you to generate a customized RMarkdown PDF template in a few basic steps.</p>
 <p>Start by installing indiedown:</p>
-<pre class="chroma">
-<span class="c"># install.packages("remotes")</span>
-<span class="nf">remotes</span><span class="nf">::</span><span class="nf"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="o">(</span><span class="s">"cynkra/indiedown"</span><span class="o">)</span></pre>
-<p>To create your own, customized RMarkdown template, start by creating an indiedown template package, called <code>mydown</code>:</p>
+<p>``r install.packages(“indiedown”)</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>You can also install the development version from GitHub<span class="op">:</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="st">```</span><span class="dt">r</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="dt"># install.packages("devtools")</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="dt">devtools::install_github("cynkra/indiedown")</span></span></code></pre></div>
+<p>To create your own, customized RMarkdown template, start by creating an indiedown template package, called <code>mydown</code> in this example. Navigate to the directory where you want to create the package, then:</p>
 <pre class="chroma">
 <span class="nf">indiedown</span><span class="nf">::</span><span class="nf"><a href="https://rdrr.io/pkg/indiedown/man/create_indiedown_package.html" class="external-link">create_indiedown_package</a></span><span class="o">(</span><span class="s">"mydown"</span><span class="o">)</span></pre>
-<p>This creates a package skeleton at <code>./mydown</code>. You can build build <em>mydown</em>, using ‘build and reload’ in the RStudio or via the command line, as follows:</p>
+<p>This creates a package skeleton in the new <code>mydown</code> directory in the current working directory. You can build build <em>mydown</em>, using ‘Build and Reload’ in the RStudio or via the command line, as follows:</p>
 <pre class="chroma">
 <span class="nf">devtools</span><span class="nf">::</span><span class="nf"><a href="https://devtools.r-lib.org//reference/install.html" class="external-link">install</a></span><span class="o">(</span><span class="s">"mydown"</span><span class="o">)</span></pre>
 <p>With <em>mydown</em> built and installed, our new template is available in RStudio (after a restart).</p>
-<p>See <code><a href="articles/indiedown.html">vignette("indiedown")</a></code> for a more detailed tutorial.</p>
-<p>See <code><a href="articles/customize.html">vignette("customize")</a></code> for how to customize your template.</p>
+<p>Read more at <code><a href="articles/indiedown.html">vignette("indiedown")</a></code>. See <code><a href="articles/customize.html">vignette("customize")</a></code> for how to customize your template.</p>
 </div>
   </div>
 
@@ -140,9 +142,9 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://lifecycle.cynkra.org/articles/stages.html#stable" class="external-link"><img src="https://img.shields.io/badge/lifecycle-stable-brightgreen.svg" alt="Lifecycle: stable"></a></li>
-<li><a href="https://github.com/cynkra/indiedown/actions" class="external-link"><img src="https://github.com/cynkra/indiedown/workflows/R-CMD-check/badge.svg" alt="R build status"></a></li>
-<li><a href="https://codecov.io/github/cynkra/indiedown?branch=master" class="external-link"><img src="https://codecov.io/gh/cynkra/indiedown/branch/master/graph/badge.svg" alt="Coverage status"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
+<li><a href="https://github.com/cynkra/indiedown/actions" class="external-link"><img src="https://github.com/cynkra/indiedown/workflows/rcc/badge.svg" alt="R build status"></a></li>
+<li><a href="https://codecov.io/github/cynkra/indiedown?branch=master" class="external-link"><img src="https://codecov.io/gh/cynkra/indiedown/branch/main/graph/badge.svg" alt="Coverage status"></a></li>
 <li><a href="https://cran.r-project.org/package=indiedown" class="external-link"><img src="https://www.r-pkg.org/badges/version/indiedown" alt="CRAN status"></a></li>
 </ul>
 </div>
