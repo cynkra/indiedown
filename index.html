@@ -91,12 +91,12 @@
 <!-- badges: end -->
 <p>indiedown allows you to generate a customized RMarkdown PDF template in a few basic steps.</p>
 <p>Start by installing indiedown:</p>
-<p>``r install.packages(“indiedown”)</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>You can also install the development version from GitHub<span class="op">:</span></span>
-<span id="cb1-2"><a href="#cb1-2"></a></span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="st">```</span><span class="dt">r</span></span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="dt"># install.packages("devtools")</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="dt">devtools::install_github("cynkra/indiedown")</span></span></code></pre></div>
+<pre class="chroma">
+<span class="nf"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="o">(</span><span class="s">"indiedown"</span><span class="o">)</span></pre>
+<p>You can also install the development version from GitHub:</p>
+<pre class="chroma">
+<span class="c"># install.packages("devtools")</span>
+<span class="nf">devtools</span><span class="nf">::</span><span class="nf"><a href="https://devtools.r-lib.org//reference/remote-reexports.html" class="external-link">install_github</a></span><span class="o">(</span><span class="s">"cynkra/indiedown"</span><span class="o">)</span></pre>
 <p>To create your own, customized RMarkdown template, start by creating an indiedown template package, called <code>mydown</code> in this example. Navigate to the directory where you want to create the package, then:</p>
 <pre class="chroma">
 <span class="nf">indiedown</span><span class="nf">::</span><span class="nf"><a href="https://rdrr.io/pkg/indiedown/man/create_indiedown_package.html" class="external-link">create_indiedown_package</a></span><span class="o">(</span><span class="s">"mydown"</span><span class="o">)</span></pre>
