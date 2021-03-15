@@ -15,7 +15,7 @@ To create your own, customized RMarkdown template, start by creating an indiedow
 indiedown::create_indiedown_package("mydown")
 ```
 
-This creates a package skeleton at `./mydown`. You can build build *mydown*, using 'build and reload' in the RStudio or via the command line, as folows:
+This creates a package skeleton at `./mydown`. You can build build *mydown*, using 'build and reload' in the RStudio or via the command line, as follows:
 
 ```r
 devtools::install("mydown")
@@ -26,4 +26,3 @@ With *mydown* built and installed, our new template is available in RStudio (aft
 See `vignette("intro")` for a more detailed tutorial.
 
 See `vignette("customize")` for how to customize your template.
-
