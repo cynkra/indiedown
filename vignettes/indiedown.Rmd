@@ -44,7 +44,7 @@ indiedown::create_indiedown_package("mydown")
 ```
 
 This creates a package skeleton in the new `mydown` directory in the current working directory.
-You can build build *mydown*, using "Build and Reload" in the RStudio or via the command line, as follows:
+You can build *mydown*, using "Build and Reload" in the RStudio or via the command line, as follows:
 
 ```{r eval = FALSE}
 devtools::install("mydown")
