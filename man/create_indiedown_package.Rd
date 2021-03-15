@@ -20,5 +20,4 @@ path <- file.path(tempdir(), "mydown")
 
 # set up empty R Package 'mydown'
 create_indiedown_package(path, overwrite = TRUE)
-
 }
