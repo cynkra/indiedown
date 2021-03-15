@@ -1,6 +1,6 @@
 #' Corporate Design Element for Title Page
 #'
-#' Example function to generate a title page
+#' Example function to generate a title page.
 #'
 #' @param title Document title.
 #' @param subtitle Document subtitle.

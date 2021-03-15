@@ -2,10 +2,20 @@
 % Please edit documentation in R/indiedown.R
 \name{indiedown_path}
 \alias{indiedown_path}
-\title{Path to indiedown assets, usable in R or LaTeX}
+\alias{indiedown_path_tex}
+\title{Path helpers}
 \usage{
 indiedown_path(...)
+
+indiedown_path_tex(...)
+}
+\arguments{
+\item{...}{Path components, passed on to \code{system.file()}.}
 }
 \description{
-Path to indiedown assets, usable in R or LaTeX
+\code{indiedown_path()} creates a path to this package's indiedown assets,
+located at \code{inst/indiedown}.
+
+\code{indiedown_path_tex()} creates a path that is usable in LaTeX,
+with all special characters escaped.
 }

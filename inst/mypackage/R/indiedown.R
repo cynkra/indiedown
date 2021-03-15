@@ -3,6 +3,13 @@
 # do not customize this file!
 
 
+#' indiedown_pdf_document_with_asset
+#'
+#' FIXME
+#'
+#' @param includes ...
+#' @param ... ...
+#'
 #' @export
 indiedown_pdf_document_with_asset <- function(includes = NULL, ...) {
 
@@ -61,8 +68,8 @@ apply_default_yaml <- function(metadata) {
   # pandoc ignores 'header-includes' if includes$in_header is specified
   # https://github.com/jgm/pandoc/issues/3139
   # we can still use `header-includes` by passing it as a command line option to pandoc
-  if (!is.null(metadata$`header-includes`)) {
-    args <- c(args, "--variable", paste0("header-includes:", paste(metadata$`header-includes`, collapse = "\n")))
+  if (!is.null(rmarkdown::metadata$`header-includes`)) {
+    args <- c(args, "--variable", paste0("header-includes:", paste(rmarkdown::metadata$`header-includes`, collapse = "\n")))
   }
 
   args
@@ -93,15 +100,24 @@ list_to_pandoc_args <- function(list) {
   zip("--variable", vars)
 }
 
-#' Path to indiedown assets, usable in R or LaTeX
+#' Path helpers
+#'
+#' `indiedown_path()` creates a path to this package's indiedown assets,
+#' located at `inst/indiedown`.
+#'
+#' @param ... Path components, passed on to `system.file()`.
 #'
 #' @export
 indiedown_path <- function(...) {
-  system.file("indiedown", ..., package = getPackageName())
+  system.file("indiedown", ..., package = utils::packageName())
 }
 
 #' Path to indiedown assets, usable in LaTeX
 #'
+#' `indiedown_path_tex()` creates a path that is usable in LaTeX,
+#' with all special characters escaped.
+#'
+#' @rdname indiedown_path
 #' @export
 indiedown_path_tex <- function(...) {
   sanitize_tex(indiedown_path(...))
@@ -140,6 +156,13 @@ read_tex <- function(file) {
   paste(readLines(indiedown_path("tex", file), encoding = "UTF-8"), collapse = "\n")
 }
 
+#' default
+#'
+#' FIXME
+#'
+#' @param x ...
+#' @param default ...
+#'
 #' @export
 default <- function(x, default = "") {
   ans <- if (is.null(x)) default else x

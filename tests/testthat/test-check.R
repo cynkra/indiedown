@@ -6,5 +6,5 @@ test_that("create_indiedown_package() passes R CMD check", {
 
   create_indiedown_package("mydown")
 
-  expect_error(rcmdcheck::rcmdcheck("mydown", error_on = "error"), NA)
+  expect_error(rcmdcheck::rcmdcheck("mydown", args = "--no-manual", error_on = "note"), NA)
 })

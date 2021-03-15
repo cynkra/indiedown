@@ -1,9 +1,9 @@
 Package: mypackage
-Title: What the Package Does (One Line, Title Case)
+Title: Acme Inc. Corporate Design RMarkdown Template
 Version: 0.1
 Authors@R: person("First", "Last", email = "first.last@example.com",
                   role = c("aut", "cre"))
-Description: What the package does (one paragraph)
+Description: Provides an RMarkdown template conforming to the corporate design guidelines at Acme Inc.
 Depends: R (>= 4.0.0)
 License: file LICENSE
 Encoding: UTF-8

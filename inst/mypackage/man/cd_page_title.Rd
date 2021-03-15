@@ -18,5 +18,5 @@ cd_page_title(
 \item{date}{Document creation date.}
 }
 \description{
-Example function to generate a title page
+Example function to generate a title page.
 }

@@ -5,6 +5,7 @@
 #' `mypackage()` is the main function of the mypackage package. Use as
 #' `output: mypackage::mypackage` in the RMarkdown YAML header.
 #'
+#' @param ... Passed on to [indiedown_pdf_document_with_asset()].
 #' @export
 mypackage <- function(...) {
   indiedown_pdf_document_with_asset(

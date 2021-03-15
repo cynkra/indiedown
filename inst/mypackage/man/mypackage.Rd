@@ -6,6 +6,9 @@
 \usage{
 mypackage(...)
 }
+\arguments{
+\item{...}{Passed on to \code{\link[=indiedown_pdf_document_with_asset]{indiedown_pdf_document_with_asset()}}.}
+}
 \description{
 \code{mypackage()} is the main function of the mypackage package. Use as
 \code{output: mypackage::mypackage} in the RMarkdown YAML header.

@@ -1,5 +1,19 @@
+#' cd_knit_chunk_opts
+#'
+#' FIXME
+#'
+#' FIXME: Rename fig.width to fig_width, etc.?
+#'
+#' @param twocolumn ...
+#' @param fig.width ...
+#' @param fig.height ...
+#' @param fig.pos ...
+#' @param cache ...
+#' @param message ...
+#' @param echo ...
+#' @param tidy ...
 #' @export
-cd_knit_chunk_opts <- function(twocolumn = default(metadata$twocolumn, FALSE),
+cd_knit_chunk_opts <- function(twocolumn = default(rmarkdown::metadata$twocolumn, FALSE),
                                fig.width = NULL,
                                fig.height = NULL,
                                fig.pos = "h",
@@ -12,7 +26,7 @@ cd_knit_chunk_opts <- function(twocolumn = default(metadata$twocolumn, FALSE),
     fig.width <- default(fig.width, 4)
     fig.height <- default(fig.height, 3.5)
   } else {
-    if (isTRUE(metadata$wide)) {
+    if (isTRUE(rmarkdown::metadata$wide)) {
       fig.width <- default(fig.width, 8.5)
       fig.height <- default(fig.height, 3.38)
     } else {

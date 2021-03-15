@@ -1,3 +1,10 @@
+#' cd_format_date
+#'
+#' FIXME
+#'
+#' @param date ...
+#' @param lang ...
+#'
 #' @export
 cd_format_date <- function(date, lang = default(rmarkdown::metadata$lang, "de_CH")) {
   if (lang %in% c("german", "de-DE", "de-CH")) {
