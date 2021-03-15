@@ -9,8 +9,7 @@
 #'
 cd_page_title <- function(title = default(rmarkdown::metadata$title, "Title"),
                           subtitle = default(rmarkdown::metadata$subtitle, "Subtitle"),
-                          date = default(rmarkdown::metadata$date, cd_format_date(Sys.Date()))
-                          ) {
+                          date = default(rmarkdown::metadata$date, cd_format_date(Sys.Date()))) {
 
   logo_path <- indiedown_path_tex("res/logo.png")
 
@@ -40,4 +39,3 @@ cd_page_title <- function(title = default(rmarkdown::metadata$title, "Title"),
     )"
   )
 }
-
