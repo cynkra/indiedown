@@ -31,11 +31,11 @@ BugReports: https://github.com/cynkra/indiedown/issues
 Depends: 
     R (>= 4.0.0)
 Imports:
+    cli,
     fs,
     gfonts,
     knitr (>= 1.12),
     rmarkdown,
-    usethis,
     withr
 Suggests: 
     callr,
