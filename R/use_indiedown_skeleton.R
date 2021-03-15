@@ -14,12 +14,20 @@
 #' create_indiedown_package(path, overwrite = TRUE)
 #' @importFrom fs dir_copy file_move
 create_indiedown_package <- function(path, overwrite = FALSE) {
+  if (fs::dir_exists(path)) {
+    if (!overwrite) {
+      stop("Path exists, use `overwrite = TRUE` to overwrite.", call. = TRUE)
+    }
+  } else if (fs::file_exists(path)) {
+    stop("Path exists and is a file or a link, remove before proceeding.", call. = TRUE)
+  }
+
   path_skeleton <- system.file("mypackage", package = "indiedown")
 
   fs::dir_copy(
     path_skeleton,
     path,
-    overwrite = overwrite
+    overwrite = TRUE
   )
 
   pkg_name <- basename(path)

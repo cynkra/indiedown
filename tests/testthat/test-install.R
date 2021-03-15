@@ -4,9 +4,10 @@ test_that("create_indiedown_package() can be installed", {
 
   withr::local_dir(root)
 
-  create_indiedown_package("mydown")
+  suppressMessages(create_indiedown_package("mydown"))
 
   withr::local_temp_libpaths()
 
+  # R CMD check is checked on GitHub Actions
   expect_error(callr::rcmd("INSTALL", "mydown", fail_on_status = TRUE), NA)
 })
