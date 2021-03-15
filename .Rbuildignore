@@ -7,3 +7,4 @@
 ^\.github$
 ^README\.html$
 ^\.lintr$
+^README\.Rmd$
