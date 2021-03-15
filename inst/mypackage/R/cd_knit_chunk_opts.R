@@ -6,8 +6,7 @@ cd_knit_chunk_opts <- function(twocolumn = default(metadata$twocolumn, FALSE),
                                cache = FALSE,
                                message = FALSE,
                                echo = FALSE,
-                               tidy = FALSE
-                               ) {
+                               tidy = FALSE) {
 
   if (twocolumn) {
     fig.width <- default(fig.width, 4)
