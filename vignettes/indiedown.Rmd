@@ -45,12 +45,12 @@ With *mydown* built and installed, our new template is available in RStudio (aft
 
 
 
-## Apply custom modification at three entry points
+## Apply custom modification at three customization points
 
 indiedown does not modify the default `.tex` template of Pandoc. Instead, all modifications are applied on top of it.
 This should make it compliant with future releases of Pandoc and RMarkdown.
 
-There are three possible entry points to customize an indiedown skeleton:
+There are three possible customization points to customize an indiedown skeleton:
 
 - Set defaults (such as fonts or geometry) in the YAML header at `inst/indedown/default.ymal`
 

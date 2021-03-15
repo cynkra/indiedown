@@ -5,7 +5,7 @@
 #' @inheritParams create_indiedown_package
 #' @inheritParams gfonts::download_font
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' path <- file.path(tempdir(), "mydown")
 #' create_indiedown_package(path, overwrite = TRUE)
 #' # Use Lora, instead of default Roboto
@@ -45,6 +45,3 @@ use_indiedown_gfonts <- function(path = ".",
   usethis::ui_done("add fonts")
 
 }
-
-
-

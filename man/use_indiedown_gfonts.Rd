@@ -21,7 +21,7 @@ use_indiedown_gfonts(
 Download and use Google fonts, using the \emph{gfonts} package.
 }
 \examples{
-\donttest{
+\dontrun{
 path <- file.path(tempdir(), "mydown")
 create_indiedown_package(path, overwrite = TRUE)
 # Use Lora, instead of default Roboto
