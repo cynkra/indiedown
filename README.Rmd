@@ -18,7 +18,7 @@ indiedown allows you to generate a customized RMarkdown PDF template in a few ba
 
 Start by installing indiedown:
 
-``r
+```r
 install.packages("indiedown")
 ```
 

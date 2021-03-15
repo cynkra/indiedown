@@ -14,13 +14,14 @@ indiedown allows you to generate a customized RMarkdown PDF template in a few ba
 
 Start by installing indiedown:
 
-\`\`r install.packages(“indiedown”)
+<pre class='chroma'>
+<span class='nf'><a href='https://rdrr.io/r/utils/install.packages.html'>install.packages</a></span><span class='o'>(</span><span class='s'>"indiedown"</span><span class='o'>)</span></pre>
 
-    You can also install the development version from GitHub:
+You can also install the development version from GitHub:
 
-    ```r
-    # install.packages("devtools")
-    devtools::install_github("cynkra/indiedown")
+<pre class='chroma'>
+<span class='c'># install.packages("devtools")</span>
+<span class='nf'>devtools</span><span class='nf'>::</span><span class='nf'><a href='https://devtools.r-lib.org//reference/remote-reexports.html'>install_github</a></span><span class='o'>(</span><span class='s'>"cynkra/indiedown"</span><span class='o'>)</span></pre>
 
 To create your own, customized RMarkdown template, start by creating an indiedown template package, called `mydown` in this example. Navigate to the directory where you want to create the package, then:
 
