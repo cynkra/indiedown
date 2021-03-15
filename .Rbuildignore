@@ -8,3 +8,4 @@
 ^README\.html$
 ^\.lintr$
 ^README\.Rmd$
+^CODE_OF_CONDUCT\.md$
