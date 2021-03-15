@@ -25,7 +25,10 @@ use_indiedown_gfonts <- function(path = ".",
 
   # FIXME can we avoid downloading the non ttfs?
   gfonts::download_font(id = id, output_dir = path_fonts, variants = variants)
-  file.remove(file.path(path_fonts, grep("\\.ttf", list.files(path_fonts), value = TRUE, invert = TRUE)))
+  file.remove(file.path(
+    path_fonts,
+    grep("\\.ttf", list.files(path_fonts), value = TRUE, invert = TRUE)
+  ))
 
   font_path <- function(var) {
     grep(paste0("-", var, ".ttf$"), list.files(path_fonts), value = TRUE)
