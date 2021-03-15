@@ -12,11 +12,8 @@
 #'
 #' # set up empty R Package 'mydown'
 #' create_indiedown_package(path, overwrite = TRUE)
-#'
 #' @importFrom fs dir_copy file_move
 create_indiedown_package <- function(path, overwrite = FALSE) {
-
-
   path_skeleton <- system.file("mypackage", package = "indiedown")
 
   fs::dir_copy(
@@ -53,5 +50,4 @@ create_indiedown_package <- function(path, overwrite = FALSE) {
 
   usethis::ui_done("set up indiedown skeleton")
   usethis::ui_info(paste('see `vignette("indiedown")` for how to customize', pkg_name))
-
 }

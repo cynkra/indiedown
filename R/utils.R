@@ -1,5 +1,4 @@
 gsub_in_file <- function(pattern, replacement, file, fixed = TRUE) {
-
   if (length(file) > 1) {
     lapply(file, function(e) gsub_in_file(pattern, replacement, file = e, fixed = fixed))
     return(invisible(TRUE))
