@@ -12,7 +12,6 @@
 #'
 #' # set up empty R Package 'mydown'
 #' create_indiedown_package(path, overwrite = TRUE)
-#' @importFrom fs dir_copy file_move
 create_indiedown_package <- function(path, overwrite = FALSE) {
   if (fs::dir_exists(path)) {
     if (!overwrite) {
@@ -56,6 +55,6 @@ create_indiedown_package <- function(path, overwrite = FALSE) {
   # Can't use .here as part of the template due to the leading dot
   writeLines(character(), ".here")
 
-  usethis::ui_done("set up indiedown skeleton")
-  usethis::ui_info(paste('see `vignette("indiedown")` for how to customize', pkg_name))
+  cli_alert_success("indiedown skeleton set up at {.file {path}}")
+  cli_alert_info('See {.code vignette("indiedown")} for how to customize the {pkg_name} package')
 }

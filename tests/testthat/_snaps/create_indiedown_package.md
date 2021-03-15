@@ -2,9 +2,9 @@
 
     Code
       create_indiedown_package("mydown")
-    Message <message>
-      v set up indiedown skeleton
-      i see `vignette("indiedown")` for how to customize mydown
+    Message <cliMessage>
+      v indiedown skeleton set up at mydown
+      i See `vignette("indiedown")` for how to customize the mydown package
     Code
       fs::dir_tree("mydown")
     Output
@@ -48,7 +48,7 @@
     Code
       unlink("mydown/R/cd_page_title.R")
       create_indiedown_package("mydown", overwrite = TRUE)
-    Message <message>
-      v set up indiedown skeleton
-      i see `vignette("indiedown")` for how to customize mydown
+    Message <cliMessage>
+      v indiedown skeleton set up at mydown
+      i See `vignette("indiedown")` for how to customize the mydown package
 

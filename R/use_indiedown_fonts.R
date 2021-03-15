@@ -43,5 +43,5 @@ use_indiedown_gfonts <- function(path = ".",
     file.path(path_fonts, paste0(default_names, ".ttf"))
   )
 
-  usethis::ui_done("add fonts")
+  cli_alert_success("Added {id} fonts")
 }

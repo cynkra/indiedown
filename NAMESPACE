@@ -2,5 +2,4 @@
 
 export(create_indiedown_package)
 export(use_indiedown_gfonts)
-importFrom(fs,dir_copy)
-importFrom(fs,file_move)
+import(cli)

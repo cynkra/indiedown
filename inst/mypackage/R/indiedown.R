@@ -144,7 +144,6 @@ sanitize_tex <- function(path) {
 #' @param x Character, often as a raw string (`r"()"`)
 #' @param .open,.close The opening and closing delimiter.
 #' @export
-#' @importFrom glue glue
 indiedown_glue <- function(x, .open = "<<", .close = ">>") {
   ans <- glue::glue(x, .envir = sys.frame(-1), .open = .open, .close = .close)
   knitr::asis_output(ans)
