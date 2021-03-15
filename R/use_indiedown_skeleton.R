@@ -48,6 +48,9 @@ create_indiedown_package <- function(path, overwrite = FALSE) {
     file.path("man", paste0(pkg_name, ".Rd"))
   )
 
+  # Can't use .here as part of the template due to the leading dot
+  writeLines(character(), ".here")
+
   usethis::ui_done("set up indiedown skeleton")
   usethis::ui_info(paste('see `vignette("intro")` for how to customize', pkg_name))
 
