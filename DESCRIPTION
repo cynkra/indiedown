@@ -31,7 +31,8 @@ Imports:
     fs,
     gfonts,
     knitr (>= 1.12),
-    rmarkdown
+    rmarkdown,
+    withr
 Suggests:
     spelling,
     testthat (>= 3.0.0),

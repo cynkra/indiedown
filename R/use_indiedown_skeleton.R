@@ -27,12 +27,14 @@ create_indiedown_package <- function(path, overwrite = FALSE) {
 
   pkg_name <- basename(path)
 
+  withr::local_dir(path)
+
   files <- c(
-    file.path(path, "inst", "rmarkdown", "templates", "report", "skeleton", "skeleton.Rmd"),
-    file.path(path, "R", "indiedown_pdf_document.R"),
-    file.path(path, "man", "mypackage.Rd"),
-    file.path(path, "DESCRIPTION"),
-    file.path(path, "NAMESPACE")
+    "inst/rmarkdown/templates/report/skeleton/skeleton.Rmd",
+    "R/indiedown_pdf_document.R",
+    "man/mypackage.Rd",
+    "DESCRIPTION",
+    "NAMESPACE"
   )
 
   gsub_in_file(
@@ -42,8 +44,8 @@ create_indiedown_package <- function(path, overwrite = FALSE) {
   )
 
   file.rename(
-    file.path(path, "man", "mypackage.Rd"),
-    file.path(path, "man", paste0(pkg_name, ".Rd"))
+    "man/mypackage.Rd",
+    file.path("man", paste0(pkg_name, ".Rd"))
   )
 
   usethis::ui_done("set up indiedown skeleton")
