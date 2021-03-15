@@ -58,6 +58,9 @@
 <li>
       <a href="../articles/customize.html">Customize Individual RMarkdown Templates</a>
     </li>
+    <li>
+      <a href="../articles/walkthrough.html">Walkthrough: Build your own RMarkdown Template</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -105,7 +108,7 @@
 <p><code>default.yaml</code> is the only required element of an indiedown template. It specifies the default pandoc options used by your template. To experiment with pandoc options, simply add them to the YAML header of a standard RMarkdown document.</p>
 <p>Most relevant LaTeX options can be set as pandoc options. For example, pandoc options allow you to set a customized font or a user defined geometry. If possible always prefer Pandoc options instead of LaTeX (covered below), as this will minimize unwanted interactions with other options.</p>
 <p>For a detailed description of all pandoc options, see the ‘Variables for LaTeX’ section in the <a href="https://pandoc.org/MANUAL.html#" class="external-link">pandoc Manual</a>.</p>
-<p><code>default.yaml</code>, as well as <code>preamble.tex</code> supports substitution of the variable <code>&lt;asset_path&gt;</code>, which is explained below.</p>
+<p><code>default.yaml</code>, as well as <code>preamble.tex</code> supports substitution of the variable <code>&lt;&lt;indiedown_path&gt;</code>, which is explained below.</p>
 </div>
 <div id="additional-latex-settings" class="section level3">
 <h3 class="hasAnchor">
@@ -124,12 +127,12 @@
 <div id="variable-substitution" class="section level3">
 <h3 class="hasAnchor">
 <a href="#variable-substitution" class="anchor"></a>Variable Substitution</h3>
-<p><code>default.yaml</code>, as well as <code>preamble.tex</code> supports substitution of the variable <code>&lt;asset_path&gt;</code>. Whenever you mention <code>&lt;asset_path&gt;</code> in one of your files, it will be substituted by the path to the <code>indiedown</code> folder.</p>
+<p><code>default.yaml</code>, as well as <code>preamble.tex</code> supports substitution of the variable <code>&lt;&lt;indiedown_path&gt;</code>. Whenever you mention <code>&lt;&lt;indiedown_path&gt;</code> in one of your files, it will be substituted by the path to the <code>indiedown</code> folder.</p>
 </div>
 <div id="including-additional-assets" class="section level3">
 <h3 class="hasAnchor">
 <a href="#including-additional-assets" class="anchor"></a>Including Additional Assets</h3>
-<p>Most customized styles will include some additional assets, such as a logo or a special font. Assets can be put into arbitrarily named folders. To access the assets from <code>default.yaml</code> or <code>preamble.tex</code>, simply use <code>&lt;asset_path&gt;/myasset</code> and the path will be correctly resolved by indiedown.</p>
+<p>Most customized styles will include some additional assets, such as a logo or a special font. Assets can be put into arbitrarily named folders. To access the assets from <code>default.yaml</code> or <code>preamble.tex</code>, simply use <code>&lt;&lt;indiedown_path&gt;/res</code> and the path will be correctly resolved by indiedown.</p>
 </div>
 </div>
 <div id="latex-generators" class="section level2">
