@@ -17,10 +17,10 @@
 create_indiedown_package <- function(path, overwrite = FALSE) {
 
 
-  path_seleton <- system.file("mypackage", package = "indiedown")
+  path_skeleton <- system.file("mypackage", package = "indiedown")
 
   fs::dir_copy(
-    path_seleton,
+    path_skeleton,
     path,
     overwrite = TRUE
   )
@@ -50,4 +50,3 @@ create_indiedown_package <- function(path, overwrite = FALSE) {
   usethis::ui_info(paste('see `vignette("intro")` for how to customize', pkg_name))
 
 }
-
