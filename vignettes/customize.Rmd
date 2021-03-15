@@ -38,7 +38,7 @@ Most relevant LaTeX options can be set as pandoc options. For example, pandoc op
 
 For a detailed description of all pandoc options, see the 'Variables for LaTeX' section in the [pandoc Manual](https://pandoc.org/MANUAL.html#).
 
-`default.yaml`, as well as `preamble.tex` supports substitution of the variable `<asset_path>`, which is explained below.
+`default.yaml`, as well as `preamble.tex` supports substitution of the variable `<<indiedown_path>`, which is explained below.
 
 
 ### Additional LaTeX Settings
@@ -67,15 +67,13 @@ See the example script for how to use it.
 
 ### Variable Substitution
 
-`default.yaml`, as well as `preamble.tex` supports substitution of the variable `<asset_path>`.
-Whenever you mention `<asset_path>` in one of your files, it will be substituted by the path to the `indiedown` folder.
+`default.yaml`, as well as `preamble.tex` supports substitution of the variable `<<indiedown_path>`.
+Whenever you mention `<<indiedown_path>` in one of your files, it will be substituted by the path to the `indiedown` folder.
 
 
 ### Including Additional Assets
 
-Most customized styles will include some additional assets, such as a logo or a special font. Assets can be put into arbitrarily named folders. To access the assets from `default.yaml` or `preamble.tex`, simply use `<asset_path>/myasset` and the path will be correctly resolved by indiedown.
-
-
+Most customized styles will include some additional assets, such as a logo or a special font. Assets can be put into arbitrarily named folders. To access the assets from `default.yaml` or `preamble.tex`, simply use `<<indiedown_path>/res` and the path will be correctly resolved by indiedown.
 
 ## LaTeX Generators
 

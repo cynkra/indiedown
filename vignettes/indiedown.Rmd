@@ -83,7 +83,7 @@ The function `cd_page_title()` creates an example title page that can be adjuste
 
 ## Principles of Indiedown
 
-### Extend Pandoc .tex, do not substitute
+### Extend Pandoc .tex, do not replace
 
 indiedown does not modify the default `.tex` template of Pandoc. Instead, all modifications are applied on top of it.
 This should make it compliant with future releases of Pandoc and RMarkdown.
