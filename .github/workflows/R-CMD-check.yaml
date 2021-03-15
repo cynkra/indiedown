@@ -121,6 +121,16 @@ jobs:
         shell: Rscript {0}
 
       # Begin custom: after install
+      - name: Check template
+        env:
+          _R_CHECK_CRAN_INCOMING_: false
+          _R_CHECK_SYSTEM_CLOCK_: false
+          _R_CHECK_FUTURE_FILE_TIMESTAMPS_: false
+        run: |
+          options(crayon.enabled = TRUE)
+          error_on <- "note"
+          rcmdcheck::rcmdcheck("inst/mypackage", args = c("--no-manual", "--as-cran"), error_on = "note", check_dir = "inst/mypackage/check")
+        shell: Rscript {0}
       # End custom: after install
 
       - name: Check
