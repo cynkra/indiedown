@@ -20,11 +20,11 @@ library(indiedown)
 
 ## Assets
 
-**Location:** `indiedown` (folder)
+**Location:** `inst/indiedown` (folder)
 
-Template assets are stored in a folder `indiedown`. The folder is usually located in the `inst` folder of an R package, but could be put to any location.
-
-The folder contains all the necessary information to customize your markdown template. It can contain basic pandoc settings, additional LaTeX settings and dynamic pandoc settings.
+Template assets are stored in a folder `inst/indiedown`.
+This folder contains all the necessary information to customize your markdown template.
+It can contain basic pandoc settings, additional LaTeX settings and dynamic pandoc settings.
 
 ### Basic Settings
 

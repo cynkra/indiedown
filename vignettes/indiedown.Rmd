@@ -88,6 +88,6 @@ The function `cd_page_title()` creates an example title page that can be adjuste
 indiedown does not modify the default `.tex` template of Pandoc. Instead, all modifications are applied on top of it.
 This should make it compliant with future releases of Pandoc and RMarkdown.
 
-### Corporate Design Elements
+### Use R to customize
 
 Keep all corporate design elements as R code. This keeps the LaTeX code simple and allows flexible extensions.
