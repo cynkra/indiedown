@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-`vignette("intro")` has shown how to set up a package skeleton with indiedown. This article teaches you how to apply customiztions to produce a template that fits your needs.
+`vignette("intro")` has shown how to set up a package skeleton with indiedown. This article teaches you how to apply customizations to produce a template that fits your needs.
 
 
 ## Customization points
@@ -68,7 +68,7 @@ These are simply defaults for the custom template. So rather than adding these o
 You can overwrite these values in the `.Rmd` file.
 
 It is recommended to set as many customizations as possible as Pandoc options, and fall back to LaTeX if this is not possible.
-A full list of options is given in the [LaTeX section of the Padoc manual](https://pandoc.org/MANUAL.html#variables-for-latex).
+A full list of options is given in the [LaTeX section of the Pandoc manual](https://pandoc.org/MANUAL.html#variables-for-latex).
 
 In our case, we want to use slightly wider page margins, so we change the geometry to:
 
@@ -84,14 +84,14 @@ geometry:
 
 Changing the font to fit your corporate style is usually the first step in customization.
 
-Note that `<<indiedown_path>>` will be automatically substituted with the actual location of `inst/indiedown`. That is why we can include *assets* that are picked up by the template. The default template inclues the free Roboto font, which is located at `inst/indiedown`.
+Note that `<<indiedown_path>>` will be automatically substituted with the actual location of `inst/indiedown`. That is why we can include *assets* that are picked up by the template. The default template includes the free Roboto font, which is located at `inst/indiedown`.
 
 We could replace that with a proprietary font to match the corporate design.
 Instead we use a helper function to get one of [Google's free fonts](https://fonts.google.com).
 
 use_indiedown_gfonts(id = "lato")
 
-The function reliess on the [gfonts](https://CRAN.R-project.org/package=gfonts) package to download and install the 'Noto Sans JP' font.
+The function relies on the [gfonts](https://CRAN.R-project.org/package=gfonts) package to download and install the *Lato* font.
 If you don't know the ID of a font, use `gfonts::get_all_fonts()` to get a list of all available fonts.
 
 Let's preview what we have by now:
@@ -101,7 +101,7 @@ Let's preview what we have by now:
 
 ## `preamble.tex`
 
-Let's turn to the second customization point, `preamble.tex`. This contains LaTeX code that is run at the begining. Add everything here that cannot be changed in the `default.yaml`. We want to use slightly bigger headers, and change the 'titlesec' line to:
+Let's turn to the second customization point, `preamble.tex`. This contains LaTeX code that is run at the beginning. Add everything here that cannot be changed in the `default.yaml`. We want to use slightly bigger headers, and change the `titlesec` line to:
 
 ```tex
 \usepackage[medium]{titlesec}
@@ -120,13 +120,13 @@ Instead, we will build our own title page in R now.
 
 One of the core principles of indiedown is to keep corporate design elements as R code. That way, elements can be arranged flexibly and adjusted to particular needs.
 
-As a final step, we build a customized title page, by modifiying the function definition of `R/cd_page_title`. The function writes LaTeX code that will be added to the `.Rmd` when `cd_page_title()` is called.
+As a final step, we build a customized title page, by modifying the function definition of `R/cd_page_title`. The function writes LaTeX code that will be added to the `.Rmd` when `cd_page_title()` is called.
 
 To make writing of LaTeX code in R easy, we rely on the raw string feature that was added in R 4.0.0. It allows you to write pure LaTeX code in R, without having to escape every `\` by a second `\\`.
 
 If you have to use a version of R that is older, the `read_tex()` function offers an alternative way to write unescaped LaTeX code. See `?read_tex`.
 
-The `indiedown_glue()` helper function uses the [glue](https://CRAN.R-project.org/package=glue) package to substitue variables in the string. That way, variables such as `title` or `subtitle` will be substituted in the LaTeX code.
+The `indiedown_glue()` helper function uses the [glue](https://CRAN.R-project.org/package=glue) package to substitute variables in the string. That way, variables such as `title` or `subtitle` will be substituted in the LaTeX code.
 
 With `indiedown_path_tex()`, you can also refer to the path of `inst/indiedown`, and use assets from the package. In the example, we use this to include a logo. Now, we don't want to use a logo but rather a photography of a beautiful parrot. We download the image from [unsplash.com](https://unsplash.com/photos/gGC63oug3iY) in medium quality and store it in `res/mikhail-vasilyev-gGC63oug3iY-unsplash.jpg`. Then, we change the function definition as follows:
 
@@ -173,7 +173,7 @@ Building the package again, and running the template `.Rmd`, we get:
 
 ## Where to go from here
 
-indiedown provides a framework to easily generate customized RMarkdow templates. Templates can be customized by the full power of Pandoc of LaTeX, through various points of customizations.
+indiedown provides a framework to easily generate customized RMarkdown templates. Templates can be customized by the full power of Pandoc of LaTeX, through various points of customizations.
 
 This walk-through introduced two of them.
 For more details and a description of the third one, see `vignettes("customize")`.
