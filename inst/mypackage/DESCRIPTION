@@ -1,14 +1,24 @@
 Package: mypackage
 Title: Acme Inc. Corporate Design RMarkdown Template
 Version: 0.1
-Authors@R: person("First", "Last", email = "first.last@example.com",
-                  role = c("aut", "cre"))
-Description: Provides an RMarkdown template conforming to the corporate design guidelines at Acme Inc.
-Depends: R (>= 4.0.0)
+Authors@R: 
+    person(given = "First",
+           family = "Last",
+           role = c("aut", "cre"),
+           email = "first.last@example.com")
+Description: Provides an RMarkdown template conforming to the
+    corporate design guidelines at Acme Inc.
 License: file LICENSE
+Depends: 
+    R (>= 4.0.0)
+Imports: 
+    glue,
+    knitr,
+    rmarkdown,
+    utils,
+    withr,
+    yaml
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1.9001
-Imports: 
-    glue, knitr, rmarkdown, withr, yaml, utils
