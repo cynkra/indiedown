@@ -22,7 +22,7 @@ create_indiedown_package <- function(path, overwrite = FALSE) {
   fs::dir_copy(
     path_skeleton,
     path,
-    overwrite = TRUE
+    overwrite = overwrite
   )
 
   pkg_name <- basename(path)
