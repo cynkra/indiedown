@@ -23,6 +23,6 @@ devtools::install("mydown")
 
 With *mydown* built and installed, our new template is available in RStudio (after a restart).
 
-See `vignette("intro")` for a more detailed tutorial.
+See `vignette("indiedown")` for a more detailed tutorial.
 
 See `vignette("customize")` for how to customize your template.

@@ -13,7 +13,7 @@ create_indiedown_package(path, overwrite = FALSE)
 }
 \description{
 Set up the packages structure for an indiedown-based customized RMarkdown
-template. See \code{vignette("intro")} for a more detailed usage example.
+template. See \code{vignette("indiedown")} for a more detailed usage example.
 }
 \examples{
 path <- file.path(tempdir(), "mydown")

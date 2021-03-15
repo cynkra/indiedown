@@ -1,7 +1,7 @@
 #' Skeleton for a Customized RMarkdown Template
 #'
 #' Set up the packages structure for an indiedown-based customized RMarkdown
-#' template. See `vignette("intro")` for a more detailed usage example.
+#' template. See `vignette("indiedown")` for a more detailed usage example.
 #'
 #' @param path Package path
 #' @param overwrite Should existing assets be overwritten?
@@ -52,6 +52,6 @@ create_indiedown_package <- function(path, overwrite = FALSE) {
   writeLines(character(), ".here")
 
   usethis::ui_done("set up indiedown skeleton")
-  usethis::ui_info(paste('see `vignette("intro")` for how to customize', pkg_name))
+  usethis::ui_info(paste('see `vignette("indiedown")` for how to customize', pkg_name))
 
 }
