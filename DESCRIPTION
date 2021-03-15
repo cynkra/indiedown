@@ -24,7 +24,7 @@ Authors@R:
 Description: Simplifies the generation of customized RMarkdown
     templates. Provides a package skeleton with instructions for
     customizations.
-License: MIT + file LICENSE
+License: MIT
 Depends: 
     R (>= 4.0.0)
 Imports:
