@@ -1,11 +1,11 @@
-customizations
+Lifecycle
 Pandoc
 RMarkdown
 RStudio
 YAML
+customizations
 gfonts
 kableExtra
 mydown
 pandoc
 tex
-usethis

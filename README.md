@@ -28,7 +28,7 @@ To create your own, customized RMarkdown template, start by creating an indiedow
 <pre class='chroma'>
 <span class='nf'>indiedown</span><span class='nf'>::</span><span class='nf'><a href='https://rdrr.io/pkg/indiedown/man/create_indiedown_package.html'>create_indiedown_package</a></span><span class='o'>(</span><span class='s'>"mydown"</span><span class='o'>)</span></pre>
 
-This creates a package skeleton in the new `mydown` directory in the current working directory. You can build build *mydown*, using ‘Build and Reload’ in the RStudio or via the command line, as follows:
+This creates a package skeleton in the new `mydown` directory in the current working directory. You can build build *mydown*, using “Build and Reload” in the RStudio or via the command line, as follows:
 
 <pre class='chroma'>
 <span class='nf'>devtools</span><span class='nf'>::</span><span class='nf'><a href='https://devtools.r-lib.org//reference/install.html'>install</a></span><span class='o'>(</span><span class='s'>"mydown"</span><span class='o'>)</span></pre>
