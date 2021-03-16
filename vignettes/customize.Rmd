@@ -79,11 +79,11 @@ Most customized styles will include some additional assets, such as a logo or a 
 
 Indiedown packages use R functions to generate LaTeX code for customization.
 
-For most customizations, it is recommended to turn off the default LaTeX title page, and create your own title page via LaTeX commands. The basic repertory are the LaTeX commands `\large`, `\Large`, `\LARGE`, `\huge`, etc., along witch `vspace{1ex}`, but all LaTeX trickery can be applied. The LaTeX helper functions should be put to the `R` folder of your package.
+For most customizations, it is recommended to turn off the default LaTeX title page, and create your own title page via LaTeX commands. The basic repertory are the LaTeX commands `\large`, `\Large`, `\LARGE`, `\huge`, etc, along with `vspace{1ex}`, but all LaTeX trickery can be applied. The LaTeX helper functions should be put in the `R` folder of your package.
 
 
 ## Templates
 
-RMarkdown Templates demonstrate the use of a customized style. RMarkdown requires you to put them to `inst/rmarkdown/templates/mytemplate`.
+RMarkdown Templates demonstrate the use of a customized style. RMarkdown requires you to put them in `inst/rmarkdown/templates/mytemplate`.
 RStudio will recognize them and show them when you click 'New RMarkdown Document' and 'from Template'.
 You can also use `usethis::use_rmarkdown_template()` to add a new template.

@@ -36,7 +36,7 @@ remotes::install_github("cynkra/indiedown")
 devtools::install_github("cynkra/indiedown")
 ```
 
-To create your own, customized RMarkdown template, start by creating an indiedown template package, called `mydown` in this example.
+To create your own customized RMarkdown template, start by creating an indiedown template package, called `mydown` in this example.
 Navigate to the directory where you want to create the package, then:
 
 ```{r eval = FALSE}
@@ -63,9 +63,9 @@ This should make it compliant with future releases of Pandoc and RMarkdown.
 
 There are three possible customization points to customize an indiedown skeleton:
 
-- Set defaults (such as fonts or geometry) in the YAML header at `inst/indedown/default.yaml`
+- Set defaults (such as fonts or geometry) in the YAML header at `inst/indiedown/default.yaml`
 
-- Tweak LaTeX settings at `inst/indedown/preamble.tex`
+- Tweak LaTeX settings at `inst/indiedown/preamble.tex`
 
 - Apply dynamic adjustments in `pre_processor.R` (advanced)
 
@@ -76,7 +76,7 @@ See the `vignette("customize")` for details.
 
 Indiedown packages use R functions to generate LaTeX code for customization.
 
-For most customizations, it is recommended to turn off the default LaTeX title page, and create your own title page via LaTeX commands. The basic repertory are the LaTeX commands `\large`, `\Large`, `\LARGE`, `\huge`, etc., along witch `vspace{1ex}`, but all LaTeX trickery can be applied. The LaTeX helper functions should be put to the `R` folder of your package.
+For most customizations, it is recommended to turn off the default LaTeX title page and create your own title page via LaTeX commands. The basic repertory are the LaTeX commands `\large`, `\Large`, `\LARGE`, `\huge`, etc, along with `vspace{1ex}`, but all LaTeX trickery can be applied. The LaTeX helper functions should be put in the `R` folder of your package.
 
 The function `cd_page_title()` creates an example title page that can be adjusted to your needs. Note that the example uses raw strings, which are only available in R >= 4. They make it easy to write LaTeX code directly in R. See details in `?indiedown_glue` for methods that work well with R < 4.
 

@@ -29,7 +29,7 @@ You can also install the development version from GitHub:
 devtools::install_github("cynkra/indiedown")
 ```
 
-To create your own, customized RMarkdown template, start by creating an indiedown template package, called `mydown` in this example.
+To create your own customized RMarkdown template, start by creating an indiedown template package, called `mydown` in this example.
 Navigate to the directory where you want to create the package, then:
 
 ```r
