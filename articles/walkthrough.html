@@ -101,8 +101,8 @@
 <p>indiedown does not modify the default <code>.tex</code> template of Pandoc. Instead, all modifications are applied on top of it. This should make it compliant with future releases of Pandoc and RMarkdown.</p>
 <p>There are three possible customization points to customize an indiedown skeleton:</p>
 <ul>
-<li><p>Set defaults (such as fonts or geometry) in the YAML header at <code>inst/indedown/default.yaml</code></p></li>
-<li><p>Tweak LaTeX settings at <code>inst/indedown/preamble.tex</code></p></li>
+<li><p>Set defaults (such as fonts or geometry) in the YAML header at <code>inst/indiedown/default.yaml</code></p></li>
+<li><p>Tweak LaTeX settings at <code>inst/indiedown/preamble.tex</code></p></li>
 <li><p>Apply dynamic adjustments in <code>pre_processor.R</code> (advanced)</p></li>
 </ul>
 <p>For this tutorial, we will focus on the first two points only.</p>
@@ -163,7 +163,7 @@
 </h2>
 <p>Let’s turn to the second customization point, <code>preamble.tex</code>. This contains LaTeX code that is run at the beginning. Add everything here that cannot be changed in the <code>default.yaml</code>. We want to use slightly bigger headers, and change the <code>titlesec</code> line to:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode tex"><code class="sourceCode latex"><span id="cb3-1"><a href="#cb3-1"></a><span class="bu">\usepackage</span>[medium]{<span class="ex">titlesec</span>}</span></code></pre></div>
-<p>As <code>default.yaml</code>, it supports substitution of <code>&lt;&lt;indiedown_path&gt;&gt;</code>, so you could link to images here as well. Most of the time, you do not want do too many thing here. Note that the default LaTeX title page is disabled in the default template, for good reason:</p>
+<p>As for <code>default.yaml</code>, it supports substitution of <code>&lt;&lt;indiedown_path&gt;&gt;</code>, so you could link to images here as well. Generally, you do not want do too many thing here. Note that the default LaTeX title page is disabled in the default template, for good reason:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode tex"><code class="sourceCode latex"><span id="cb4-1"><a href="#cb4-1"></a><span class="fu">\renewcommand\maketitle</span>{}</span></code></pre></div>
 <p>Instead, we will build our own title page in R now.</p>
 </div>
@@ -171,11 +171,11 @@
 <h2 class="hasAnchor">
 <a href="#a-customized-title-page-" class="anchor"></a>A customized title page.</h2>
 <p>One of the core principles of indiedown is to keep corporate design elements as R code. That way, elements can be arranged flexibly and adjusted to particular needs.</p>
-<p>As a final step, we build a customized title page, by modifying the function definition of <code>R/cd_page_title</code>. The function writes LaTeX code that will be added to the <code>.Rmd</code> when <code>cd_page_title()</code> is called.</p>
+<p>As a final step, we build a customized title page by modifying the function definition of <code>R/cd_page_title</code>. The function writes LaTeX code that will be added to the <code>.Rmd</code> when <code>cd_page_title()</code> is called.</p>
 <p>To make writing of LaTeX code in R easy, we rely on the raw string feature that was added in R 4.0.0. It allows you to write pure LaTeX code in R, without having to escape every <code>\</code> by a second <code>\\</code>.</p>
 <p>If you have to use a version of R that is older, the <code>read_tex()</code> function offers an alternative way to write unescaped LaTeX code. See <code>?read_tex</code>.</p>
 <p>The <code>indiedown_glue()</code> helper function uses the <a href="https://CRAN.R-project.org/package=glue" class="external-link">glue</a> package to substitute variables in the string. That way, variables such as <code>title</code> or <code>subtitle</code> will be substituted in the LaTeX code.</p>
-<p>With <code>indiedown_path_tex()</code>, you can also refer to the path of <code>inst/indiedown</code>, and use assets from the package. In the example, we use this to include a logo. Now, we don’t want to use a logo but rather a photography of a beautiful parrot. We download the image from <a href="https://unsplash.com/photos/gGC63oug3iY" class="external-link">unsplash.com</a> in medium quality and store it in <code>res/mikhail-vasilyev-gGC63oug3iY-unsplash.jpg</code>. Then, we change the function definition as follows:</p>
+<p>With <code>indiedown_path_tex()</code>, you can also refer to the path of <code>inst/indiedown</code>, and use assets from the package. In the example, we use this to include a logo. Now, we don’t want to use a logo but rather a photograph of a beautiful parrot. We download the image from <a href="https://unsplash.com/photos/gGC63oug3iY" class="external-link">unsplash.com</a> in medium quality and store it in <code>res/mikhail-vasilyev-gGC63oug3iY-unsplash.jpg</code>. Then, we change the function definition as follows:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cd_page_title</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">title</span> <span class="op">=</span> <span class="fu">default</span><span class="op">(</span><span class="fu">rmarkdown</span><span class="fu">::</span><span class="va"><a href="https://pkgs.rstudio.com/rmarkdown/reference/metadata.html" class="external-link">metadata</a></span><span class="op">$</span><span class="va">title</span>, <span class="st">"Title"</span><span class="op">)</span>,
                           <span class="va">subtitle</span> <span class="op">=</span> <span class="fu">default</span><span class="op">(</span><span class="fu">rmarkdown</span><span class="fu">::</span><span class="va"><a href="https://pkgs.rstudio.com/rmarkdown/reference/metadata.html" class="external-link">metadata</a></span><span class="op">$</span><span class="va">subtitle</span>, <span class="st">"Subtitle"</span><span class="op">)</span>,
@@ -216,7 +216,7 @@
 <div id="where-to-go-from-here" class="section level2">
 <h2 class="hasAnchor">
 <a href="#where-to-go-from-here" class="anchor"></a>Where to go from here</h2>
-<p>indiedown provides a framework to easily generate customized RMarkdown templates. Templates can be customized by the full power of Pandoc of LaTeX, through various points of customizations.</p>
+<p>indiedown provides a framework to easily generate customized RMarkdown templates. Templates can be customized by the full power of Pandoc and LaTeX through various points of customization.</p>
 <p>This walk-through introduced two of them. For more details and a description of the third one, see <code><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignettes("customize")</a></code>.</p>
 </div>
   </div>

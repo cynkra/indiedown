@@ -108,7 +108,7 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"cynkra/indiedown"</span><span class="op">)</span></code></pre></div>
-<p>To create your own, customized RMarkdown template, start by creating an indiedown template package, called <code>mydown</code> in this example. Navigate to the directory where you want to create the package, then:</p>
+<p>To create your own customized RMarkdown template, start by creating an indiedown template package, called <code>mydown</code> in this example. Navigate to the directory where you want to create the package, then:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">indiedown</span><span class="fu">::</span><span class="fu"><a href="../reference/create_indiedown_package.html">create_indiedown_package</a></span><span class="op">(</span><span class="st">"mydown"</span><span class="op">)</span></code></pre></div>
 <p>This creates a package skeleton in the new <code>mydown</code> directory in the current working directory. You can build <em>mydown</em>, using “Build and Reload” in the RStudio or via the command line, as follows:</p>
@@ -123,8 +123,8 @@
 <p>indiedown does not modify the default <code>.tex</code> template of Pandoc. Instead, all modifications are applied on top of it. This should make it compliant with future releases of Pandoc and RMarkdown.</p>
 <p>There are three possible customization points to customize an indiedown skeleton:</p>
 <ul>
-<li><p>Set defaults (such as fonts or geometry) in the YAML header at <code>inst/indedown/default.yaml</code></p></li>
-<li><p>Tweak LaTeX settings at <code>inst/indedown/preamble.tex</code></p></li>
+<li><p>Set defaults (such as fonts or geometry) in the YAML header at <code>inst/indiedown/default.yaml</code></p></li>
+<li><p>Tweak LaTeX settings at <code>inst/indiedown/preamble.tex</code></p></li>
 <li><p>Apply dynamic adjustments in <code>pre_processor.R</code> (advanced)</p></li>
 </ul>
 <p>See the <code><a href="../articles/customize.html">vignette("customize")</a></code> for details.</p>
@@ -133,7 +133,7 @@
 <h2 class="hasAnchor">
 <a href="#corporate-design-elements" class="anchor"></a>Corporate Design Elements</h2>
 <p>Indiedown packages use R functions to generate LaTeX code for customization.</p>
-<p>For most customizations, it is recommended to turn off the default LaTeX title page, and create your own title page via LaTeX commands. The basic repertory are the LaTeX commands <code>\large</code>, <code>\Large</code>, <code>\LARGE</code>, <code>\huge</code>, etc., along witch <code>vspace{1ex}</code>, but all LaTeX trickery can be applied. The LaTeX helper functions should be put to the <code>R</code> folder of your package.</p>
+<p>For most customizations, it is recommended to turn off the default LaTeX title page and create your own title page via LaTeX commands. The basic repertory are the LaTeX commands <code>\large</code>, <code>\Large</code>, <code>\LARGE</code>, <code>\huge</code>, etc, along with <code>vspace{1ex}</code>, but all LaTeX trickery can be applied. The LaTeX helper functions should be put in the <code>R</code> folder of your package.</p>
 <p>The function <code>cd_page_title()</code> creates an example title page that can be adjusted to your needs. Note that the example uses raw strings, which are only available in R &gt;= 4. They make it easy to write LaTeX code directly in R. See details in <code>?indiedown_glue</code> for methods that work well with R &lt; 4.</p>
 </div>
 <div id="principles-of-indiedown" class="section level2">
