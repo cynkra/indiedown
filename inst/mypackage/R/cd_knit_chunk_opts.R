@@ -5,6 +5,7 @@
 #' @param twocolumn Use two-column mode? This will affect `fig.width` and `fig.height`
 #' @param fig.width Figure width. If `NULL`, automatically chosen based on `twocolumn`.
 #' @param fig.height Figure height If `NULL`, automatically chosen based on `twocolumn`.
+#' @param fig.pos Floating modifier for figures.
 #' @param message Should messages be shown?
 #' @param echo Should echo be shown?
 #' @export

@@ -20,6 +20,8 @@ cd_knit_chunk_opts(
 
 \item{fig.height}{Figure height If \code{NULL}, automatically chosen based on \code{twocolumn}.}
 
+\item{fig.pos}{Floating modifier for figures.}
+
 \item{message}{Should messages be shown?}
 
 \item{echo}{Should echo be shown?}
