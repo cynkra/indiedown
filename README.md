@@ -6,7 +6,7 @@ Individual RMarkdown PDF Templates.
 
 <!-- badges: start -->
 
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental) [![R build status](https://github.com/cynkra/indiedown/workflows/rcc/badge.svg)](https://github.com/cynkra/indiedown/actions) [![Coverage status](https://codecov.io/gh/cynkra/indiedown/branch/main/graph/badge.svg)](https://codecov.io/github/cynkra/indiedown?branch=master) [![CRAN status](https://www.r-pkg.org/badges/version/indiedown)](https://cran.r-project.org/package=indiedown)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental) [![R build status](https://github.com/cynkra/indiedown/workflows/rcc/badge.svg)](https://github.com/cynkra/indiedown/actions) [![Coverage status](https://codecov.io/gh/cynkra/indiedown/branch/main/graph/badge.svg)](https://codecov.io/github/cynkra/indiedown?branch=master) [CRAN status](https://www.r-pkg.org/badges/version/indiedown)
 
 <!-- badges: end -->
 
