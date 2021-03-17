@@ -23,15 +23,18 @@ test_that("create_indiedown_package() fails with meaningful error message", {
 
   fs::dir_create("mydown")
   fs::file_create("mydown2")
-  fs::link_create("mydown", "mydown3")
-  fs::link_create("mydown-bogus", "mydown4")
+  withr::defer(fs::file_delete("mydown2"))
+  withr::defer(fs::dir_delete("mydown"))
 
   expect_error(create_indiedown_package("mydown"), "overwrite")
   expect_error(create_indiedown_package("mydown2"), "file")
+
+  skip_on_os("windows")
+
+  fs::link_create("mydown", "mydown3")
+  fs::link_create("mydown-bogus", "mydown4")
+  withr::defer(fs::link_delete("mydown-bogus"))
+  withr::defer(fs::link_delete("mydown3"))
   expect_error(create_indiedown_package("mydown3"), "overwrite")
   expect_error(create_indiedown_package("mydown4"), "link")
-
-  fs::link_delete("mydown3")
-  fs::file_delete("mydown2")
-  fs::dir_delete("mydown")
 })
