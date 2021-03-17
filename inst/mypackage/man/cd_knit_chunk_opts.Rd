@@ -2,39 +2,28 @@
 % Please edit documentation in R/cd_knit_chunk_opts.R
 \name{cd_knit_chunk_opts}
 \alias{cd_knit_chunk_opts}
-\title{cd_knit_chunk_opts}
+\title{Corporate Design: knitr Chunk Options}
 \usage{
 cd_knit_chunk_opts(
   twocolumn = default(rmarkdown::metadata$twocolumn, FALSE),
   fig.width = NULL,
   fig.height = NULL,
   fig.pos = "h",
-  cache = FALSE,
   message = FALSE,
-  echo = FALSE,
-  tidy = FALSE
+  echo = FALSE
 )
 }
 \arguments{
-\item{twocolumn}{...}
+\item{twocolumn}{Use two-column mode? This will affect \code{fig.width} and \code{fig.height}}
 
-\item{fig.width}{...}
+\item{fig.width}{Figure width. If \code{NULL}, automatically chosen based on \code{twocolumn}.}
 
-\item{fig.height}{...}
+\item{fig.height}{Figure height If \code{NULL}, automatically chosen based on \code{twocolumn}.}
 
-\item{fig.pos}{...}
+\item{message}{Should messages be shown?}
 
-\item{cache}{...}
-
-\item{message}{...}
-
-\item{echo}{...}
-
-\item{tidy}{...}
+\item{echo}{Should echo be shown?}
 }
 \description{
-FIXME
-}
-\details{
-FIXME: Rename fig.width to fig_width, etc.?
+Set knitr chunk options in accordance with corporate design.
 }

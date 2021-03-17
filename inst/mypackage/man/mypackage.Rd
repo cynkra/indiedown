@@ -7,7 +7,7 @@
 mypackage(...)
 }
 \arguments{
-\item{...}{Passed on to \code{\link[=indiedown_pdf_document_with_asset]{indiedown_pdf_document_with_asset()}}.}
+\item{...}{Passed on to \code{\link[rmarkdown:pdf_document]{rmarkdown::pdf_document()}}.}
 }
 \description{
 \code{mypackage()} is the main function of the mypackage package. Use as

@@ -2,15 +2,6 @@
 #
 # do not customize this file!
 
-
-#' indiedown_pdf_document_with_asset
-#'
-#' FIXME
-#'
-#' @param includes ...
-#' @param ... ...
-#'
-#' @export
 indiedown_pdf_document_with_asset <- function(includes = NULL, ...) {
 
   # file preamble
@@ -155,12 +146,12 @@ read_tex <- function(file) {
   paste(readLines(indiedown_path("tex", file), encoding = "UTF-8"), collapse = "\n")
 }
 
-#' default
+#' Set Default Value
 #'
-#' FIXME
+#' Set default value of an argument. If `x` is `NULL`, `default` is used.
 #'
-#' @param x ...
-#' @param default ...
+#' @param x A character string, or `NULL`
+#' @param default If `x` is `NULL`, `default` is used.
 #'
 #' @export
 default <- function(x, default = "") {

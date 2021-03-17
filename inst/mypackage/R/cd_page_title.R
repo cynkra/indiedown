@@ -1,4 +1,4 @@
-#' Corporate Design Element for Title Page
+#' Corporate Design: Title Page
 #'
 #' Example function to generate a title page.
 #'

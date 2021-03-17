@@ -2,15 +2,15 @@
 % Please edit documentation in R/indiedown.R
 \name{default}
 \alias{default}
-\title{default}
+\title{Set Default Value}
 \usage{
 default(x, default = "")
 }
 \arguments{
-\item{x}{...}
+\item{x}{A character string, or \code{NULL}}
 
-\item{default}{...}
+\item{default}{If \code{x} is \code{NULL}, \code{default} is used.}
 }
 \description{
-FIXME
+Set default value of an argument. If \code{x} is \code{NULL}, \code{default} is used.
 }

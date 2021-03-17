@@ -1,9 +1,9 @@
-#' cd_format_date
+#' Corporate Design: Format Date
 #'
-#' FIXME
+#' Format date in local language format
 #'
-#' @param date ...
-#' @param lang ...
+#' @param date Current date
+#' @param lang Language, either `"de-DE"`, `"de-CH"` or `"en_US"`
 #'
 #' @export
 cd_format_date <- function(date, lang = default(rmarkdown::metadata$lang, "de_CH")) {

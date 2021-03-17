@@ -2,15 +2,15 @@
 % Please edit documentation in R/cd_format_date.R
 \name{cd_format_date}
 \alias{cd_format_date}
-\title{cd_format_date}
+\title{Corporate Design: Format Date}
 \usage{
 cd_format_date(date, lang = default(rmarkdown::metadata$lang, "de_CH"))
 }
 \arguments{
-\item{date}{...}
+\item{date}{Current date}
 
-\item{lang}{...}
+\item{lang}{Language, either \code{"de-DE"}, \code{"de-CH"} or \code{"en_US"}}
 }
 \description{
-FIXME
+Format date in local language format
 }

@@ -1,26 +1,19 @@
-#' cd_knit_chunk_opts
+#' Corporate Design: knitr Chunk Options
 #'
-#' FIXME
+#' Set knitr chunk options in accordance with corporate design.
 #'
-#' FIXME: Rename fig.width to fig_width, etc.?
-#'
-#' @param twocolumn ...
-#' @param fig.width ...
-#' @param fig.height ...
-#' @param fig.pos ...
-#' @param cache ...
-#' @param message ...
-#' @param echo ...
-#' @param tidy ...
+#' @param twocolumn Use two-column mode? This will affect `fig.width` and `fig.height`
+#' @param fig.width Figure width. If `NULL`, automatically chosen based on `twocolumn`.
+#' @param fig.height Figure height If `NULL`, automatically chosen based on `twocolumn`.
+#' @param message Should messages be shown?
+#' @param echo Should echo be shown?
 #' @export
 cd_knit_chunk_opts <- function(twocolumn = default(rmarkdown::metadata$twocolumn, FALSE),
                                fig.width = NULL,
                                fig.height = NULL,
                                fig.pos = "h",
-                               cache = FALSE,
                                message = FALSE,
-                               echo = FALSE,
-                               tidy = FALSE) {
+                               echo = FALSE) {
 
   if (twocolumn) {
     fig.width <- default(fig.width, 4)
@@ -37,11 +30,9 @@ cd_knit_chunk_opts <- function(twocolumn = default(rmarkdown::metadata$twocolumn
   knitr::opts_chunk$set(
     fig.width = fig.width,
     fig.height = fig.height,
-    fig.pos = "h",
-    cache = FALSE,
-    message = FALSE,
-    echo = FALSE,
-    tidy = FALSE
+    fig.pos = fig.pos,
+    message = message,
+    echo = echo
   )
 
   options(knitr.table.format = "latex")

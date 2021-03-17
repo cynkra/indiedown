@@ -2,7 +2,7 @@
 % Please edit documentation in R/cd_page_title.R
 \name{cd_page_title}
 \alias{cd_page_title}
-\title{Corporate Design Element for Title Page}
+\title{Corporate Design: Title Page}
 \usage{
 cd_page_title(
   title = default(rmarkdown::metadata$title, "Title"),
