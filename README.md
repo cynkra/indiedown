@@ -23,7 +23,7 @@ You can also install the development version from GitHub:
 <span class='c'># install.packages("devtools")</span>
 <span class='nf'>devtools</span><span class='nf'>::</span><span class='nf'><a href='https://devtools.r-lib.org//reference/remote-reexports.html'>install_github</a></span><span class='o'>(</span><span class='s'>"cynkra/indiedown"</span><span class='o'>)</span></pre>
 
-To create your own, customized RMarkdown template, start by creating an indiedown template package, called `mydown` in this example. Navigate to the directory where you want to create the package, then:
+To create your own customized RMarkdown template, start by creating an indiedown template package, called `mydown` in this example. Navigate to the directory where you want to create the package, then:
 
 <pre class='chroma'>
 <span class='nf'>indiedown</span><span class='nf'>::</span><span class='nf'><a href='https://cynkra.github.io/indiedown/reference/create_indiedown_package.html'>create_indiedown_package</a></span><span class='o'>(</span><span class='s'>"mydown"</span><span class='o'>)</span></pre>
