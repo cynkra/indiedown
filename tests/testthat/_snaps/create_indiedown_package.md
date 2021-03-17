@@ -42,7 +42,6 @@
       mydown/man/default.Rd
       mydown/man/indiedown_glue.Rd
       mydown/man/indiedown_path.Rd
-      mydown/man/indiedown_pdf_document_with_asset.Rd
       mydown/man/mydown.Rd
     Code
       unlink("mydown/R/cd_page_title.R")
