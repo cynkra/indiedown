@@ -15,10 +15,10 @@
 create_indiedown_package <- function(path, overwrite = FALSE) {
   if (fs::dir_exists(path)) {
     if (!overwrite) {
-      stop("Path exists, use `overwrite = TRUE` to overwrite.", call. = TRUE)
+      stop("Path exists, use `overwrite = TRUE` to overwrite.", call. = FALSE)
     }
   } else if (fs::file_exists(path)) {
-    stop("Path exists and is a file or a link, remove before proceeding.", call. = TRUE)
+    stop("Path exists and is a file or a link, remove before proceeding.", call. = FALSE)
   }
 
   path_skeleton <- system.file("mypackage", package = "indiedown")
