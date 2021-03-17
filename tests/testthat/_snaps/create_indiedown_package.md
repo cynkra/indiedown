@@ -6,7 +6,7 @@
       v indiedown skeleton set up at mydown
       i See `vignette("indiedown")` for how to customize the mydown package
     Code
-      fs::dir_tree("mydown")
+      withr::with_collate("C", fs::dir_tree("mydown"))
     Output
       mydown
       +-- DESCRIPTION
