@@ -11,6 +11,9 @@ create_indiedown_package(path, overwrite = FALSE)
 
 \item{overwrite}{Should existing assets be overwritten?}
 }
+\value{
+This function is called for its side effects and returns \code{NULL}, invisibly.
+}
 \description{
 Set up the packages structure for an indiedown-based customized RMarkdown
 template. See \code{vignette("indiedown")} for a more detailed usage example.

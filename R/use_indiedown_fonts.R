@@ -4,6 +4,8 @@
 #'
 #' @inheritParams create_indiedown_package
 #' @inheritParams gfonts::download_font
+#' @return This function is called for its side effects and returns `NULL`, invisibly.
+#' @export
 #' @examples
 #' \dontrun{
 #' path <- file.path(tempdir(), "mydown")
@@ -15,7 +17,6 @@
 #'   variants = c("regular", "italic", "700", "700italic")
 #' )
 #' }
-#' @export
 use_indiedown_gfonts <- function(path = ".",
                                  id = "roboto",
                                  variants = c("regular", "300italic", "700", "700italic")) {
@@ -44,4 +45,6 @@ use_indiedown_gfonts <- function(path = ".",
   )
 
   cli_alert_success("Added {id} fonts")
+
+  invisible()
 }

@@ -17,6 +17,9 @@ use_indiedown_gfonts(
 
 \item{variants}{Variant(s) to download, default is to includes all available ones.}
 }
+\value{
+This function is called for its side effects and returns \code{NULL}, invisibly.
+}
 \description{
 Download and use Google fonts, using the \emph{gfonts} package.
 }

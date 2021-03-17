@@ -6,6 +6,8 @@
 #' @param path Package path
 #' @param overwrite Should existing assets be overwritten?
 #'
+#' @return This function is called for its side effects and returns `NULL`, invisibly.
+#'
 #' @export
 #' @examples
 #' path <- file.path(tempdir(), "mydown")
