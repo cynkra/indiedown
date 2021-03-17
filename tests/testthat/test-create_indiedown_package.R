@@ -6,7 +6,7 @@ test_that("create_indiedown_package() works", {
 
   expect_snapshot({
     create_indiedown_package("mydown")
-    withr::with_collate("C", fs::dir_tree("mydown"))
+    withr::with_collate("C", fs::dir_ls("mydown", recurse = TRUE))
 
     unlink("mydown/R/cd_page_title.R")
     create_indiedown_package("mydown", overwrite = TRUE)
