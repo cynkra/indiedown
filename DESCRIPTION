@@ -34,6 +34,7 @@ Imports:
     cli,
     fs,
     gfonts,
+    rlang,
     withr
 Suggests: 
     callr,
