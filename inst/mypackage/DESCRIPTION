@@ -13,7 +13,7 @@ Depends:
     R (>= 4.0.0)
 Imports: 
     glue,
-    knitr,
+    knitr (>= 1.12),
     rmarkdown,
     utils,
     withr,

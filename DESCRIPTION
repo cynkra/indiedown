@@ -34,12 +34,12 @@ Imports:
     cli,
     fs,
     gfonts,
-    knitr (>= 1.12),
-    rmarkdown,
     withr
 Suggests: 
     callr,
+    knitr (>= 1.12),
     rcmdcheck,
+    rmarkdown,
     spelling,
     testthat (>= 3.0.0)
 VignetteBuilder: 
