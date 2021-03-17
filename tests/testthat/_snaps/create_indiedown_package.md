@@ -6,7 +6,7 @@
       v indiedown skeleton set up at mydown
       i See `vignette("indiedown")` for how to customize the mydown package
     Code
-      withr::with_collate("C", fs::dir_ls("mydown", recurse = TRUE))
+      withr::with_collate("C", sort(fs::dir_ls("mydown", recurse = TRUE)))
     Output
       mydown/DESCRIPTION
       mydown/LICENSE
