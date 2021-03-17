@@ -25,7 +25,7 @@ Description: Simplifies the generation of customized RMarkdown
     templates. Provides a package skeleton with instructions for
     customizations.
 License: MIT + file LICENSE
-URL: https://cynkra.github.io/indiedown,
+URL: https://cynkra.github.io/indiedown/,
     https://github.com/cynkra/indiedown
 BugReports: https://github.com/cynkra/indiedown/issues
 Depends: 
