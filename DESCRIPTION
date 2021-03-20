@@ -1,7 +1,7 @@
 Type: Package
 Package: indiedown
 Title: Individual R Markdown Templates
-Version: 0.1.0
+Version: 0.1.1
 Authors@R:
     c(person(given = "Christoph",
              family = "Sax",
@@ -26,7 +26,7 @@ Description: Simplifies the generation of customized R Markdown PDF templates.
     scheme. The package provides a skeleton with detailed instructions for
     customizations. The skeleton can be modified by changing defaults in the
     'YAML' header, by adding additional 'LaTeX' commands or by applying dynamic
-    adjustments in R. Individual corporate design elements, such as a title page, can be added as 'LaTeX'-producing R functions.
+    adjustments in R. Individual corporate design elements, such as a title page, can be added as R functions that produce 'LaTeX' code.
 License: MIT + file LICENSE
 URL: https://cynkra.github.io/indiedown/,
     https://github.com/cynkra/indiedown

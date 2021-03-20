@@ -1,3 +1,7 @@
+# indiedown 0.1.1
+
+- CRAN feedback: better DESCRIPTION, extended documentation, examples.
+
 # indiedown 0.1.0
 
 Initial release.
