@@ -2,7 +2,7 @@ Type: Package
 Package: indiedown
 Title: Individual RMarkdown Templates
 Version: 0.1.0
-Authors@R: 
+Authors@R:
     c(person(given = "Christoph",
              family = "Sax",
              role = c("aut", "cre"),
@@ -28,7 +28,7 @@ License: MIT + file LICENSE
 URL: https://cynkra.github.io/indiedown/,
     https://github.com/cynkra/indiedown
 BugReports: https://github.com/cynkra/indiedown/issues
-Depends: 
+Depends:
     R (>= 4.0.0)
 Imports:
     cli,
@@ -36,14 +36,14 @@ Imports:
     gfonts,
     rlang,
     withr
-Suggests: 
+Suggests:
     callr,
     knitr (>= 1.12),
     rcmdcheck,
     rmarkdown,
     spelling,
     testthat (>= 3.0.0)
-VignetteBuilder: 
+VignetteBuilder:
     knitr
 Config/testthat/edition: 3
 Encoding: UTF-8
