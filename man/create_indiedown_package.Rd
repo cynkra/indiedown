@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_indiedown_package.R
 \name{create_indiedown_package}
 \alias{create_indiedown_package}
-\title{Skeleton for a Customized RMarkdown Template}
+\title{Skeleton for a Customized R Markdown Template}
 \usage{
 create_indiedown_package(path, overwrite = FALSE)
 }
@@ -15,7 +15,7 @@ create_indiedown_package(path, overwrite = FALSE)
 This function is called for its side effects and returns \code{NULL}, invisibly.
 }
 \description{
-Set up the packages structure for an indiedown-based customized RMarkdown
+Set up the packages structure for an indiedown-based customized R Markdown
 template. See \code{vignette("indiedown")} for a more detailed usage example.
 }
 \examples{

@@ -2,5 +2,5 @@
 
 Initial release.
 
-- `create_indiedown_package()` creates a ready-to-customize RMarkdown template package.
+- `create_indiedown_package()` creates a ready-to-customize R Markdown template package.
 - `use_indiedown_gfonts()` adds Google fonts to a template package.

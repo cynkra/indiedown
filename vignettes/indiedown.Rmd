@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-indiedown makes it easy to generate a customized RMarkdown PDF template that follow the principles of your corporate design.
+indiedown makes it easy to generate a customized R Markdown PDF template that follow the principles of your corporate design.
 
 Start by installing indiedown:
 
@@ -29,14 +29,14 @@ You can also install the development version from GitHub:
 remotes::install_github("cynkra/indiedown")
 ```
 
-## Create an customized RMarkdown template
+## Create an customized R Markdown template
 
 ```{r eval = FALSE}
 # install.packages("devtools")
 devtools::install_github("cynkra/indiedown")
 ```
 
-To create your own customized RMarkdown template, start by creating an indiedown template package, called `mydown` in this example.
+To create your own customized R Markdown template, start by creating an indiedown template package, called `mydown` in this example.
 Navigate to the directory where you want to create the package, then:
 
 ```{r eval = FALSE}
@@ -59,7 +59,7 @@ With *mydown* built and installed, our new template is available in RStudio (aft
 ## Customization points
 
 indiedown does not modify the default `.tex` template of Pandoc. Instead, all modifications are applied on top of it.
-This should make it compliant with future releases of Pandoc and RMarkdown.
+This should make it compliant with future releases of Pandoc and R Markdown.
 
 There are three possible customization points to customize an indiedown skeleton:
 
@@ -86,7 +86,7 @@ The function `cd_page_title()` creates an example title page that can be adjuste
 ### Extend Pandoc .tex, do not replace
 
 indiedown does not modify the default `.tex` template of Pandoc. Instead, all modifications are applied on top of it.
-This should make it compliant with future releases of Pandoc and RMarkdown.
+This should make it compliant with future releases of Pandoc and R Markdown.
 
 ### Use R to customize
 

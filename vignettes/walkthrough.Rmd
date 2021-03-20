@@ -1,8 +1,8 @@
 ---
-title: "Walkthrough: Build your own RMarkdown Template"
+title: "Walkthrough: Build your own R Markdown Template"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Walkthrough: Build your own RMarkdown Template}
+  %\VignetteIndexEntry{Walkthrough: Build your own R Markdown Template}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 ## Customization points
 
 indiedown does not modify the default `.tex` template of Pandoc. Instead, all modifications are applied on top of it.
-This should make it compliant with future releases of Pandoc and RMarkdown.
+This should make it compliant with future releases of Pandoc and R Markdown.
 
 There are three possible customization points to customize an indiedown skeleton:
 
@@ -173,7 +173,7 @@ Building the package again, and running the template `.Rmd`, we get:
 
 ## Where to go from here
 
-indiedown provides a framework to easily generate customized RMarkdown templates. Templates can be customized by the full power of Pandoc and LaTeX through various points of customization.
+indiedown provides a framework to easily generate customized R Markdown templates. Templates can be customized by the full power of Pandoc and LaTeX through various points of customization.
 
 This walk-through introduced two of them.
 For more details and a description of the third one, see `vignette("customize")`.

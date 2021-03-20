@@ -1,9 +1,9 @@
 # indiedown: customize options to rmarkdown::pdf_document() here
 
-#' Customized RMarkdown Document
+#' Customized R Markdown Document
 #'
 #' `mypackage()` is the main function of the mypackage package. Use as
-#' `output: mypackage::mypackage` in the RMarkdown YAML header.
+#' `output: mypackage::mypackage` in the R Markdown YAML header.
 #'
 #' @param ... Passed on to [rmarkdown::pdf_document()].
 #' @export

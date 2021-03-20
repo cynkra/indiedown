@@ -2,7 +2,7 @@
 % Please edit documentation in R/indiedown_pdf_document.R
 \name{mypackage}
 \alias{mypackage}
-\title{Customized RMarkdown Document}
+\title{Customized R Markdown Document}
 \usage{
 mypackage(...)
 }
@@ -11,5 +11,5 @@ mypackage(...)
 }
 \description{
 \code{mypackage()} is the main function of the mypackage package. Use as
-\code{output: mypackage::mypackage} in the RMarkdown YAML header.
+\code{output: mypackage::mypackage} in the R Markdown YAML header.
 }

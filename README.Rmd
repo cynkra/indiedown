@@ -5,7 +5,7 @@ output: downlit::readme_document
 
 # indiedown
 
-Individual RMarkdown PDF Templates.
+Individual R Markdown PDF Templates.
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
@@ -14,7 +14,7 @@ Individual RMarkdown PDF Templates.
 ![CRAN status](https://www.r-pkg.org/badges/version/indiedown)
 <!-- badges: end -->
 
-indiedown allows you to generate a customized RMarkdown PDF template in a few basic steps.
+indiedown allows you to generate a customized R Markdown PDF template in a few basic steps.
 
 Start by installing indiedown:
 
@@ -29,7 +29,7 @@ You can also install the development version from GitHub:
 devtools::install_github("cynkra/indiedown")
 ```
 
-To create your own customized RMarkdown template, start by creating an indiedown template package, called `mydown` in this example.
+To create your own customized R Markdown template, start by creating an indiedown template package, called `mydown` in this example.
 Navigate to the directory where you want to create the package, then:
 
 ```r

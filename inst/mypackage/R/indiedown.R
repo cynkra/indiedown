@@ -122,7 +122,7 @@ sanitize_tex <- function(path) {
   path
 }
 
-#' Glue LaTeX Code for Use in RMarkdown
+#' Glue LaTeX Code for Use in R Markdown
 #'
 #' Use the function to wrap literal LaTeX code in R. Use a raw string input
 #' (`r"()"`) to automatically escape quotes and backslashes, as they are common

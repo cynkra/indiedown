@@ -2,7 +2,7 @@
 % Please edit documentation in R/indiedown.R
 \name{indiedown_glue}
 \alias{indiedown_glue}
-\title{Glue LaTeX Code for Use in RMarkdown}
+\title{Glue LaTeX Code for Use in R Markdown}
 \usage{
 indiedown_glue(x, .open = "<<", .close = ">>")
 }

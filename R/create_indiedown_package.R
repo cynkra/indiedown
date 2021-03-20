@@ -1,6 +1,6 @@
-#' Skeleton for a Customized RMarkdown Template
+#' Skeleton for a Customized R Markdown Template
 #'
-#' Set up the packages structure for an indiedown-based customized RMarkdown
+#' Set up the packages structure for an indiedown-based customized R Markdown
 #' template. See `vignette("indiedown")` for a more detailed usage example.
 #'
 #' @param path Package path

@@ -1,12 +1,12 @@
 Package: mypackage
-Title: Acme Inc. Corporate Design RMarkdown Template
+Title: Acme Inc. Corporate Design R Markdown Template
 Version: 0.1
 Authors@R:
     person(given = "First",
            family = "Last",
            role = c("aut", "cre"),
            email = "first.last@example.com")
-Description: Provides an RMarkdown template conforming to the
+Description: Provides an R Markdown template conforming to the
     corporate design guidelines at Acme Inc.
 License: file LICENSE
 Depends:

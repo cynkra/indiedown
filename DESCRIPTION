@@ -1,6 +1,6 @@
 Type: Package
 Package: indiedown
-Title: Individual RMarkdown Templates
+Title: Individual R Markdown Templates
 Version: 0.1.0
 Authors@R:
     c(person(given = "Christoph",
@@ -21,7 +21,7 @@ Authors@R:
       person(given = "cynkra GmbH",
              role = c("fnd", "cph"),
              email = "mail@cynkra.com"))
-Description: Simplifies the generation of customized RMarkdown
+Description: Simplifies the generation of customized R Markdown
     templates. Provides a package skeleton with instructions for
     customizations.
 License: MIT + file LICENSE
