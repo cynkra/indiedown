@@ -56,10 +56,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/customize.html">Customize Individual RMarkdown Templates</a>
+      <a href="../articles/customize.html">Customize Individual R Markdown Templates</a>
     </li>
     <li>
-      <a href="../articles/walkthrough.html">Walkthrough: Build your own RMarkdown Template</a>
+      <a href="../articles/walkthrough.html">Walkthrough: Build your own R Markdown Template</a>
     </li>
   </ul>
 </li>
@@ -97,7 +97,7 @@
 
     
     
-<p>indiedown makes it easy to generate a customized RMarkdown PDF template that follow the principles of your corporate design.</p>
+<p>indiedown makes it easy to generate a customized R Markdown PDF template that follow the principles of your corporate design.</p>
 <p>Start by installing indiedown:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"indiedown"</span><span class="op">)</span></code></pre></div>
@@ -105,13 +105,13 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("remotes")</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"cynkra/indiedown"</span><span class="op">)</span></code></pre></div>
-<div id="create-an-customized-rmarkdown-template" class="section level2">
+<div id="create-an-customized-r-markdown-template" class="section level2">
 <h2 class="hasAnchor">
-<a href="#create-an-customized-rmarkdown-template" class="anchor"></a>Create an customized RMarkdown template</h2>
+<a href="#create-an-customized-r-markdown-template" class="anchor"></a>Create an customized R Markdown template</h2>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"cynkra/indiedown"</span><span class="op">)</span></code></pre></div>
-<p>To create your own customized RMarkdown template, start by creating an indiedown template package, called <code>mydown</code> in this example. Navigate to the directory where you want to create the package, then:</p>
+<p>To create your own customized R Markdown template, start by creating an indiedown template package, called <code>mydown</code> in this example. Navigate to the directory where you want to create the package, then:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">indiedown</span><span class="fu">::</span><span class="fu"><a href="../reference/create_indiedown_package.html">create_indiedown_package</a></span><span class="op">(</span><span class="st">"mydown"</span><span class="op">)</span></code></pre></div>
 <p>This creates a package skeleton in the new <code>mydown</code> directory in the current working directory. You can build <em>mydown</em>, using “Build and Reload” in the RStudio or via the command line, as follows:</p>
@@ -123,7 +123,7 @@
 <div id="customization-points" class="section level2">
 <h2 class="hasAnchor">
 <a href="#customization-points" class="anchor"></a>Customization points</h2>
-<p>indiedown does not modify the default <code>.tex</code> template of Pandoc. Instead, all modifications are applied on top of it. This should make it compliant with future releases of Pandoc and RMarkdown.</p>
+<p>indiedown does not modify the default <code>.tex</code> template of Pandoc. Instead, all modifications are applied on top of it. This should make it compliant with future releases of Pandoc and R Markdown.</p>
 <p>There are three possible customization points to customize an indiedown skeleton:</p>
 <ul>
 <li><p>Set defaults (such as fonts or geometry) in the YAML header at <code>inst/indiedown/default.yaml</code></p></li>
@@ -145,7 +145,7 @@
 <div id="extend-pandoc--tex-do-not-replace" class="section level3">
 <h3 class="hasAnchor">
 <a href="#extend-pandoc--tex-do-not-replace" class="anchor"></a>Extend Pandoc .tex, do not replace</h3>
-<p>indiedown does not modify the default <code>.tex</code> template of Pandoc. Instead, all modifications are applied on top of it. This should make it compliant with future releases of Pandoc and RMarkdown.</p>
+<p>indiedown does not modify the default <code>.tex</code> template of Pandoc. Instead, all modifications are applied on top of it. This should make it compliant with future releases of Pandoc and R Markdown.</p>
 </div>
 <div id="use-r-to-customize" class="section level3">
 <h3 class="hasAnchor">

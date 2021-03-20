@@ -5,14 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Walkthrough: Build your own RMarkdown Template • indiedown</title>
+<title>Walkthrough: Build your own R Markdown Template • indiedown</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.1/css/all.min.css" integrity="sha256-PbSmjxuVAzJ6FPvNYsrXygfGhNJYyZ2GktDbkMBqQZg=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.1/css/v4-shims.min.css" integrity="sha256-A6jcAdwFD48VMjlI3GDxUd+eCQa7/KWy6G9oe/ovaPA=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <link href="../extra.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Walkthrough: Build your own RMarkdown Template">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Walkthrough: Build your own R Markdown Template">
 <meta property="og:description" content="indiedown">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -56,10 +56,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/customize.html">Customize Individual RMarkdown Templates</a>
+      <a href="../articles/customize.html">Customize Individual R Markdown Templates</a>
     </li>
     <li>
-      <a href="../articles/walkthrough.html">Walkthrough: Build your own RMarkdown Template</a>
+      <a href="../articles/walkthrough.html">Walkthrough: Build your own R Markdown Template</a>
     </li>
   </ul>
 </li>
@@ -87,7 +87,7 @@
       </header><script src="walkthrough_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Walkthrough: Build your own RMarkdown Template</h1>
+      <h1 data-toc-skip>Walkthrough: Build your own R Markdown Template</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/cynkra/indiedown/blob/master/vignettes/walkthrough.Rmd" class="external-link"><code>vignettes/walkthrough.Rmd</code></a></small>
@@ -101,7 +101,7 @@
 <div id="customization-points" class="section level2">
 <h2 class="hasAnchor">
 <a href="#customization-points" class="anchor"></a>Customization points</h2>
-<p>indiedown does not modify the default <code>.tex</code> template of Pandoc. Instead, all modifications are applied on top of it. This should make it compliant with future releases of Pandoc and RMarkdown.</p>
+<p>indiedown does not modify the default <code>.tex</code> template of Pandoc. Instead, all modifications are applied on top of it. This should make it compliant with future releases of Pandoc and R Markdown.</p>
 <p>There are three possible customization points to customize an indiedown skeleton:</p>
 <ul>
 <li><p>Set defaults (such as fonts or geometry) in the YAML header at <code>inst/indiedown/default.yaml</code></p></li>
@@ -219,7 +219,7 @@
 <div id="where-to-go-from-here" class="section level2">
 <h2 class="hasAnchor">
 <a href="#where-to-go-from-here" class="anchor"></a>Where to go from here</h2>
-<p>indiedown provides a framework to easily generate customized RMarkdown templates. Templates can be customized by the full power of Pandoc and LaTeX through various points of customization.</p>
+<p>indiedown provides a framework to easily generate customized R Markdown templates. Templates can be customized by the full power of Pandoc and LaTeX through various points of customization.</p>
 <p>This walk-through introduced two of them. For more details and a description of the third one, see <code><a href="../articles/customize.html">vignette("customize")</a></code>.</p>
 </div>
   </div>
