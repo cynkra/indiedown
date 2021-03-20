@@ -4,7 +4,7 @@
 \alias{cd_format_date}
 \title{Corporate Design: Format Date}
 \usage{
-cd_format_date(date, lang = rmarkdown::metadata$lang)
+cd_format_date(date, lang = default(rmarkdown::metadata$lang, "en-US"))
 }
 \arguments{
 \item{date}{Current date}
@@ -18,6 +18,6 @@ Character string, date in local format
 Format date in local language format
 }
 \examples{
-cd_format_date("2012-01-01", "de-CH")
-cd_format_date("2012-01-01", "en_US")
+cd_format_date("2012-01-01", "de-DE")
+cd_format_date("2012-01-01", "en-US")
 }
