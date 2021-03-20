@@ -32,3 +32,7 @@ This function is called for its side effects and returns \code{NULL}, invisibly.
 \description{
 Set knitr chunk options in accordance with corporate design.
 }
+\examples{
+cd_knit_chunk_opts()
+
+}

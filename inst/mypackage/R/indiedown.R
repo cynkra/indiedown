@@ -98,6 +98,8 @@ list_to_pandoc_args <- function(list) {
 #'
 #' @param ... Path components, passed on to `system.file()`.
 #' @return Character string, path to this package's indiedown assets
+#' @examples
+#' indiedown_path()
 #' @export
 indiedown_path <- function(...) {
   system.file("indiedown", ..., package = utils::packageName())
@@ -136,6 +138,10 @@ sanitize_tex <- function(path) {
 #' @param .open,.close The opening and closing delimiter.
 #' @return Object of class `"knit_asis"` (so that knitr will treat it as is). Usually LaTeX code.
 #' @export
+#' @examples
+#' x <- "something"
+#' indiedown_glue(r"(\LaTeX\ code with <<x>> substituted )")
+#'
 indiedown_glue <- function(x, .open = "<<", .close = ">>") {
   ans <- glue::glue(x, .envir = sys.frame(-1), .open = .open, .close = .close)
   knitr::asis_output(ans)
@@ -155,7 +161,10 @@ read_tex <- function(file) {
 #' @param default If `x` is `NULL`, `default` is used.
 #'
 #' @return Character string
-#'
+#' @examples
+#' default(NULL)
+#' default(NULL, "my default")
+#' default("a string", "my default")
 #' @export
 default <- function(x, default = "") {
   ans <- if (is.null(x)) default else x

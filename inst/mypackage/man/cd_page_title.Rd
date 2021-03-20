@@ -23,3 +23,9 @@ Object of class \code{"knit_asis"} (so that knitr will treat it as is). LaTeX co
 \description{
 Example function to generate a title page
 }
+\examples{
+cd_page_title(
+  title = "My Title",
+  subtitle = "My Subtitle"
+)
+}

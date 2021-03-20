@@ -24,3 +24,8 @@ in LaTeX. Expressions enclosed by \verb{<<} and \verb{>>} will be evaluated as R
 \code{glue::glue()} (\verb{<<} and \verb{>>}), because braces are so common in LaTeX.
 Doubling the full delimiter (\verb{<<<<} and \verb{>>>>}) escapes it.
 }
+\examples{
+x <- "something"
+indiedown_glue(r"(\LaTeX\ code with <<x>> substituted )")
+
+}

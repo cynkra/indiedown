@@ -9,6 +9,9 @@
 #' @param message Should messages be shown?
 #' @param echo Should echo be shown?
 #' @return This function is called for its side effects and returns `NULL`, invisibly.
+#' @examples
+#' cd_knit_chunk_opts()
+#'
 #' @export
 cd_knit_chunk_opts <- function(twocolumn = default(rmarkdown::metadata$twocolumn, FALSE),
                                fig.width = NULL,

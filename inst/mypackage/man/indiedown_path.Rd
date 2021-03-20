@@ -22,3 +22,6 @@ located at \code{inst/indiedown}.
 \code{indiedown_path_tex()} creates a path that is usable in LaTeX,
 with all special characters escaped.
 }
+\examples{
+indiedown_path()
+}

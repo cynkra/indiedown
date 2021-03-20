@@ -17,3 +17,8 @@ Character string
 \description{
 Set default value of an argument. If \code{x} is \code{NULL}, \code{default} is used.
 }
+\examples{
+default(NULL)
+default(NULL, "my default")
+default("a string", "my default")
+}
