@@ -12,6 +12,9 @@ indiedown_path_tex(...)
 \arguments{
 \item{...}{Path components, passed on to \code{system.file()}.}
 }
+\value{
+Character string, path to this package's indiedown assets
+}
 \description{
 \code{indiedown_path()} creates a path to this package's indiedown assets,
 located at \code{inst/indiedown}.

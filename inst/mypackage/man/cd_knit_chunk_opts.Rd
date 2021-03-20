@@ -14,17 +14,20 @@ cd_knit_chunk_opts(
 )
 }
 \arguments{
-\item{twocolumn}{Use two-column mode? This will affect \code{fig.width} and \code{fig.height}}
+\item{twocolumn}{Use two-column mode? This will affect \code{fig.width} and \code{fig.height}.}
 
 \item{fig.width}{Figure width. If \code{NULL}, automatically chosen based on \code{twocolumn}.}
 
 \item{fig.height}{Figure height If \code{NULL}, automatically chosen based on \code{twocolumn}.}
 
-\item{fig.pos}{Floating modifier for figures.}
+\item{fig.pos}{Floating modifier for figures}
 
 \item{message}{Should messages be shown?}
 
 \item{echo}{Should echo be shown?}
+}
+\value{
+This function is called for its side effects and returns \code{NULL}, invisibly.
 }
 \description{
 Set knitr chunk options in accordance with corporate design.

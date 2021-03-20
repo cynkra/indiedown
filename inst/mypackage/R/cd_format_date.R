@@ -4,6 +4,7 @@
 #'
 #' @param date Current date
 #' @param lang Language, either `"de-DE"`, `"de-CH"` or `"en_US"`
+#' @return Character string, date in local format
 #'
 #' @export
 cd_format_date <- function(date, lang = default(rmarkdown::metadata$lang, "de_CH")) {

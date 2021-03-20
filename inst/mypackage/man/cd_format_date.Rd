@@ -11,6 +11,9 @@ cd_format_date(date, lang = default(rmarkdown::metadata$lang, "de_CH"))
 
 \item{lang}{Language, either \code{"de-DE"}, \code{"de-CH"} or \code{"en_US"}}
 }
+\value{
+Character string, date in local format
+}
 \description{
 Format date in local language format
 }

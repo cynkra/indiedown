@@ -11,12 +11,15 @@ cd_page_title(
 )
 }
 \arguments{
-\item{title}{Document title.}
+\item{title}{Document title}
 
-\item{subtitle}{Document subtitle.}
+\item{subtitle}{Document subtitle}
 
-\item{date}{Document creation date.}
+\item{date}{Document creation date}
+}
+\value{
+Object of class \code{"knit_asis"} (so that knitr will treat it as is). LaTeX code for title page.
 }
 \description{
-Example function to generate a title page.
+Example function to generate a title page
 }

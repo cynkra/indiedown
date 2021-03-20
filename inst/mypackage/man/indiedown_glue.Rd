@@ -11,6 +11,9 @@ indiedown_glue(x, .open = "<<", .close = ">>")
 
 \item{.open, .close}{The opening and closing delimiter.}
 }
+\value{
+Object of class \code{"knit_asis"} (so that knitr will treat it as is). Usually LaTeX code.
+}
 \description{
 Use the function to wrap literal LaTeX code in R. Use a raw string input
 (\code{r"()"}) to automatically escape quotes and backslashes, as they are common

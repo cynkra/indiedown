@@ -9,6 +9,9 @@ mypackage(...)
 \arguments{
 \item{...}{Passed on to \code{\link[rmarkdown:pdf_document]{rmarkdown::pdf_document()}}.}
 }
+\value{
+R Markdown output format to pass to \code{\link[rmarkdown:render]{rmarkdown::render()}}.
+}
 \description{
 \code{mypackage()} is the main function of the mypackage package. Use as
 \code{output: mypackage::mypackage} in the R Markdown YAML header.

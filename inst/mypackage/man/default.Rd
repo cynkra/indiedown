@@ -7,9 +7,12 @@
 default(x, default = "")
 }
 \arguments{
-\item{x}{A character string, or \code{NULL}}
+\item{x}{Character string, or \code{NULL}}
 
 \item{default}{If \code{x} is \code{NULL}, \code{default} is used.}
+}
+\value{
+Character string
 }
 \description{
 Set default value of an argument. If \code{x} is \code{NULL}, \code{default} is used.

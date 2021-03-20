@@ -1,10 +1,11 @@
 #' Corporate Design: Title Page
 #'
-#' Example function to generate a title page.
+#' Example function to generate a title page
 #'
-#' @param title Document title.
-#' @param subtitle Document subtitle.
-#' @param date Document creation date.
+#' @param title Document title
+#' @param subtitle Document subtitle
+#' @param date Document creation date
+#' @return Object of class `"knit_asis"` (so that knitr will treat it as is). LaTeX code for title page.
 #' @export
 #'
 cd_page_title <- function(title = default(rmarkdown::metadata$title, "Title"),
