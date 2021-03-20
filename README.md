@@ -35,7 +35,9 @@ This creates a package skeleton in the new `mydown` directory in the current wor
 
 With *mydown* built and installed, our new template is available in RStudio (after a restart).
 
-Read more at `vignette("indiedown")`. See `vignette("walkthrough")` for a step by step guide to customization. See `vignette("customize")` for advanced customization.
+-   Read more at `vignette("indiedown")`.
+-   See `vignette("walkthrough")` for a step by step guide to customization.
+-   See `vignette("customize")` for advanced customization.
 
 ------------------------------------------------------------------------
 
