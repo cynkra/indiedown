@@ -24,7 +24,7 @@ This function is called for its side effects and returns \code{NULL}, invisibly.
 Download and use Google fonts, using the \emph{gfonts} package.
 }
 \examples{
-\dontrun{
+\donttest{
 path <- file.path(tempdir(), "mydown")
 create_indiedown_package(path, overwrite = TRUE)
 # Use Lora, instead of default Roboto
