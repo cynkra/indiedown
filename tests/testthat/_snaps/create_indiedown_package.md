@@ -3,7 +3,7 @@
     Code
       create_indiedown_package("mydown")
     Message <cliMessage>
-      v indiedown skeleton set up at mydown
+      v indiedown skeleton set up at 'mydown'
       i See `vignette("indiedown")` for how to customize the mydown package
     Code
       withr::with_collate("C", sort(fs::dir_ls("mydown", recurse = TRUE)))
@@ -47,6 +47,6 @@
       unlink("mydown/R/cd_page_title.R")
       create_indiedown_package("mydown", overwrite = TRUE)
     Message <cliMessage>
-      v indiedown skeleton set up at mydown
+      v indiedown skeleton set up at 'mydown'
       i See `vignette("indiedown")` for how to customize the mydown package
 
