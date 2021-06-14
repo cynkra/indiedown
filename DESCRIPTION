@@ -45,6 +45,8 @@ Suggests:
     rcmdcheck,
     rmarkdown,
     spelling,
+    tinytex,
+    rstudioapi,
     testthat (>= 3.0.0)
 VignetteBuilder:
     knitr
