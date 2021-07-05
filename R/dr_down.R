@@ -13,18 +13,18 @@ dr_down <- function() {
   pandoc_v <- as.character(rmarkdown::pandoc_version())
   r_v <- paste(version$major, version$minor, sep = ".")
 
-  if (Sys.getenv("RSTUDIO") == "1") {
+  if (Sys.getenv("RSTUDIO") == "1" && requireNamespace("rstudioapi", quietly = TRUE)) {
     rstudio_v <- as.character(rstudioapi::versionInfo()$version)
   } else {
     rstudio_v <- NA_character_
   }
 
-  if("tinytex" %in% rownames(installed.packages())){
+  if(requireNamespace("tinytex", quietly = TRUE)){
     tinytex_v <- as.character(packageVersion("tinytex"))
-    is_tinytex = tinytex::is_tinytex()
+    is_tinytex <- tinytex::is_tinytex()
   } else{
     tinytex_v <- NA_character_
-    is_tinytex = FALSE
+    is_tinytex <- FALSE
   }
 
   version_info <- c(
@@ -49,19 +49,20 @@ dr_down <- function() {
   )
 
   try_with_engine <- function(latex_engines) {
-    try(
+    tryCatch(
       suppressWarnings(
         rmarkdown::render(
           fs::path(tdir, "test.Rmd"),
           rmarkdown::pdf_document(latex_engine = latex_engines),
           quiet = TRUE
         )
-      )
+      ),
+      error = identity
     )
   }
 
   ans <- lapply(latex_engines, try_with_engine)
-  is_success <- setNames(!sapply(ans, inherits, "try-error"), latex_engines)
+  success <- setNames(!sapply(ans, inherits, "try-error"), latex_engines)
 
   # clean up
   fs::dir_delete(tdir)
@@ -95,9 +96,9 @@ dr_down <- function() {
 
 
   cli_h1("Test Runs")
-  text <- paste("Running", names(is_success), ifelse(is_success, "successfully", "unsucessfully"))
+  text <- paste("Running", names(success), ifelse(success, "successfully", "unsuccessfully"))
   for (i in seq(text)) {
-    if (is_success[i]) {
+    if (success[i]) {
       cli_alert_success(text[i])
     } else {
       cli_alert_danger(text[i])
@@ -106,7 +107,7 @@ dr_down <- function() {
 
   ans <- list(
     version_info = version_info,
-    is_success = is_success,
+    success = success,
     is_tinytex = is_tinytex
   )
   invisible(ans)
