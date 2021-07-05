@@ -44,7 +44,7 @@ dr_down <- function() {
   tdir <- tempfile("dr_down")
   fs::dir_create(tdir)
   a <- fs::file_copy(
-    system.file(package = "indiedown", "dr_down", "test.Rmd"),
+    fs::path_package("indiedown", "dr_down", "test.Rmd"),
     tdir
   )
 
