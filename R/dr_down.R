@@ -62,9 +62,48 @@ dr_down <- function() {
   # clean up
   fs::dir_delete(tdir)
 
-  list(
+
+  cli_h1("System Information")
+
+  cli_alert_info("R-Version: {version_info['r']}")
+
+  cli_alert_info("Operating System: {R.Version()$os}")
+
+  if (is_tinytex) {
+    cli_alert_success("tinytex Version: {version_info['tinytex']}")
+  } else {
+    cli_alert_warning("tinytex not installed")
+  }
+
+  if (rmarkdown::pandoc_available()) {
+    cli_alert_success("pandoc Version: {version_info['pandoc']}")
+  } else {
+    cli_alert_warning("pandoc not available")
+  }
+
+  cli_alert_info("indiedown Version: {packageVersion('indiedown')}")
+
+  if (!is.na(version_info['rstudio'])) {
+    cli_alert_success("RStudio: {version_info['rstudio']}")
+  } else {
+    cli_alert_info("Running outside of RStudio")
+  }
+
+
+  cli_h1("Test Runs")
+  text <- paste("Running", names(is_success), ifelse(is_success, "successfully", "unsucessfully"))
+  for (i in seq(text)) {
+    if (is_success[i]) {
+      cli_alert_success(text[i])
+    } else {
+      cli_alert_danger(text[i])
+    }
+  }
+
+  ans <- list(
     version_info = version_info,
     is_success = is_success,
     is_tinytex = is_tinytex
   )
+  invisible(ans)
 }
