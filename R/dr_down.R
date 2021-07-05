@@ -3,6 +3,10 @@
 #' `dr_down` analyzes the R markdown capabilities of the hardware.
 #'
 #' @export
+#' @examples
+#' \dontrun{
+#'   indiedown::dr_down()
+#' }
 dr_down <- function() {
 
   # Check the version

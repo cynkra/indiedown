@@ -9,3 +9,8 @@ dr_down()
 \description{
 \code{dr_down} analyzes the R markdown capabilities of the hardware.
 }
+\examples{
+\dontrun{
+  indiedown::dr_down()
+}
+}
