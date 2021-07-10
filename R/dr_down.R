@@ -62,7 +62,7 @@ dr_down <- function() {
   }
 
   ans <- lapply(latex_engines, try_with_engine)
-  success <- setNames(!sapply(ans, inherits, "try-error"), latex_engines)
+  success <- setNames(!sapply(ans, inherits, "error"), latex_engines)
 
   # clean up
   fs::dir_delete(tdir)
