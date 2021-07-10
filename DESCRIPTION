@@ -21,12 +21,14 @@ Authors@R:
       person(given = "cynkra GmbH",
              role = c("fnd", "cph"),
              email = "mail@cynkra.com"))
-Description: Simplifies the generation of customized R Markdown PDF templates.
-    A template may include an individual logo, typography, geometry or color
-    scheme. The package provides a skeleton with detailed instructions for
-    customizations. The skeleton can be modified by changing defaults in the
-    'YAML' header, by adding additional 'LaTeX' commands or by applying dynamic
-    adjustments in R. Individual corporate design elements, such as a title page, can be added as R functions that produce 'LaTeX' code.
+Description: Simplifies the generation of customized R Markdown PDF
+    templates.  A template may include an individual logo, typography,
+    geometry or color scheme. The package provides a skeleton with
+    detailed instructions for customizations. The skeleton can be modified
+    by changing defaults in the 'YAML' header, by adding additional
+    'LaTeX' commands or by applying dynamic adjustments in R. Individual
+    corporate design elements, such as a title page, can be added as R
+    functions that produce 'LaTeX' code.
 License: MIT + file LICENSE
 URL: https://cynkra.github.io/indiedown/,
     https://github.com/cynkra/indiedown
@@ -44,8 +46,10 @@ Suggests:
     knitr (>= 1.12),
     rcmdcheck,
     rmarkdown,
+    rstudioapi,
     spelling,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    tinytex
 VignetteBuilder:
     knitr
 Config/testthat/edition: 3
