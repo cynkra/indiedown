@@ -97,7 +97,7 @@ dr_down <- function() {
 
   cli_h1("Test Runs")
   text <- paste("Running", names(success), ifelse(success, "successfully", "unsuccessfully"))
-  for (i in seq(text)) {
+  for (i in seq_along(text)) {
     if (success[i]) {
       cli_alert_success(text[i])
     } else {
