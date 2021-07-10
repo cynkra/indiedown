@@ -275,6 +275,17 @@ nav[data-toggle="toc"] .nav > li > a {
   padding-top: 16.5px;
 }
 
+nav[data-toggle='toc'] .nav .nav > .active > a, nav[data-toggle='toc'] .nav .nav > .active:hover > a, nav[data-toggle='toc'] .nav .nav > .active:focus > a {
+    padding-left: 15px;
+    font-weight: 400;
+    font-size: 1rem;
+}
+
+nav[data-toggle='toc'] .nav .nav > li > a {
+    padding-left: 16px;
+    font-size: 1rem;
+}
+
 /* sidebar ------------------------------------------------------------------ */
 
 #pkgdown-sidebar h2 {
