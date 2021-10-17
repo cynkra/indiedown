@@ -100,13 +100,13 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://cynkra.github.io/indiedown/">indiedown</a></span><span class="op">)</span></code></pre></div>
 <div id="assets" class="section level2">
-<h2 class="hasAnchor">
-<a href="#assets" class="anchor" aria-hidden="true"></a>Assets</h2>
+<h2>Assets<a class="anchor" aria-label="anchor" href="#assets"></a>
+</h2>
 <p><strong>Location:</strong> <code>inst/indiedown</code> (folder)</p>
 <p>Template assets are stored in a folder <code>inst/indiedown</code>. This folder contains all the necessary information to customize your markdown template. It can contain basic pandoc settings, additional LaTeX settings and dynamic pandoc settings.</p>
 <div id="basic-settings" class="section level3">
-<h3 class="hasAnchor">
-<a href="#basic-settings" class="anchor" aria-hidden="true"></a>Basic Settings</h3>
+<h3>Basic Settings<a class="anchor" aria-label="anchor" href="#basic-settings"></a>
+</h3>
 <p><strong>Location:</strong> <code>default.yaml</code> (required)</p>
 <p><code>default.yaml</code> is the only required element of an indiedown template. It specifies the default pandoc options used by your template. To experiment with pandoc options, simply add them to the YAML header of a standard R Markdown document.</p>
 <p>Most relevant LaTeX options can be set as pandoc options. For example, pandoc options allow you to set a customized font or a user defined geometry. If possible always prefer Pandoc options instead of LaTeX (covered below), as this will minimize unwanted interactions with other options.</p>
@@ -114,39 +114,39 @@
 <p><code>default.yaml</code>, as well as <code>preamble.tex</code> supports substitution of the variable <code>&lt;&lt;indiedown_path&gt;</code>, which is explained below.</p>
 </div>
 <div id="additional-latex-settings" class="section level3">
-<h3 class="hasAnchor">
-<a href="#additional-latex-settings" class="anchor" aria-hidden="true"></a>Additional LaTeX Settings</h3>
+<h3>Additional LaTeX Settings<a class="anchor" aria-label="anchor" href="#additional-latex-settings"></a>
+</h3>
 <p><strong>Location:</strong> <code>preamble.tex</code> (optional, advanced)</p>
 <p>Sometimes, pandoc options are just not enough. While pandoc allows you to directly apply single LaTeX commands in the YAML header (using <code>headers-include</code>), <code>preamble.tex</code> offers a more convenient way to include LaTeX commands at the beginning of your document.</p>
 <p>To include commands, simply edit <code>preamble.tex</code>. Common options set in <code>preamble.tex</code> are the modification of section headings (e.g., <code>\usepackage[small]{titlesec}</code>), the provision of the <code>H</code> float modifier (<code>\usepackage{float}</code>), or the packages used by <a href="https://CRAN.R-project.org/package=kableExtra" class="external-link">kableExtra</a>.</p>
 <p>For most customizations, it is recommended to turn off the default LaTeX title page, using <code>\renewcommand\maketitle{}</code>. Creating your own title page via LaTeX commands in the R Markdown script or by a customized R function is a much easier and more flexible way to create a customized title page.</p>
 </div>
 <div id="dynamic-settings" class="section level3">
-<h3 class="hasAnchor">
-<a href="#dynamic-settings" class="anchor" aria-hidden="true"></a>Dynamic Settings</h3>
+<h3>Dynamic Settings<a class="anchor" aria-label="anchor" href="#dynamic-settings"></a>
+</h3>
 <p><strong>Location:</strong> <code>pre_processor.R</code> (optional, advanced)</p>
 <p>In a few cases, pandoc options should be set dynamically. E.g., the geometry of a document should depend on whether it uses two columns or just one. <code>pre_processor.R</code> allows you to dynamically modify pandoc options, using plain R. See the example script for how to use it.</p>
 </div>
 <div id="variable-substitution" class="section level3">
-<h3 class="hasAnchor">
-<a href="#variable-substitution" class="anchor" aria-hidden="true"></a>Variable Substitution</h3>
+<h3>Variable Substitution<a class="anchor" aria-label="anchor" href="#variable-substitution"></a>
+</h3>
 <p><code>default.yaml</code>, as well as <code>preamble.tex</code> supports substitution of the variable <code>&lt;&lt;indiedown_path&gt;</code>. Whenever you mention <code>&lt;&lt;indiedown_path&gt;</code> in one of your files, it will be substituted by the path to the <code>indiedown</code> folder.</p>
 </div>
 <div id="including-additional-assets" class="section level3">
-<h3 class="hasAnchor">
-<a href="#including-additional-assets" class="anchor" aria-hidden="true"></a>Including Additional Assets</h3>
+<h3>Including Additional Assets<a class="anchor" aria-label="anchor" href="#including-additional-assets"></a>
+</h3>
 <p>Most customized styles will include some additional assets, such as a logo or a special font. Assets can be put into arbitrarily named folders. To access the assets from <code>default.yaml</code> or <code>preamble.tex</code>, simply use <code>&lt;&lt;indiedown_path&gt;/res</code> and the path will be correctly resolved by indiedown.</p>
 </div>
 </div>
 <div id="latex-generators" class="section level2">
-<h2 class="hasAnchor">
-<a href="#latex-generators" class="anchor" aria-hidden="true"></a>LaTeX Generators</h2>
+<h2>LaTeX Generators<a class="anchor" aria-label="anchor" href="#latex-generators"></a>
+</h2>
 <p>Indiedown packages use R functions to generate LaTeX code for customization.</p>
 <p>For most customizations, it is recommended to turn off the default LaTeX title page, and create your own title page via LaTeX commands. The basic repertory are the LaTeX commands <code>\large</code>, <code>\Large</code>, <code>\LARGE</code>, <code>\huge</code>, etc, along with <code>vspace{1ex}</code>, but all LaTeX trickery can be applied. The LaTeX helper functions should be put in the <code>R</code> folder of your package.</p>
 </div>
 <div id="templates" class="section level2">
-<h2 class="hasAnchor">
-<a href="#templates" class="anchor" aria-hidden="true"></a>Templates</h2>
+<h2>Templates<a class="anchor" aria-label="anchor" href="#templates"></a>
+</h2>
 <p>R Markdown Templates demonstrate the use of a customized style. R Markdown requires you to put them in <code>inst/rmarkdown/templates/mytemplate</code>. RStudio will recognize them and show them when you click ‘New R Markdown Document’ and ‘from Template’. You can also use <code><a href="https://usethis.r-lib.org/reference/use_rmarkdown_template.html" class="external-link">usethis::use_rmarkdown_template()</a></code> to add a new template.</p>
 </div>
   </div>
