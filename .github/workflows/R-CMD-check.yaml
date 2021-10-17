@@ -50,9 +50,6 @@ jobs:
           # Begin custom: R 3.4
           # End custom: R 3.4
 
-          # Begin custom: R 3.3
-          # End custom: R 3.3
-
           # Begin custom: matrix elements
           # End custom: matrix elements
     env:
