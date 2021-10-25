@@ -98,8 +98,8 @@
     
     
 <p><code>vignette("intro")</code> has shown how to set up a package skeleton with indiedown. This article teaches you how to apply customizations to produce a template that fits your needs.</p>
-<div id="customization-points" class="section level2">
-<h2>Customization points<a class="anchor" aria-label="anchor" href="#customization-points"></a>
+<div class="section level2">
+<h2 id="customization-points">Customization points<a class="anchor" aria-label="anchor" href="#customization-points"></a>
 </h2>
 <p>indiedown does not modify the default <code>.tex</code> template of Pandoc. Instead, all modifications are applied on top of it. This should make it compliant with future releases of Pandoc and R Markdown.</p>
 <p>There are three possible customization points to customize an indiedown skeleton:</p>
@@ -110,8 +110,8 @@
 </ul>
 <p>For this tutorial, we will focus on the first two points only.</p>
 </div>
-<div id="default-yaml" class="section level2">
-<h2>
+<div class="section level2">
+<h2 id="default-yaml">
 <code>default.yaml</code><a class="anchor" aria-label="anchor" href="#default-yaml"></a>
 </h2>
 <p>Let’s have a look at <code>inst/indedown/default.yaml</code>:</p>
@@ -149,8 +149,8 @@
 <span id="cb2-4"><a href="#cb2-4"></a><span class="kw">-</span><span class="at"> left=3cm</span></span>
 <span id="cb2-5"><a href="#cb2-5"></a><span class="kw">-</span><span class="at"> right=3cm</span></span></code></pre></div>
 </div>
-<div id="changing-fonts" class="section level2">
-<h2>Changing Fonts<a class="anchor" aria-label="anchor" href="#changing-fonts"></a>
+<div class="section level2">
+<h2 id="changing-fonts">Changing Fonts<a class="anchor" aria-label="anchor" href="#changing-fonts"></a>
 </h2>
 <p>Changing the font to fit your corporate style is usually the first step in customization.</p>
 <p>Note that <code>&lt;&lt;indiedown_path&gt;&gt;</code> will be automatically substituted with the actual location of <code>inst/indiedown</code>. That is why we can include <em>assets</em> that are picked up by the template. The default template includes the free Roboto font, which is located at <code>inst/indiedown</code>.</p>
@@ -160,8 +160,8 @@
 <p>Let’s preview what we have by now:</p>
 <p><img src="fig/status-1.png" style="width:70.0%"></p>
 </div>
-<div id="preamble-tex" class="section level2">
-<h2>
+<div class="section level2">
+<h2 id="preamble-tex">
 <code>preamble.tex</code><a class="anchor" aria-label="anchor" href="#preamble-tex"></a>
 </h2>
 <p>Let’s turn to the second customization point, <code>preamble.tex</code>. This contains LaTeX code that is run at the beginning. Add everything here that cannot be changed in the <code>default.yaml</code>. We want to use slightly bigger headers, and change the <code>titlesec</code> line to:</p>
@@ -170,8 +170,8 @@
 <div class="sourceCode" id="cb4"><pre class="sourceCode tex"><code class="sourceCode latex"><span id="cb4-1"><a href="#cb4-1"></a><span class="fu">\renewcommand\maketitle</span>{}</span></code></pre></div>
 <p>Instead, we will build our own title page in R now.</p>
 </div>
-<div id="a-customized-title-page-" class="section level2">
-<h2>A customized title page.<a class="anchor" aria-label="anchor" href="#a-customized-title-page-"></a>
+<div class="section level2">
+<h2 id="a-customized-title-page-">A customized title page.<a class="anchor" aria-label="anchor" href="#a-customized-title-page-"></a>
 </h2>
 <p>One of the core principles of indiedown is to keep corporate design elements as R code. That way, elements can be arranged flexibly and adjusted to particular needs.</p>
 <p>As a final step, we build a customized title page by modifying the function definition of <code>R/cd_page_title</code>. The function writes LaTeX code that will be added to the <code>.Rmd</code> when <code>cd_page_title()</code> is called.</p>
@@ -216,8 +216,8 @@
 <p>Building the package again, and running the template <code>.Rmd</code>, we get:</p>
 <p><img src="fig/status-2.png" style="width:30.0%"></p>
 </div>
-<div id="where-to-go-from-here" class="section level2">
-<h2>Where to go from here<a class="anchor" aria-label="anchor" href="#where-to-go-from-here"></a>
+<div class="section level2">
+<h2 id="where-to-go-from-here">Where to go from here<a class="anchor" aria-label="anchor" href="#where-to-go-from-here"></a>
 </h2>
 <p>indiedown provides a framework to easily generate customized R Markdown templates. Templates can be customized by the full power of Pandoc and LaTeX through various points of customization.</p>
 <p>This walk-through introduced two of them. For more details and a description of the third one, see <code><a href="../articles/customize.html">vignette("customize")</a></code>.</p>
@@ -239,7 +239,7 @@
 </div>
 
 <div class="footer-right">
-  <p>Developed by Christoph Sax, Kirill Müller, Angelica Becerra, Frederik Aust, cynkra GmbH.</p>
+  <p>Developed by .</p>
 </div>
 
       </footer>

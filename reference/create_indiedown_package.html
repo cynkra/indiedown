@@ -18,8 +18,8 @@ template. See vignette("indiedown") for a more detailed usage example.'><meta na
       </button>
 
       <div class="navbar-brand-container">
-        <a class="cynkra-logo-font" href="https://www.cynkra.com">cynkra</a>
-        <a class="cynkra-logo" href="https://www.cynkra.com">■</a>
+        <a class="external-link cynkra-logo-font" href="https://www.cynkra.com">cynkra</a>
+        <a class="external-link cynkra-logo" href="https://www.cynkra.com">■</a>
         <a class="navbar-brand" href="../index.html">indiedown <small>v0.1.1</small></a>
       </div>
     </div>
@@ -47,7 +47,7 @@ template. See vignette("indiedown") for a more detailed usage example.'><meta na
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/cynkra/indiedown/">
+  <a href="https://github.com/cynkra/indiedown/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -62,7 +62,7 @@ template. See vignette("indiedown") for a more detailed usage example.'><meta na
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Skeleton for a Customized R Markdown Template</h1>
-    <small class="dont-index">Source: <a href="https://github.com/cynkra/indiedown/blob/master/R/create_indiedown_package.R"><code>R/create_indiedown_package.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/cynkra/indiedown/blob/master/R/create_indiedown_package.R" class="external-link"><code>R/create_indiedown_package.R</code></a></small>
     <div class="hidden name"><code>create_indiedown_package.Rd</code></div>
     </div>
 
@@ -73,26 +73,27 @@ template. See <code><a href="../articles/indiedown.html">vignette("indiedown")</
 
     <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">create_indiedown_package</span><span class="op">(</span><span class="va">path</span>, overwrite <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 
+    <div id="ref-sections">
     <div id="arguments">
-    <h2>Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>path</th>
-      <td><p>Package path</p></td>
-    </tr><tr><th>overwrite</th>
-      <td><p>Should existing assets be overwritten?</p></td>
-    </tr></table></div>
+    <h2>Arguments</h2>
+    
 
+<dl><dt>path</dt><dd><p>Package path</p></dd>
+</dl><dl><dt>overwrite</dt><dd><p>Should existing assets be overwritten?</p></dd>
+</dl></div>
     <div id="value">
-    <h2>Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    <h2>Value</h2>
     <p>This function is called for its side effects and returns <code>NULL</code>, invisibly.</p>
+    </div>
     </div>
 
     <div id="examples">
-    <h2>Examples<a class="anchor" aria-label="anchor" href="#examples"></a></h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"mydown"</span><span class="op">)</span></span>
+    <h2>Examples</h2>
+    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"mydown"</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># set up empty R Package 'mydown'</span></span>
 <span class="r-in"><span class="fu">create_indiedown_package</span><span class="op">(</span><span class="va">path</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> indiedown skeleton set up at <span style="color: #0000BB;">/tmp/RtmpWaP2bI/mydown</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> indiedown skeleton set up at <span style="color: #0000BB;">/tmp/Rtmpn3FYY9/mydown</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> See <span style="color: #262626; background-color: #DADADA;">`vignette("indiedown")`</span> for how to customize the mydown package</span>
 </code></pre></div>
     </div>
@@ -104,11 +105,11 @@ template. See <code><a href="../articles/indiedown.html">vignette("indiedown")</
 
 
       <footer><div class="footer-left">
-  <p>indiedown is sponsored by <a class="cynkra-logo-font-footer" href="https://www.cynkra.com">cynkra</a><a class="cynkra-logo-footer" href="https://www.cynkra.com">■</a>. Learn more at <a href="https://www.cynkra.com/">www.cynkra.com</a>.</p>
+  <p>indiedown is sponsored by <a class="external-link cynkra-logo-font-footer" href="https://www.cynkra.com">cynkra</a><a class="external-link cynkra-logo-footer" href="https://www.cynkra.com">■</a>. Learn more at <a href="https://www.cynkra.com/" class="external-link">www.cynkra.com</a>.</p>
 </div>
 
 <div class="footer-right">
-  <p>Developed by Christoph Sax, Kirill Müller, Angelica Becerra, Frederik Aust, cynkra GmbH.</p>
+  <p>Developed by .</p>
 </div>
 
       </footer></div>

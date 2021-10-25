@@ -105,8 +105,8 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("remotes")</span>
 <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"cynkra/indiedown"</span><span class="op">)</span></code></pre></div>
-<div id="create-an-customized-r-markdown-template" class="section level2">
-<h2>Create an customized R Markdown template<a class="anchor" aria-label="anchor" href="#create-an-customized-r-markdown-template"></a>
+<div class="section level2">
+<h2 id="create-an-customized-r-markdown-template">Create an customized R Markdown template<a class="anchor" aria-label="anchor" href="#create-an-customized-r-markdown-template"></a>
 </h2>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
@@ -120,8 +120,8 @@
 <p>With <em>mydown</em> built and installed, our new template is available in RStudio (after a restart):</p>
 <p><img src="fig/rstudio.png" style="width:50.0%"></p>
 </div>
-<div id="customization-points" class="section level2">
-<h2>Customization points<a class="anchor" aria-label="anchor" href="#customization-points"></a>
+<div class="section level2">
+<h2 id="customization-points">Customization points<a class="anchor" aria-label="anchor" href="#customization-points"></a>
 </h2>
 <p>indiedown does not modify the default <code>.tex</code> template of Pandoc. Instead, all modifications are applied on top of it. This should make it compliant with future releases of Pandoc and R Markdown.</p>
 <p>There are three possible customization points to customize an indiedown skeleton:</p>
@@ -132,23 +132,23 @@
 </ul>
 <p>See the <code><a href="../articles/customize.html">vignette("customize")</a></code> for details.</p>
 </div>
-<div id="corporate-design-elements" class="section level2">
-<h2>Corporate Design Elements<a class="anchor" aria-label="anchor" href="#corporate-design-elements"></a>
+<div class="section level2">
+<h2 id="corporate-design-elements">Corporate Design Elements<a class="anchor" aria-label="anchor" href="#corporate-design-elements"></a>
 </h2>
 <p>Indiedown packages use R functions to generate LaTeX code for customization.</p>
 <p>For most customizations, it is recommended to turn off the default LaTeX title page and create your own title page via LaTeX commands. The basic repertory are the LaTeX commands <code>\large</code>, <code>\Large</code>, <code>\LARGE</code>, <code>\huge</code>, etc, along with <code>vspace{1ex}</code>, but all LaTeX trickery can be applied. The LaTeX helper functions should be put in the <code>R</code> folder of your package.</p>
 <p>The function <code>cd_page_title()</code> creates an example title page that can be adjusted to your needs. Note that the example uses raw strings, which are only available in R &gt;= 4. They make it easy to write LaTeX code directly in R. See details in <code>?indiedown_glue</code> for methods that work well with R &lt; 4.</p>
 </div>
-<div id="principles-of-indiedown" class="section level2">
-<h2>Principles of Indiedown<a class="anchor" aria-label="anchor" href="#principles-of-indiedown"></a>
+<div class="section level2">
+<h2 id="principles-of-indiedown">Principles of Indiedown<a class="anchor" aria-label="anchor" href="#principles-of-indiedown"></a>
 </h2>
-<div id="extend-pandoc--tex-do-not-replace" class="section level3">
-<h3>Extend Pandoc .tex, do not replace<a class="anchor" aria-label="anchor" href="#extend-pandoc--tex-do-not-replace"></a>
+<div class="section level3">
+<h3 id="extend-pandoc--tex-do-not-replace">Extend Pandoc .tex, do not replace<a class="anchor" aria-label="anchor" href="#extend-pandoc--tex-do-not-replace"></a>
 </h3>
 <p>indiedown does not modify the default <code>.tex</code> template of Pandoc. Instead, all modifications are applied on top of it. This should make it compliant with future releases of Pandoc and R Markdown.</p>
 </div>
-<div id="use-r-to-customize" class="section level3">
-<h3>Use R to customize<a class="anchor" aria-label="anchor" href="#use-r-to-customize"></a>
+<div class="section level3">
+<h3 id="use-r-to-customize">Use R to customize<a class="anchor" aria-label="anchor" href="#use-r-to-customize"></a>
 </h3>
 <p>Keep all corporate design elements as R code. This keeps the LaTeX code simple and allows flexible extensions.</p>
 </div>
@@ -170,7 +170,7 @@
 </div>
 
 <div class="footer-right">
-  <p>Developed by Christoph Sax, Kirill Müller, Angelica Becerra, Frederik Aust, cynkra GmbH.</p>
+  <p>Developed by .</p>
 </div>
 
       </footer>
