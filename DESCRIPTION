@@ -34,7 +34,7 @@ URL: https://cynkra.github.io/indiedown/,
     https://github.com/cynkra/indiedown
 BugReports: https://github.com/cynkra/indiedown/issues
 Depends:
-    R (>= 4.0.0)
+    R (>= 3.6.0)
 Imports:
     cli,
     fs,
