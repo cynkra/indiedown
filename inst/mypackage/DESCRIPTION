@@ -10,7 +10,7 @@ Description: Provides an R Markdown template conforming to the
     corporate design guidelines at Acme Inc.
 License: file LICENSE
 Depends:
-    R (>= 4.0.0)
+    R (>= 3.6.0)
 Imports:
     glue,
     knitr (>= 1.12),
