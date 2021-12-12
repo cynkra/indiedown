@@ -3,9 +3,9 @@ name: 'Actions to run after R packages are installed'
 runs:
   using: "composite"
   steps:
-    - name: Empty
+    - name: Run R CMD check on example package
       run: |
         options(crayon.enabled = TRUE)
         error_on <- "note"
-        rcmdcheck::rcmdcheck("inst/mypackage", args = c("--no-manual", "--as-cran"), error_on = "note", check_dir = "inst/mypackage/check")
+        rcmdcheck::rcmdcheck("inst/mypackage", args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "inst/mypackage/check")
       shell: Rscript {0}
