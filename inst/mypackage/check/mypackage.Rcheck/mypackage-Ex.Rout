@@ -1,0 +1,198 @@
+
+R version 4.1.2 (2021-11-01) -- "Bird Hippie"
+Copyright (C) 2021 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> pkgname <- "mypackage"
+> source(file.path(R.home("share"), "R", "examples-header.R"))
+> options(warn = 1)
+> base::assign(".ExTimings", "mypackage-Ex.timings", pos = 'CheckExEnv')
+> base::cat("name\tuser\tsystem\telapsed\n", file=base::get(".ExTimings", pos = 'CheckExEnv'))
+> base::assign(".format_ptime",
++ function(x) {
++   if(!is.na(x[4L])) x[1L] <- x[1L] + x[4L]
++   if(!is.na(x[5L])) x[2L] <- x[2L] + x[5L]
++   options(OutDec = '.')
++   format(x[1L:3L], digits = 7L)
++ },
++ pos = 'CheckExEnv')
+> 
+> ### * </HEADER>
+> library('mypackage')
+> 
+> base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
+> base::assign(".old_wd", base::getwd(), pos = 'CheckExEnv')
+> cleanEx()
+> nameEx("cd_format_date")
+> ### * cd_format_date
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: cd_format_date
+> ### Title: Corporate Design: Format Date
+> ### Aliases: cd_format_date
+> 
+> ### ** Examples
+> 
+> cd_format_date("2012-01-01", "de-DE")
+Warning in (function (category = "LC_ALL", locale = "")  :
+  OS reports request to set locale to "de_DE" cannot be honored
+[1] " 1. January 2012"
+> cd_format_date("2012-01-01", "en-US")
+Warning in (function (category = "LC_ALL", locale = "")  :
+  OS reports request to set locale to "en_US" cannot be honored
+[1] "January  1, 2012"
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("cd_format_date", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("cd_knit_chunk_opts")
+> ### * cd_knit_chunk_opts
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: cd_knit_chunk_opts
+> ### Title: Corporate Design: knitr Chunk Options
+> ### Aliases: cd_knit_chunk_opts
+> 
+> ### ** Examples
+> 
+> cd_knit_chunk_opts()
+> 
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("cd_knit_chunk_opts", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("cd_page_title")
+> ### * cd_page_title
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: cd_page_title
+> ### Title: Corporate Design: Title Page
+> ### Aliases: cd_page_title
+> 
+> ### ** Examples
+> 
+> cd_page_title(
++   title = "My Title",
++   subtitle = "My Subtitle"
++ )
+Warning in (function (category = "LC_ALL", locale = "")  :
+  OS reports request to set locale to "en_US" cannot be honored
+[1] "\\vspace*{-1cm}\n\\begin{center}\n  \\makebox[\\textwidth]{\\includegraphics[width=0.1\\paperwidth]{/home/runner/work/indiedown/indiedown/inst/mypackage/check/mypackage.Rcheck/mypackage/indiedown/res/logo.png}}\n\\end{center}\n\n\n\\vspace*{2cm}\n\n\\noindent \\Huge My Title\n\n\\noindent \\huge My Subtitle\n\n\\vspace*{2cm}\n\n\n\\normalsize\n\n\\noindent December 18, 2021\n\n\\clearpage"
+attr(,"class")
+[1] "knit_asis"
+attr(,"knit_cacheable")
+[1] NA
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("cd_page_title", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("default")
+> ### * default
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: default
+> ### Title: Set Default Value
+> ### Aliases: default
+> 
+> ### ** Examples
+> 
+> default(NULL)
+[1] ""
+> default(NULL, "my default")
+[1] "my default"
+> default("a string", "my default")
+[1] "a string"
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("default", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("indiedown_glue")
+> ### * indiedown_glue
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: indiedown_glue
+> ### Title: Glue LaTeX Code for Use in R Markdown
+> ### Aliases: indiedown_glue
+> 
+> ### ** Examples
+> 
+> x <- "something"
+> indiedown_glue(r"(\LaTeX\ code with <<x>> substituted )")
+[1] "\\LaTeX\\ code with something substituted "
+attr(,"class")
+[1] "knit_asis"
+attr(,"knit_cacheable")
+[1] NA
+> 
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("indiedown_glue", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("indiedown_path")
+> ### * indiedown_path
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: indiedown_path
+> ### Title: Path helpers
+> ### Aliases: indiedown_path indiedown_path_tex
+> 
+> ### ** Examples
+> 
+> indiedown_path()
+[1] "/home/runner/work/indiedown/indiedown/inst/mypackage/check/mypackage.Rcheck/mypackage/indiedown"
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("indiedown_path", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> ### * <FOOTER>
+> ###
+> cleanEx()
+> options(digits = 7L)
+> base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
+Time elapsed:  0.487 0.024 0.562 0 0 
+> grDevices::dev.off()
+null device 
+          1 
+> ###
+> ### Local variables: ***
+> ### mode: outline-minor ***
+> ### outline-regexp: "\\(> \\)?### [*]+" ***
+> ### End: ***
+> quit('no')

@@ -1,0 +1,33 @@
+---
+title           : "Report-Title"
+subtitle        : "Subtitle"
+author          : ["My-Name", "Our-Team"]
+
+documentclass   : article   # article (default) report
+fontsize        : 11pt      # 10pt 11pt (default) 12pt
+numbersections  : true
+
+output          : mypackage::mypackage
+---
+
+
+```{r, include = FALSE}
+library(knitr)
+library(kableExtra)
+library(tidyverse)
+library(mypackage)
+cd_knit_chunk_opts()
+```
+
+```{r}
+cd_page_title()
+```
+
+# Customized R Markdown Template
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.

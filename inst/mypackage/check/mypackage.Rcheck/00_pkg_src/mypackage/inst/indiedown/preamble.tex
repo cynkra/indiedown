@@ -1,0 +1,68 @@
+% indiedown: customize additional LaTeX settings here
+
+% word style tabs
+\usepackage{tabto}
+
+% no indentation, space between paragraphs
+\usepackage{parskip}
+
+% provides the H float modifier
+\usepackage{float}
+
+% full width table (with kable)
+\usepackage{tabu}
+\tabulinesep=1.1mm
+
+% Support for kableExtra package
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{pdflscape}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{colortbl}
+
+% extended implementation of the array and tabular environments
+\usepackage{array}
+
+% embedd graphics
+\usepackage{graphicx}
+\setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+
+% verbatim with URL-sensitive line breaks
+\usepackage{url}
+
+% units. E.g., \unitfrac{m}{s}
+\usepackage{units}
+
+% cross-references to according to the type of cross-reference
+\usepackage{cleveref}
+
+% Increase the number of simultaneous LaTeX floats
+\usepackage{morefloats}
+
+% Simple argument parsing
+\usepackage{xparse}
+
+% smaller section headings (also needed for titleformat below)
+\usepackage[small]{titlesec}
+
+% change space between letters
+\usepackage{fontspec}
+
+% for protrusion (even margins) and expansion (fewer/better hyphenations)
+\hyphenpenalty=7500
+% https://tex.stackexchange.com/a/335088/8057
+\pretolerance=5000
+\tolerance=9000
+% Do not set \lefthyphenmin, \righthyphenmin, or \<lang>hyphenmins
+% (https://tex.stackexchange.com/a/235279/8057):
+% These values add too much space between words.
+
+% omit default title page
+\renewcommand\maketitle{}
+
+
+

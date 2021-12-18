@@ -1,0 +1,26 @@
+# indiedown: customize defaults in YAML header here
+
+indent: false
+compact-title: true
+subparagraph: true  # needed for titlesec
+papersize: a4
+documentclass: article
+secnumdepth: 2
+fontsize: "11pt"
+
+mainfont: regular.ttf
+mainfontoptions:
+- Path=<<indiedown_path>>/fonts/
+- BoldFont=bold.ttf
+- ItalicFont=italic.ttf
+- BoldItalicFont=bolditalic.ttf
+- Scale=0.92
+
+linestretch: 1.05
+
+geometry:
+- top=2cm
+- bottom=2cm
+- left=2cm
+- right=2cm
+
