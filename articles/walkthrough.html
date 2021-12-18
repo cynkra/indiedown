@@ -84,7 +84,7 @@
 
       
 
-      </header><script src="walkthrough_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Walkthrough: Build your own R Markdown Template</h1>
@@ -115,39 +115,39 @@
 <code>default.yaml</code><a class="anchor" aria-label="anchor" href="#default-yaml"></a>
 </h2>
 <p>Let’s have a look at <code>inst/indedown/default.yaml</code>:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># indiedown: customize defaults in YAML header here</span></span>
-<span id="cb1-2"><a href="#cb1-2"></a></span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="fu">indent</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="fu">compact-title</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="fu">subparagraph</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span><span class="co">  # needed for titlesec</span></span>
-<span id="cb1-6"><a href="#cb1-6"></a><span class="fu">papersize</span><span class="kw">:</span><span class="at"> a4</span></span>
-<span id="cb1-7"><a href="#cb1-7"></a><span class="fu">documentclass</span><span class="kw">:</span><span class="at"> article</span></span>
-<span id="cb1-8"><a href="#cb1-8"></a><span class="fu">secnumdepth</span><span class="kw">:</span><span class="at"> </span><span class="dv">2</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a><span class="fu">fontsize</span><span class="kw">:</span><span class="at"> </span><span class="st">"11pt"</span></span>
-<span id="cb1-10"><a href="#cb1-10"></a></span>
-<span id="cb1-11"><a href="#cb1-11"></a><span class="fu">mainfont</span><span class="kw">:</span><span class="at"> regular.ttf</span></span>
-<span id="cb1-12"><a href="#cb1-12"></a><span class="fu">mainfontoptions</span><span class="kw">:</span></span>
-<span id="cb1-13"><a href="#cb1-13"></a><span class="kw">-</span><span class="at"> Path=&lt;&lt;indiedown_path&gt;&gt;/fonts/</span></span>
-<span id="cb1-14"><a href="#cb1-14"></a><span class="kw">-</span><span class="at"> BoldFont=bold.ttf</span></span>
-<span id="cb1-15"><a href="#cb1-15"></a><span class="kw">-</span><span class="at"> ItalicFont=italic.ttf</span></span>
-<span id="cb1-16"><a href="#cb1-16"></a><span class="kw">-</span><span class="at"> BoldItalicFont=bolditalic.ttf</span></span>
-<span id="cb1-17"><a href="#cb1-17"></a><span class="kw">-</span><span class="at"> Scale=0.92</span></span>
-<span id="cb1-18"><a href="#cb1-18"></a></span>
-<span id="cb1-19"><a href="#cb1-19"></a><span class="fu">linestretch</span><span class="kw">:</span><span class="at"> </span><span class="fl">1.05</span></span>
-<span id="cb1-20"><a href="#cb1-20"></a></span>
-<span id="cb1-21"><a href="#cb1-21"></a><span class="fu">geometry</span><span class="kw">:</span></span>
-<span id="cb1-22"><a href="#cb1-22"></a><span class="kw">-</span><span class="at"> top=2cm</span></span>
-<span id="cb1-23"><a href="#cb1-23"></a><span class="kw">-</span><span class="at"> bottom=2cm</span></span>
-<span id="cb1-24"><a href="#cb1-24"></a><span class="kw">-</span><span class="at"> left=2cm</span></span>
-<span id="cb1-25"><a href="#cb1-25"></a><span class="kw">-</span><span class="at"> right=2cm</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># indiedown: customize defaults in YAML header here</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">indent</span><span class="kw">:</span><span class="at"> </span><span class="ch">false</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">compact-title</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">subparagraph</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span><span class="co">  # needed for titlesec</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">papersize</span><span class="kw">:</span><span class="at"> a4</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">documentclass</span><span class="kw">:</span><span class="at"> article</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">secnumdepth</span><span class="kw">:</span><span class="at"> </span><span class="dv">2</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">fontsize</span><span class="kw">:</span><span class="at"> </span><span class="st">"11pt"</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">mainfont</span><span class="kw">:</span><span class="at"> regular.ttf</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">mainfontoptions</span><span class="kw">:</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> Path=&lt;&lt;indiedown_path&gt;&gt;/fonts/</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> BoldFont=bold.ttf</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> ItalicFont=italic.ttf</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> BoldItalicFont=bolditalic.ttf</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> Scale=0.92</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">linestretch</span><span class="kw">:</span><span class="at"> </span><span class="fl">1.05</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">geometry</span><span class="kw">:</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> top=2cm</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> bottom=2cm</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> left=2cm</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> right=2cm</span></span></code></pre></div>
 <p>These are simply defaults for the custom template. So rather than adding these options to the YAML header of the <code>.Rmd</code> each time, they can be stored centrally. You can overwrite these values in the <code>.Rmd</code> file.</p>
 <p>It is recommended to set as many customizations as possible as Pandoc options, and fall back to LaTeX if this is not possible. A full list of options is given in the <a href="https://pandoc.org/MANUAL.html#variables-for-latex" class="external-link">LaTeX section of the Pandoc manual</a>.</p>
 <p>In our case, we want to use slightly wider page margins, so we change the geometry to:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1"></a><span class="fu">geometry</span><span class="kw">:</span></span>
-<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">-</span><span class="at"> top=2.5cm</span></span>
-<span id="cb2-3"><a href="#cb2-3"></a><span class="kw">-</span><span class="at"> bottom=2.5cm</span></span>
-<span id="cb2-4"><a href="#cb2-4"></a><span class="kw">-</span><span class="at"> left=3cm</span></span>
-<span id="cb2-5"><a href="#cb2-5"></a><span class="kw">-</span><span class="at"> right=3cm</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">geometry</span><span class="kw">:</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> top=2.5cm</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> bottom=2.5cm</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> left=3cm</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> right=3cm</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="changing-fonts">Changing Fonts<a class="anchor" aria-label="anchor" href="#changing-fonts"></a>
@@ -165,9 +165,9 @@
 <code>preamble.tex</code><a class="anchor" aria-label="anchor" href="#preamble-tex"></a>
 </h2>
 <p>Let’s turn to the second customization point, <code>preamble.tex</code>. This contains LaTeX code that is run at the beginning. Add everything here that cannot be changed in the <code>default.yaml</code>. We want to use slightly bigger headers, and change the <code>titlesec</code> line to:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode tex"><code class="sourceCode latex"><span id="cb3-1"><a href="#cb3-1"></a><span class="bu">\usepackage</span>[medium]{<span class="ex">titlesec</span>}</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode tex"><code class="sourceCode latex"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>[medium]{<span class="ex">titlesec</span>}</span></code></pre></div>
 <p>As for <code>default.yaml</code>, it supports substitution of <code>&lt;&lt;indiedown_path&gt;&gt;</code>, so you could link to images here as well. Generally, you do not want do too many thing here. Note that the default LaTeX title page is disabled in the default template, for good reason:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode tex"><code class="sourceCode latex"><span id="cb4-1"><a href="#cb4-1"></a><span class="fu">\renewcommand\maketitle</span>{}</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode tex"><code class="sourceCode latex"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">\renewcommand\maketitle</span>{}</span></code></pre></div>
 <p>Instead, we will build our own title page in R now.</p>
 </div>
 <div class="section level2">
