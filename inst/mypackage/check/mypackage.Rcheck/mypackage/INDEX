@@ -1,7 +1,0 @@
-cd_format_date          Corporate Design: Format Date
-cd_knit_chunk_opts      Corporate Design: knitr Chunk Options
-cd_page_title           Corporate Design: Title Page
-default                 Set Default Value
-indiedown_glue          Glue LaTeX Code for Use in R Markdown
-indiedown_path          Path helpers
-mypackage               Customized R Markdown Document
