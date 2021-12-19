@@ -15,6 +15,6 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 NeedsCompilation: no
-Packaged: 2021-12-18 18:36:20 UTC; runner
+Packaged: 2021-12-19 01:34:04 UTC; runner
 Author: First Last [aut, cre]
 Maintainer: First Last <first.last@example.com>

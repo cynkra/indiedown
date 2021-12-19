@@ -101,7 +101,7 @@ Warning in (function (category = "LC_ALL", locale = "")  :
 + )
 Warning in (function (category = "LC_ALL", locale = "")  :
   OS reports request to set locale to "en_US" cannot be honored
-[1] "\\vspace*{-1cm}\n\\begin{center}\n  \\makebox[\\textwidth]{\\includegraphics[width=0.1\\paperwidth]{/home/runner/work/indiedown/indiedown/inst/mypackage/check/mypackage.Rcheck/mypackage/indiedown/res/logo.png}}\n\\end{center}\n\n\n\\vspace*{2cm}\n\n\\noindent \\Huge My Title\n\n\\noindent \\huge My Subtitle\n\n\\vspace*{2cm}\n\n\n\\normalsize\n\n\\noindent December 18, 2021\n\n\\clearpage"
+[1] "\\vspace*{-1cm}\n\\begin{center}\n  \\makebox[\\textwidth]{\\includegraphics[width=0.1\\paperwidth]{/home/runner/work/indiedown/indiedown/inst/mypackage/check/mypackage.Rcheck/mypackage/indiedown/res/logo.png}}\n\\end{center}\n\n\n\\vspace*{2cm}\n\n\\noindent \\Huge My Title\n\n\\noindent \\huge My Subtitle\n\n\\vspace*{2cm}\n\n\n\\normalsize\n\n\\noindent December 19, 2021\n\n\\clearpage"
 attr(,"class")
 [1] "knit_asis"
 attr(,"knit_cacheable")
@@ -186,7 +186,7 @@ attr(,"knit_cacheable")
 > cleanEx()
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  0.384 0.011 0.443 0 0 
+Time elapsed:  0.413 0.011 0.489 0 0 
 > grDevices::dev.off()
 null device 
           1 
