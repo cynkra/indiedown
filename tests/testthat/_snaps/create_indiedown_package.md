@@ -1,4 +1,4 @@
-# create_indiedown_package() works
+# create_indiedown_package() snapshot test
 
     Code
       create_indiedown_package("mydown")
