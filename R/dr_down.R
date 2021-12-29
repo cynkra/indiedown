@@ -5,7 +5,7 @@
 #' @export
 #' @examples
 #' \dontrun{
-#'   indiedown::dr_down()
+#' indiedown::dr_down()
 #' }
 dr_down <- function() {
 
@@ -19,10 +19,10 @@ dr_down <- function() {
     rstudio_v <- NA_character_
   }
 
-  if(requireNamespace("tinytex", quietly = TRUE)){
+  if (requireNamespace("tinytex", quietly = TRUE)) {
     tinytex_v <- as.character(packageVersion("tinytex"))
     is_tinytex <- tinytex::is_tinytex()
-  } else{
+  } else {
     tinytex_v <- NA_character_
     is_tinytex <- FALSE
   }
