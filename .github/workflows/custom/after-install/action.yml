@@ -9,3 +9,8 @@ runs:
         error_on <- "note"
         rcmdcheck::rcmdcheck("inst/mypackage", args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "inst/mypackage/check")
       shell: Rscript {0}
+
+    - name: Remove check output
+      run: |
+        rm -r inst/mypackage/check
+      shell: bash
