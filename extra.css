@@ -5,20 +5,20 @@
 
 @font-face {
   font-family: "frutiger-light";
-  src: url("https://sos-ch-dk-2.exo.io/cynkraweb/1449009/e5acedaa-f4c6-4128-8b5a-2f3f8324f09b.eot"); /* IE9 Compat Modes */
-  src: url("https://sos-ch-dk-2.exo.io/cynkraweb/1449009/e5acedaa-f4c6-4128-8b5a-2f3f8324f09b.eot?#iefix")
+  src: url("https://cynkraweb.s3.eu-central-1.amazonaws.com/fonts/1449009/e5acedaa-f4c6-4128-8b5a-2f3f8324f09b.eot"); /* IE9 Compat Modes */
+  src: url("https://cynkraweb.s3.eu-central-1.amazonaws.com/fonts/1449009/e5acedaa-f4c6-4128-8b5a-2f3f8324f09b.eot?#iefix")
       format("embedded-opentype"),
     /* IE6-IE8 */
-      url("https://sos-ch-dk-2.exo.io/cynkraweb/1449009/b3ca2df2-7bee-4fc0-84cb-b029b99c3b61.woff2")
+      url("https://cynkraweb.s3.eu-central-1.amazonaws.com/fonts/1449009/b3ca2df2-7bee-4fc0-84cb-b029b99c3b61.woff2")
       format("woff2"),
     /* Super Modern Browsers */
-      url("https://sos-ch-dk-2.exo.io/cynkraweb/1449009/554d0bc9-df00-45eb-993e-f62841c80ab1.woff")
+      url("https://cynkraweb.s3.eu-central-1.amazonaws.com/fonts/1449009/554d0bc9-df00-45eb-993e-f62841c80ab1.woff")
       format("woff"),
     /* Pretty Modern Browsers */
-      url("https://sos-ch-dk-2.exo.io/cynkraweb/1449009/3512931d-90c5-4aa4-b0dc-3a3630c65f37.ttf")
+      url("https://cynkraweb.s3.eu-central-1.amazonaws.com/fonts/1449009/3512931d-90c5-4aa4-b0dc-3a3630c65f37.ttf")
       format("truetype"),
     /* Safari, Android, iOS */
-      url("https://sos-ch-dk-2.exo.io/cynkraweb/1449009/f8b7e418-9dc4-4040-ac46-c50501eac7b5.svg#f8b7e418-9dc4-4040-ac46-c50501eac7b5")
+      url("https://cynkraweb.s3.eu-central-1.amazonaws.com/fonts/1449009/f8b7e418-9dc4-4040-ac46-c50501eac7b5.svg#f8b7e418-9dc4-4040-ac46-c50501eac7b5")
       format("svg"); /* Legacy iOS */
   font-weight: normal;
   font-style: normal;
@@ -26,20 +26,20 @@
 
 @font-face {
   font-family: "frutiger-light";
-  src: url("https://sos-ch-dk-2.exo.io/cynkraweb/1449011/2b51737a-65e3-4d3c-b9f8-584e27727ccd.eot"); /* IE9 Compat Modes */
-  src: url("https://sos-ch-dk-2.exo.io/cynkraweb/1449011/2b51737a-65e3-4d3c-b9f8-584e27727ccd.eot?#iefix")
+  src: url("https://cynkraweb.s3.eu-central-1.amazonaws.com/fonts/1449011/2b51737a-65e3-4d3c-b9f8-584e27727ccd.eot"); /* IE9 Compat Modes */
+  src: url("https://cynkraweb.s3.eu-central-1.amazonaws.com/fonts/1449011/2b51737a-65e3-4d3c-b9f8-584e27727ccd.eot?#iefix")
       format("embedded-opentype"),
     /* IE6-IE8 */
-      url("https://sos-ch-dk-2.exo.io/cynkraweb/1449011/5dabc0f4-5497-42fb-ad16-ee2423337cb0.woff2")
+      url("https://cynkraweb.s3.eu-central-1.amazonaws.com/fonts/1449011/5dabc0f4-5497-42fb-ad16-ee2423337cb0.woff2")
       format("woff2"),
     /* Super Modern Browsers */
-      url("https://sos-ch-dk-2.exo.io/cynkraweb/1449011/21fc589b-c373-4c02-9c5a-66379ff223e1.woff")
+      url("https://cynkraweb.s3.eu-central-1.amazonaws.com/fonts/1449011/21fc589b-c373-4c02-9c5a-66379ff223e1.woff")
       format("woff"),
     /* Pretty Modern Browsers */
-      url("https://sos-ch-dk-2.exo.io/cynkraweb/1449011/cd86b01a-7f39-480d-b238-eeb83bde04ba.ttf")
+      url("https://cynkraweb.s3.eu-central-1.amazonaws.com/fonts/1449011/cd86b01a-7f39-480d-b238-eeb83bde04ba.ttf")
       format("truetype"),
     /* Safari, Android, iOS */
-      url("https://sos-ch-dk-2.exo.io/cynkraweb/1449011/fa9d4094-d898-4ee0-8b97-0f12071e354a.svg#fa9d4094-d898-4ee0-8b97-0f12071e354a")
+      url("https://cynkraweb.s3.eu-central-1.amazonaws.com/fonts/1449011/fa9d4094-d898-4ee0-8b97-0f12071e354a.svg#fa9d4094-d898-4ee0-8b97-0f12071e354a")
       format("svg"); /* Legacy iOS */
   font-weight: normal;
   font-style: italic;
@@ -47,20 +47,20 @@
 
 @font-face {
   font-family: "frutiger-light";
-  src: url("https://sos-ch-dk-2.exo.io/cynkraweb/1449025/418faef6-65aa-48f3-b1e1-c944af42723a.eot"); /* IE9 Compat Modes */
-  src: url("https://sos-ch-dk-2.exo.io/cynkraweb/1449025/418faef6-65aa-48f3-b1e1-c944af42723a.eot?#iefix")
+  src: url("https://cynkraweb.s3.eu-central-1.amazonaws.com/fonts/1449025/418faef6-65aa-48f3-b1e1-c944af42723a.eot"); /* IE9 Compat Modes */
+  src: url("https://cynkraweb.s3.eu-central-1.amazonaws.com/fonts/1449025/418faef6-65aa-48f3-b1e1-c944af42723a.eot?#iefix")
       format("embedded-opentype"),
     /* IE6-IE8 */
-      url("https://sos-ch-dk-2.exo.io/cynkraweb/1449025/c31af250-c28e-40ef-bed6-866e7ed6fedf.woff2")
+      url("https://cynkraweb.s3.eu-central-1.amazonaws.com/fonts/1449025/c31af250-c28e-40ef-bed6-866e7ed6fedf.woff2")
       format("woff2"),
     /* Super Modern Browsers */
-      url("https://sos-ch-dk-2.exo.io/cynkraweb/1449025/45d6a395-278a-4303-91f8-97ddd865efab.woff")
+      url("https://cynkraweb.s3.eu-central-1.amazonaws.com/fonts/1449025/45d6a395-278a-4303-91f8-97ddd865efab.woff")
       format("woff"),
     /* Pretty Modern Browsers */
-      url("https://sos-ch-dk-2.exo.io/cynkraweb/1449025/8ce19370-12eb-42ca-9585-370280f97596.ttf")
+      url("https://cynkraweb.s3.eu-central-1.amazonaws.com/fonts/1449025/8ce19370-12eb-42ca-9585-370280f97596.ttf")
       format("truetype"),
     /* Safari, Android, iOS */
-      url("https://sos-ch-dk-2.exo.io/cynkraweb/1449025/e4bcdda3-ec47-4eb5-89bb-ebd9c5eeed95.svg#fa9d4094-d898-4ee0-8b97-0f12071e354a")
+      url("https://cynkraweb.s3.eu-central-1.amazonaws.com/fonts/1449025/e4bcdda3-ec47-4eb5-89bb-ebd9c5eeed95.svg#fa9d4094-d898-4ee0-8b97-0f12071e354a")
       format("svg"); /* Legacy iOS */
   font-weight: bold;
   font-style: normal;
@@ -96,8 +96,6 @@ h6,
 .h5,
 .h6 {
   font-family: "frutiger-light", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 1.5rem;
-  font-weight: 400;
 }
 
 /* body font ---------------------------------------------------------------- */
@@ -105,7 +103,7 @@ html,
 body {
   font-family: "frutiger-light", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 15px;
-  font-weight: 300;
+  color: black;
 }
 
 /* syntax highlighting ------------------------------------------------------ */
@@ -266,7 +264,7 @@ nav[data-toggle="toc"] .nav > li > a {
 }
 
 .navbar-default .navbar-left  > li > a {
-  color: gray;
+  color: black;
   font-size: 12px;
   font-style: italic;
   line-height: 20px;
