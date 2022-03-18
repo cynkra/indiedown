@@ -14,7 +14,6 @@ output          : mypackage::mypackage
 ```{r, include = FALSE}
 library(knitr)
 library(kableExtra)
-library(tidyverse)
 library(mypackage)
 cd_knit_chunk_opts()
 ```
