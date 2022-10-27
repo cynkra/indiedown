@@ -85,16 +85,24 @@
 
     
     
-<p><code>vignette("intro")</code> has shown how to set up a package skeleton with indiedown. This article teaches you how to apply customizations to produce a template that fits your needs.</p>
+<p><code>vignette("intro")</code> has shown how to set up a package
+skeleton with indiedown. This article teaches you how to apply
+customizations to produce a template that fits your needs.</p>
 <div class="section level2">
 <h2 id="customization-points">Customization points<a class="anchor" aria-label="anchor" href="#customization-points"></a>
 </h2>
-<p>indiedown does not modify the default <code>.tex</code> template of Pandoc. Instead, all modifications are applied on top of it. This should make it compliant with future releases of Pandoc and R Markdown.</p>
-<p>There are three possible customization points to customize an indiedown skeleton:</p>
+<p>indiedown does not modify the default <code>.tex</code> template of
+Pandoc. Instead, all modifications are applied on top of it. This should
+make it compliant with future releases of Pandoc and R Markdown.</p>
+<p>There are three possible customization points to customize an
+indiedown skeleton:</p>
 <ul>
-<li><p>Set defaults (such as fonts or geometry) in the YAML header at <code>inst/indiedown/default.yaml</code></p></li>
-<li><p>Tweak LaTeX settings at <code>inst/indiedown/preamble.tex</code></p></li>
-<li><p>Apply dynamic adjustments in <code>pre_processor.R</code> (advanced)</p></li>
+<li><p>Set defaults (such as fonts or geometry) in the YAML header at
+<code>inst/indiedown/default.yaml</code></p></li>
+<li><p>Tweak LaTeX settings at
+<code>inst/indiedown/preamble.tex</code></p></li>
+<li><p>Apply dynamic adjustments in <code>pre_processor.R</code>
+(advanced)</p></li>
 </ul>
 <p>For this tutorial, we will focus on the first two points only.</p>
 </div>
@@ -128,9 +136,16 @@
 <span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> bottom=2cm</span></span>
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> left=2cm</span></span>
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> right=2cm</span></span></code></pre></div>
-<p>These are simply defaults for the custom template. So rather than adding these options to the YAML header of the <code>.Rmd</code> each time, they can be stored centrally. You can overwrite these values in the <code>.Rmd</code> file.</p>
-<p>It is recommended to set as many customizations as possible as Pandoc options, and fall back to LaTeX if this is not possible. A full list of options is given in the <a href="https://pandoc.org/MANUAL.html#variables-for-latex" class="external-link">LaTeX section of the Pandoc manual</a>.</p>
-<p>In our case, we want to use slightly wider page margins, so we change the geometry to:</p>
+<p>These are simply defaults for the custom template. So rather than
+adding these options to the YAML header of the <code>.Rmd</code> each
+time, they can be stored centrally. You can overwrite these values in
+the <code>.Rmd</code> file.</p>
+<p>It is recommended to set as many customizations as possible as Pandoc
+options, and fall back to LaTeX if this is not possible. A full list of
+options is given in the <a href="https://pandoc.org/MANUAL.html#variables-for-latex" class="external-link">LaTeX section
+of the Pandoc manual</a>.</p>
+<p>In our case, we want to use slightly wider page margins, so we change
+the geometry to:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">geometry</span><span class="kw">:</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> top=2.5cm</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> bottom=2.5cm</span></span>
@@ -140,11 +155,20 @@
 <div class="section level2">
 <h2 id="changing-fonts">Changing Fonts<a class="anchor" aria-label="anchor" href="#changing-fonts"></a>
 </h2>
-<p>Changing the font to fit your corporate style is usually the first step in customization.</p>
-<p>Note that <code>&lt;&lt;indiedown_path&gt;&gt;</code> will be automatically substituted with the actual location of <code>inst/indiedown</code>. That is why we can include <em>assets</em> that are picked up by the template. The default template includes the free Roboto font, which is located at <code>inst/indiedown</code>.</p>
-<p>We could replace that with a proprietary font to match the corporate design. Instead we use a helper function to get one of <a href="https://fonts.google.com" class="external-link">Google’s free fonts</a>.</p>
+<p>Changing the font to fit your corporate style is usually the first
+step in customization.</p>
+<p>Note that <code>&lt;&lt;indiedown_path&gt;&gt;</code> will be
+automatically substituted with the actual location of
+<code>inst/indiedown</code>. That is why we can include <em>assets</em>
+that are picked up by the template. The default template includes the
+free Roboto font, which is located at <code>inst/indiedown</code>.</p>
+<p>We could replace that with a proprietary font to match the corporate
+design. Instead we use a helper function to get one of <a href="https://fonts.google.com" class="external-link">Google’s free fonts</a>.</p>
 <p>use_indiedown_gfonts(id = “lato”)</p>
-<p>The function relies on the <a href="https://CRAN.R-project.org/package=gfonts" class="external-link">gfonts</a> package to download and install the <em>Lato</em> font. If you don’t know the ID of a font, use <code><a href="https://rdrr.io/pkg/gfonts/man/get_all_fonts.html" class="external-link">gfonts::get_all_fonts()</a></code> to get a list of all available fonts.</p>
+<p>The function relies on the <a href="https://CRAN.R-project.org/package=gfonts" class="external-link">gfonts</a> package to
+download and install the <em>Lato</em> font. If you don’t know the ID of
+a font, use <code><a href="https://rdrr.io/pkg/gfonts/man/get_all_fonts.html" class="external-link">gfonts::get_all_fonts()</a></code> to get a list of all
+available fonts.</p>
 <p>Let’s preview what we have by now:</p>
 <p><img src="fig/status-1.png" style="width:70.0%"></p>
 </div>
@@ -152,21 +176,49 @@
 <h2 id="preamble-tex">
 <code>preamble.tex</code><a class="anchor" aria-label="anchor" href="#preamble-tex"></a>
 </h2>
-<p>Let’s turn to the second customization point, <code>preamble.tex</code>. This contains LaTeX code that is run at the beginning. Add everything here that cannot be changed in the <code>default.yaml</code>. We want to use slightly bigger headers, and change the <code>titlesec</code> line to:</p>
+<p>Let’s turn to the second customization point,
+<code>preamble.tex</code>. This contains LaTeX code that is run at the
+beginning. Add everything here that cannot be changed in the
+<code>default.yaml</code>. We want to use slightly bigger headers, and
+change the <code>titlesec</code> line to:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode tex"><code class="sourceCode latex"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">\usepackage</span>[medium]{<span class="ex">titlesec</span>}</span></code></pre></div>
-<p>As for <code>default.yaml</code>, it supports substitution of <code>&lt;&lt;indiedown_path&gt;&gt;</code>, so you could link to images here as well. Generally, you do not want do too many thing here. Note that the default LaTeX title page is disabled in the default template, for good reason:</p>
+<p>As for <code>default.yaml</code>, it supports substitution of
+<code>&lt;&lt;indiedown_path&gt;&gt;</code>, so you could link to images
+here as well. Generally, you do not want do too many thing here. Note
+that the default LaTeX title page is disabled in the default template,
+for good reason:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode tex"><code class="sourceCode latex"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">\renewcommand\maketitle</span>{}</span></code></pre></div>
 <p>Instead, we will build our own title page in R now.</p>
 </div>
 <div class="section level2">
 <h2 id="a-customized-title-page-">A customized title page.<a class="anchor" aria-label="anchor" href="#a-customized-title-page-"></a>
 </h2>
-<p>One of the core principles of indiedown is to keep corporate design elements as R code. That way, elements can be arranged flexibly and adjusted to particular needs.</p>
-<p>As a final step, we build a customized title page by modifying the function definition of <code>R/cd_page_title</code>. The function writes LaTeX code that will be added to the <code>.Rmd</code> when <code>cd_page_title()</code> is called.</p>
-<p>To make writing of LaTeX code in R easy, we rely on the raw string feature that was added in R 4.0.0. It allows you to write pure LaTeX code in R, without having to escape every <code>\</code> by a second <code>\\</code>.</p>
-<p>If you have to use a version of R that is older, the <code>read_tex()</code> function offers an alternative way to write unescaped LaTeX code. See <code>?read_tex</code>.</p>
-<p>The <code>indiedown_glue()</code> helper function uses the <a href="https://CRAN.R-project.org/package=glue" class="external-link">glue</a> package to substitute variables in the string. That way, variables such as <code>title</code> or <code>subtitle</code> will be substituted in the LaTeX code.</p>
-<p>With <code>indiedown_path_tex()</code>, you can also refer to the path of <code>inst/indiedown</code>, and use assets from the package. In the example, we use this to include a logo. Now, we don’t want to use a logo but rather a photograph of a beautiful parrot. We download the image from <a href="https://unsplash.com/photos/gGC63oug3iY" class="external-link">unsplash.com</a> in medium quality and store it in <code>res/mikhail-vasilyev-gGC63oug3iY-unsplash.jpg</code>. Then, we change the function definition as follows:</p>
+<p>One of the core principles of indiedown is to keep corporate design
+elements as R code. That way, elements can be arranged flexibly and
+adjusted to particular needs.</p>
+<p>As a final step, we build a customized title page by modifying the
+function definition of <code>R/cd_page_title</code>. The function writes
+LaTeX code that will be added to the <code>.Rmd</code> when
+<code>cd_page_title()</code> is called.</p>
+<p>To make writing of LaTeX code in R easy, we rely on the raw string
+feature that was added in R 4.0.0. It allows you to write pure LaTeX
+code in R, without having to escape every <code>\</code> by a second
+<code>\\</code>.</p>
+<p>If you have to use a version of R that is older, the
+<code>read_tex()</code> function offers an alternative way to write
+unescaped LaTeX code. See <code>?read_tex</code>.</p>
+<p>The <code>indiedown_glue()</code> helper function uses the <a href="https://CRAN.R-project.org/package=glue" class="external-link">glue</a> package to
+substitute variables in the string. That way, variables such as
+<code>title</code> or <code>subtitle</code> will be substituted in the
+LaTeX code.</p>
+<p>With <code>indiedown_path_tex()</code>, you can also refer to the
+path of <code>inst/indiedown</code>, and use assets from the package. In
+the example, we use this to include a logo. Now, we don’t want to use a
+logo but rather a photograph of a beautiful parrot. We download the
+image from <a href="https://unsplash.com/photos/gGC63oug3iY" class="external-link">unsplash.com</a> in
+medium quality and store it in
+<code>res/mikhail-vasilyev-gGC63oug3iY-unsplash.jpg</code>. Then, we
+change the function definition as follows:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cd_page_title</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">title</span> <span class="op">=</span> <span class="fu">default</span><span class="op">(</span><span class="fu">rmarkdown</span><span class="fu">::</span><span class="va"><a href="https://pkgs.rstudio.com/rmarkdown/reference/metadata.html" class="external-link">metadata</a></span><span class="op">$</span><span class="va">title</span>, <span class="st">"Title"</span><span class="op">)</span>,</span>
 <span>                          <span class="va">subtitle</span> <span class="op">=</span> <span class="fu">default</span><span class="op">(</span><span class="fu">rmarkdown</span><span class="fu">::</span><span class="va"><a href="https://pkgs.rstudio.com/rmarkdown/reference/metadata.html" class="external-link">metadata</a></span><span class="op">$</span><span class="va">subtitle</span>, <span class="st">"Subtitle"</span><span class="op">)</span>,</span>
@@ -200,15 +252,21 @@
 <span><span class="st">    )"</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p>Of course, we could also pass an image path as an argument, so we can choose a different title page in each report.</p>
-<p>Building the package again, and running the template <code>.Rmd</code>, we get:</p>
+<p>Of course, we could also pass an image path as an argument, so we can
+choose a different title page in each report.</p>
+<p>Building the package again, and running the template
+<code>.Rmd</code>, we get:</p>
 <p><img src="fig/status-2.png" style="width:30.0%"></p>
 </div>
 <div class="section level2">
 <h2 id="where-to-go-from-here">Where to go from here<a class="anchor" aria-label="anchor" href="#where-to-go-from-here"></a>
 </h2>
-<p>indiedown provides a framework to easily generate customized R Markdown templates. Templates can be customized by the full power of Pandoc and LaTeX through various points of customization.</p>
-<p>This walk-through introduced two of them. For more details and a description of the third one, see <code><a href="../articles/customize.html">vignette("customize")</a></code>.</p>
+<p>indiedown provides a framework to easily generate customized R
+Markdown templates. Templates can be customized by the full power of
+Pandoc and LaTeX through various points of customization.</p>
+<p>This walk-through introduced two of them. For more details and a
+description of the third one, see
+<code><a href="../articles/customize.html">vignette("customize")</a></code>.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
@@ -223,7 +281,9 @@
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Sponsored by <a href="https://cynkra.com" class="external-link"><img src="https://cynkra.com/assets/img/logo_small.svg" id="cynkra-logo-footer" alt="cynkra"></a></p>
+<p>
+Sponsored by <a href="https://cynkra.com" class="external-link"><img src="https://cynkra.com/assets/img/logo_small.svg" id="cynkra-logo-footer" alt="cynkra"></a>
+</p>
 </div>
 
     </footer>
