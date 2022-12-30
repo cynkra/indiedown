@@ -1,5 +1,10 @@
 <!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
 
+# indiedown 0.1.1.9001
+
+- Internal changes only.
+
+
 # indiedown 0.1.1.9000
 
 ## simplify
