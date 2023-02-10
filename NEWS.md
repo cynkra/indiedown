@@ -1,4 +1,11 @@
-<!-- NEWS.md is maintained by https://cynkra.github.io/fledge, do not edit -->
+<!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
+
+# indiedown 0.1.1.9002
+
+## Chore
+
+- Avoid tests on R \< 4.0 on GHA.
+
 
 # indiedown 0.1.1.9001
 
