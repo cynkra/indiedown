@@ -34,7 +34,7 @@ jobs:
     # End custom: services
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: ./.github/workflows/rate-limit
         with:
@@ -86,7 +86,7 @@ jobs:
     # End custom: services
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ needs.rcc-smoke.outputs.sha }}
 
@@ -140,7 +140,7 @@ jobs:
           # Use 3.6 to trigger usage of RTools35
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ needs.rcc-smoke.outputs.sha }}
 
@@ -201,7 +201,7 @@ jobs:
           # End custom: matrix elements
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ needs.rcc-smoke.outputs.sha }}
 
