@@ -10,3 +10,4 @@
 ^README\.Rmd$
 ^CODE_OF_CONDUCT\.md$
 ^cran-comments\.md$
+^renovate\.json$
