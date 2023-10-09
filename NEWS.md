@@ -1,5 +1,18 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9005
+
+## Chore
+
+- Build-ignore `renovate.json`.
+
+## Uncategorized
+
+- Merge pull request #30 from cynkra/renovate/configure.
+
+  Configure Renovate
+
+
 # indiedown 0.1.1.9004
 
 - Internal changes only.
