@@ -30,7 +30,7 @@ Description: Simplifies the generation of customized R Markdown PDF
     corporate design elements, such as a title page, can be added as R
     functions that produce 'LaTeX' code.
 License: MIT + file LICENSE
-URL: https://cynkra.github.io/indiedown/,
+URL: https://indiedown.cynkra.com/,
     https://github.com/cynkra/indiedown
 BugReports: https://github.com/cynkra/indiedown/issues
 Depends:
