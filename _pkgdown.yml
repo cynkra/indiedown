@@ -2,3 +2,4 @@ url: https://cynkra.github.io/indiedown
 
 template:
   package: cynkratemplate
+  bootstrap: 5
