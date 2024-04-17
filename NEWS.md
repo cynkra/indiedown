@@ -1,5 +1,24 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9009
+
+## Chore
+
+### deps
+
+- Update dessant/lock-threads action to v5.
+
+### deps
+
+- Update actions/cache action to v4.
+
+## Documentation
+
+- Set BS version explicitly for now.
+
+  https://github.com/cynkra/cynkratemplate/issues/53
+
+
 # indiedown 0.1.1.9008
 
 - Internal changes only.
