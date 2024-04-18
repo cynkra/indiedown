@@ -1,5 +1,14 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9010
+
+## Chore
+
+### deps
+
+- Update nick-fields/retry action to v3.
+
+
 # indiedown 0.1.1.9009
 
 ## Chore
