@@ -1,12 +1,11 @@
 pandoc: 3.1.11
 pkgdown: 2.0.9.9000
-pkgdown_sha: b04741701bc6aef5e0cb9f3f688e687947b7af60
+pkgdown_sha: 34ee692e4ce10c8abfb863cc782da771838558f7
 articles:
   customize: customize.html
   indiedown: indiedown.html
   walkthrough: walkthrough.html
-last_built: 2024-04-19T00:10Z
+last_built: 2024-06-25T08:26Z
 urls:
-  reference: https://cynkra.github.io/indiedown/reference
-  article: https://cynkra.github.io/indiedown/articles
-
+  reference: https://indiedown.cynkra.com/reference
+  article: https://indiedown.cynkra.com/articles

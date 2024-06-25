@@ -1,48 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://cynkra.github.io/indiedown/404.html</loc>
-  </url>
-  <url>
-    <loc>https://cynkra.github.io/indiedown/CODE_OF_CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>https://cynkra.github.io/indiedown/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://cynkra.github.io/indiedown/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://cynkra.github.io/indiedown/articles/customize.html</loc>
-  </url>
-  <url>
-    <loc>https://cynkra.github.io/indiedown/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://cynkra.github.io/indiedown/articles/indiedown.html</loc>
-  </url>
-  <url>
-    <loc>https://cynkra.github.io/indiedown/articles/walkthrough.html</loc>
-  </url>
-  <url>
-    <loc>https://cynkra.github.io/indiedown/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://cynkra.github.io/indiedown/index.html</loc>
-  </url>
-  <url>
-    <loc>https://cynkra.github.io/indiedown/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://cynkra.github.io/indiedown/reference/create_indiedown_package.html</loc>
-  </url>
-  <url>
-    <loc>https://cynkra.github.io/indiedown/reference/dr_down.html</loc>
-  </url>
-  <url>
-    <loc>https://cynkra.github.io/indiedown/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://cynkra.github.io/indiedown/reference/use_indiedown_gfonts.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://indiedown.cynkra.com/404.html</loc></url>
+<url><loc>https://indiedown.cynkra.com/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://indiedown.cynkra.com/LICENSE-text.html</loc></url>
+<url><loc>https://indiedown.cynkra.com/LICENSE.html</loc></url>
+<url><loc>https://indiedown.cynkra.com/articles/customize.html</loc></url>
+<url><loc>https://indiedown.cynkra.com/articles/index.html</loc></url>
+<url><loc>https://indiedown.cynkra.com/articles/indiedown.html</loc></url>
+<url><loc>https://indiedown.cynkra.com/articles/walkthrough.html</loc></url>
+<url><loc>https://indiedown.cynkra.com/authors.html</loc></url>
+<url><loc>https://indiedown.cynkra.com/index.html</loc></url>
+<url><loc>https://indiedown.cynkra.com/news/index.html</loc></url>
+<url><loc>https://indiedown.cynkra.com/reference/create_indiedown_package.html</loc></url>
+<url><loc>https://indiedown.cynkra.com/reference/dr_down.html</loc></url>
+<url><loc>https://indiedown.cynkra.com/reference/index.html</loc></url>
+<url><loc>https://indiedown.cynkra.com/reference/use_indiedown_gfonts.html</loc></url>
 </urlset>
+
