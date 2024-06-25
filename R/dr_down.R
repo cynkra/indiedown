@@ -8,7 +8,6 @@
 #' indiedown::dr_down()
 #' }
 dr_down <- function() {
-
   # Check the version
   pandoc_v <- as.character(rmarkdown::pandoc_version())
   r_v <- paste(version$major, version$minor, sep = ".")
