@@ -1,5 +1,12 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9012
+
+## Documentation
+
+- Fix url (#28).
+
+
 # indiedown 0.1.1.9011
 
 ## Chore
