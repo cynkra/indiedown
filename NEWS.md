@@ -1,5 +1,12 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9015
+
+## Continuous integration
+
+- Fix on Windows, tweak lock workflow.
+
+
 # indiedown 0.1.1.9014
 
 ## Chore
