@@ -1,5 +1,12 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9018
+
+## Continuous integration
+
+- Use v2 instead of master.
+
+
 # indiedown 0.1.1.9017
 
 ## Continuous integration
