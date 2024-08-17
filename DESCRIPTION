@@ -1,7 +1,7 @@
 Type: Package
 Package: indiedown
 Title: Individual R Markdown Templates
-Version: 0.1.1.9018
+Version: 0.1.1.9019
 Authors@R:
     c(person(given = "Christoph",
              family = "Sax",
