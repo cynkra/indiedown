@@ -1,5 +1,16 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9023
+
+## Continuous integration
+
+  - Trigger run (#51).
+    
+      - ci: Trigger run
+    
+      - ci: Latest changes
+
+
 # indiedown 0.1.1.9022
 
 ## Continuous integration
