@@ -1,5 +1,12 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9024
+
+## Continuous integration
+
+  - Use stable pak (#52).
+
+
 # indiedown 0.1.1.9023
 
 ## Continuous integration
