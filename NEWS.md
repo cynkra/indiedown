@@ -1,5 +1,18 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9026
+
+## Continuous integration
+
+- Need to install R on Ubuntu 24.04 (#56).
+
+- Use Ubuntu 24.04 and styler PR (#54).
+
+## Uncategorized
+
+- PLACEHOLDER https://github.com/cynkra/indiedown/pull/16 (#16).
+
+
 # indiedown 0.1.1.9025
 
 ## Continuous integration
