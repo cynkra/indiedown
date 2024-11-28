@@ -1,5 +1,12 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9029
+
+## Continuous integration
+
+- Ignore errors when removing pkg-config on macOS (#59).
+
+
 # indiedown 0.1.1.9028
 
 ## Continuous integration
