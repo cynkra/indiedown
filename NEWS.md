@@ -1,5 +1,12 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9030
+
+## Continuous integration
+
+- Use larger retry count for lock-threads workflow (#60).
+
+
 # indiedown 0.1.1.9029
 
 ## Continuous integration
