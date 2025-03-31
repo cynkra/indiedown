@@ -2,25 +2,16 @@ Type: Package
 Package: indiedown
 Title: Individual R Markdown Templates
 Version: 0.1.1.9032
-Authors@R:
-    c(person(given = "Christoph",
-             family = "Sax",
-             role = c("aut", "cre"),
-             email = "christoph.sax@gmail.com",
-             comment = c(ORCID = "0000-0002-7192-7044")),
-      person(given = "Kirill",
-             family = "Müller",
-             role = "aut",
-             comment = c(ORCID = "0000-0002-1416-3412")),
-      person(given = "Angelica",
-             family = "Becerra",
-             role = "aut"),
-      person(given = "Frederik",
-             family = "Aust",
-             role = "aut"),
-      person(given = "cynkra GmbH",
-             role = c("fnd", "cph"),
-             email = "mail@cynkra.com"))
+Authors@R:c(
+    person("Christoph", "Sax", , "christoph.sax@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-7192-7044")),
+    person("Kirill", "Müller", role = "aut",
+           comment = c(ORCID = "0000-0002-1416-3412")),
+    person("Angelica", "Becerra", role = "aut"),
+    person("Frederik", "Aust", role = "aut"),
+    person("cynkra GmbH", , , "mail@cynkra.com", role = c("fnd", "cph"),
+           comment = c(ROR = "0335t7e62"))
+  )
 Description: Simplifies the generation of customized R Markdown PDF
     templates.  A template may include an individual logo, typography,
     geometry or color scheme. The package provides a skeleton with
