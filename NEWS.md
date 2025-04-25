@@ -1,5 +1,24 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9033
+
+## Chore
+
+- Auto-update from GitHub Actions.
+
+  Run: https://github.com/cynkra/indiedown/actions/runs/14636209573
+
+## Continuous integration
+
+- Explain (#69).
+
+- Add xml2 for covr, print testthat results (#68).
+
+- Fix (#67).
+
+- Sync (#66).
+
+
 # indiedown 0.1.1.9032
 
 ## Continuous integration
