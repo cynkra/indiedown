@@ -1,5 +1,12 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9034
+
+## Continuous integration
+
+- Correct installation of xml2 (#70).
+
+
 # indiedown 0.1.1.9033
 
 ## Chore
