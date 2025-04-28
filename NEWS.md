@@ -1,5 +1,14 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9035
+
+## Continuous integration
+
+- Only fail covr builds if token is given (#72).
+
+- Always use `_R_CHECK_FORCE_SUGGESTS_=false` (#71).
+
+
 # indiedown 0.1.1.9034
 
 ## Continuous integration
