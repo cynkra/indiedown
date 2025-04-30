@@ -1,5 +1,12 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9036
+
+## Continuous integration
+
+- Permissions, better tests for missing suggests, lints (#73).
+
+
 # indiedown 0.1.1.9035
 
 ## Continuous integration
