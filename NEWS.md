@@ -1,5 +1,12 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9037
+
+## Continuous integration
+
+- Enhance permissions for workflow (#74).
+
+
 # indiedown 0.1.1.9036
 
 ## Continuous integration
