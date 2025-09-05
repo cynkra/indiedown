@@ -87,3 +87,4 @@ For most customizations, it is recommended to turn off the default LaTeX title p
 R Markdown Templates demonstrate the use of a customized style. R Markdown requires you to put them in `inst/rmarkdown/templates/mytemplate`.
 RStudio will recognize them and show them when you click 'New R Markdown Document' and 'from Template'.
 You can also use `usethis::use_rmarkdown_template()` to add a new template.
+Edit the files there to adjust the default contents of documents generated from this template or their appearance in the 'New R Markdown Document' dialog.
