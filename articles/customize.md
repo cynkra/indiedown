@@ -1,0 +1,102 @@
+# Customize Individual R Markdown Templates
+
+``` r
+library(indiedown)
+```
+
+## Assets
+
+**Location:** `inst/indiedown` (folder)
+
+Template assets are stored in a folder `inst/indiedown`. This folder
+contains all the necessary information to customize your markdown
+template. It can contain basic pandoc settings, additional LaTeX
+settings and dynamic pandoc settings.
+
+### Basic Settings
+
+**Location:** `default.yaml` (required)
+
+`default.yaml` is the only required element of an indiedown template. It
+specifies the default pandoc options used by your template. To
+experiment with pandoc options, simply add them to the YAML header of a
+standard R Markdown document.
+
+Most relevant LaTeX options can be set as pandoc options. For example,
+pandoc options allow you to set a customized font or a user defined
+geometry. If possible always prefer Pandoc options instead of LaTeX
+(covered below), as this will minimize unwanted interactions with other
+options.
+
+For a detailed description of all pandoc options, see the ‘Variables for
+LaTeX’ section in the [pandoc Manual](https://pandoc.org/MANUAL.html#).
+
+`default.yaml`, as well as `preamble.tex` supports substitution of the
+variable `<<indiedown_path>`, which is explained below.
+
+### Additional LaTeX Settings
+
+**Location:** `preamble.tex` (optional, advanced)
+
+Sometimes, pandoc options are just not enough. While pandoc allows you
+to directly apply single LaTeX commands in the YAML header (using
+`headers-include`), `preamble.tex` offers a more convenient way to
+include LaTeX commands at the beginning of your document.
+
+To include commands, simply edit `preamble.tex`. Common options set in
+`preamble.tex` are the modification of section headings (e.g.,
+`\usepackage[small]{titlesec}`), the provision of the `H` float modifier
+(`\usepackage{float}`), or the packages used by
+[kableExtra](https://CRAN.R-project.org/package=kableExtra).
+
+For most customizations, it is recommended to turn off the default LaTeX
+title page, using `\renewcommand\maketitle{}`. Creating your own title
+page via LaTeX commands in the R Markdown script or by a customized R
+function is a much easier and more flexible way to create a customized
+title page.
+
+### Dynamic Settings
+
+**Location:** `pre_processor.R` (optional, advanced)
+
+In a few cases, pandoc options should be set dynamically. E.g., the
+geometry of a document should depend on whether it uses two columns or
+just one. `pre_processor.R` allows you to dynamically modify pandoc
+options, using plain R. See the example script for how to use it.
+
+### Variable Substitution
+
+`default.yaml`, as well as `preamble.tex` supports substitution of the
+variable `<<indiedown_path>`. Whenever you mention `<<indiedown_path>`
+in one of your files, it will be substituted by the path to the
+`indiedown` folder.
+
+### Including Additional Assets
+
+Most customized styles will include some additional assets, such as a
+logo or a special font. Assets can be put into arbitrarily named
+folders. To access the assets from `default.yaml` or `preamble.tex`,
+simply use `<<indiedown_path>/res` and the path will be correctly
+resolved by indiedown.
+
+## LaTeX Generators
+
+Indiedown packages use R functions to generate LaTeX code for
+customization.
+
+For most customizations, it is recommended to turn off the default LaTeX
+title page, and create your own title page via LaTeX commands. The basic
+repertory are the LaTeX commands `\large`, `\Large`, `\LARGE`, `\huge`,
+etc, along with `vspace{1ex}`, but all LaTeX trickery can be applied.
+The LaTeX helper functions should be put in the `R` folder of your
+package.
+
+## Templates
+
+R Markdown Templates demonstrate the use of a customized style. R
+Markdown requires you to put them in
+`inst/rmarkdown/templates/mytemplate`. RStudio will recognize them and
+show them when you click ‘New R Markdown Document’ and ‘from Template’.
+You can also use
+[`usethis::use_rmarkdown_template()`](https://usethis.r-lib.org/reference/use_rmarkdown_template.html)
+to add a new template.
