@@ -1,5 +1,26 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9038
+
+## Chore
+
+- Auto-update from GitHub Actions.
+
+  Run: https://github.com/cynkra/indiedown/actions/runs/17450815604
+
+## Continuous integration
+
+- Use workflows for fledge (#79).
+
+- Sync (#78).
+
+- Use reviewdog for external PRs (#77).
+
+- Cleanup and fix macOS (#76).
+
+- Format with air, check detritus, better handling of `extra-packages` (#75).
+
+
 # indiedown 0.1.1.9037
 
 ## Continuous integration
