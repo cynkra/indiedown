@@ -1,5 +1,29 @@
 # Changelog
 
+## indiedown 0.1.1.9038
+
+### Chore
+
+- Auto-update from GitHub Actions.
+
+  Run: <https://github.com/cynkra/indiedown/actions/runs/17450815604>
+
+### Continuous integration
+
+- Use workflows for fledge
+  ([\#79](https://github.com/cynkra/indiedown/issues/79)).
+
+- Sync ([\#78](https://github.com/cynkra/indiedown/issues/78)).
+
+- Use reviewdog for external PRs
+  ([\#77](https://github.com/cynkra/indiedown/issues/77)).
+
+- Cleanup and fix macOS
+  ([\#76](https://github.com/cynkra/indiedown/issues/76)).
+
+- Format with air, check detritus, better handling of `extra-packages`
+  ([\#75](https://github.com/cynkra/indiedown/issues/75)).
+
 ## indiedown 0.1.1.9037
 
 ### Continuous integration
