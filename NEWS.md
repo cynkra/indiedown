@@ -1,5 +1,12 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9039
+
+## Continuous integration
+
+- Fix reviewdog and add commenting workflow (#80).
+
+
 # indiedown 0.1.1.9038
 
 ## Chore
