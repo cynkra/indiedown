@@ -1,5 +1,12 @@
 # Changelog
 
+## indiedown 0.1.1.9039
+
+### Continuous integration
+
+- Fix reviewdog and add commenting workflow
+  ([\#80](https://github.com/cynkra/indiedown/issues/80)).
+
 ## indiedown 0.1.1.9038
 
 ### Chore
