@@ -1,5 +1,12 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9040
+
+## Continuous integration
+
+- Install binaries from r-universe for dev workflow (#81).
+
+
 # indiedown 0.1.1.9039
 
 ## Continuous integration
