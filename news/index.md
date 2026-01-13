@@ -1,5 +1,12 @@
 # Changelog
 
+## indiedown 0.1.1.9040
+
+### Continuous integration
+
+- Install binaries from r-universe for dev workflow
+  ([\#81](https://github.com/cynkra/indiedown/issues/81)).
+
 ## indiedown 0.1.1.9039
 
 ### Continuous integration

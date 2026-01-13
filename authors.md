@@ -20,14 +20,14 @@
 Source:
 [`DESCRIPTION`](https://github.com/cynkra/indiedown/blob/main/DESCRIPTION)
 
-Sax C, Müller K, Becerra A, Aust F (2025). *indiedown: Individual R
-Markdown Templates*. R package version 0.1.1.9039,
+Sax C, Müller K, Becerra A, Aust F (2026). *indiedown: Individual R
+Markdown Templates*. R package version 0.1.1.9040,
 <https://indiedown.cynkra.com/>.
 
     @Manual{,
       title = {indiedown: Individual R Markdown Templates},
       author = {Christoph Sax and Kirill Müller and Angelica Becerra and Frederik Aust},
-      year = {2025},
-      note = {R package version 0.1.1.9039},
+      year = {2026},
+      note = {R package version 0.1.1.9040},
       url = {https://indiedown.cynkra.com/},
     }
