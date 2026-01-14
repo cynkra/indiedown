@@ -1,5 +1,16 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9041
+
+## Continuous integration
+
+- Fix comment (#84).
+
+- Tweaks (#83).
+
+- Test all R versions on branches that start with cran- (#82).
+
+
 # indiedown 0.1.1.9040
 
 ## Continuous integration
