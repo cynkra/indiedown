@@ -11,6 +11,6 @@ dr_down()
 }
 \examples{
 \dontrun{
-  indiedown::dr_down()
+indiedown::dr_down()
 }
 }
