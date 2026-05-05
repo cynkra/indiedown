@@ -1,5 +1,16 @@
 # Changelog
 
+## indiedown 0.1.1.9041
+
+### Continuous integration
+
+- Fix comment ([\#84](https://github.com/cynkra/indiedown/issues/84)).
+
+- Tweaks ([\#83](https://github.com/cynkra/indiedown/issues/83)).
+
+- Test all R versions on branches that start with cran-
+  ([\#82](https://github.com/cynkra/indiedown/issues/82)).
+
 ## indiedown 0.1.1.9040
 
 ### Continuous integration

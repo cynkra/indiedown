@@ -154,6 +154,7 @@ quality and store it in `res/mikhail-vasilyev-gGC63oug3iY-unsplash.jpg`.
 Then, we change the function definition as follows:
 
 ``` r
+
 cd_page_title <- function(title = default(rmarkdown::metadata$title, "Title"),
                           subtitle = default(rmarkdown::metadata$subtitle, "Subtitle"),
                           date = default(rmarkdown::metadata$date, cd_format_date(Sys.Date()))) {

@@ -6,12 +6,14 @@ that follow the principles of your corporate design.
 Start by installing indiedown:
 
 ``` r
+
 install.packages("indiedown")
 ```
 
 You can also install the development version from GitHub:
 
 ``` r
+
 # install.packages("remotes")
 remotes::install_github("cynkra/indiedown")
 ```
@@ -19,6 +21,7 @@ remotes::install_github("cynkra/indiedown")
 ## Create an customized R Markdown template
 
 ``` r
+
 # install.packages("devtools")
 devtools::install_github("cynkra/indiedown")
 ```
@@ -28,6 +31,7 @@ indiedown template package, called `mydown` in this example. Navigate to
 the directory where you want to create the package, then:
 
 ``` r
+
 indiedown::create_indiedown_package("mydown")
 ```
 
@@ -36,6 +40,7 @@ current working directory. You can build *mydown*, using “Build and
 Reload” in the RStudio or via the command line, as follows:
 
 ``` r
+
 devtools::install("mydown")
 ```
 
