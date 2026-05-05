@@ -1,5 +1,100 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9041
+
+## Continuous integration
+
+- Fix comment (#84).
+
+- Tweaks (#83).
+
+- Test all R versions on branches that start with cran- (#82).
+
+
+# indiedown 0.1.1.9040
+
+## Continuous integration
+
+- Install binaries from r-universe for dev workflow (#81).
+
+
+# indiedown 0.1.1.9039
+
+## Continuous integration
+
+- Fix reviewdog and add commenting workflow (#80).
+
+
+# indiedown 0.1.1.9038
+
+## Chore
+
+- Auto-update from GitHub Actions.
+
+  Run: https://github.com/cynkra/indiedown/actions/runs/17450815604
+
+## Continuous integration
+
+- Use workflows for fledge (#79).
+
+- Sync (#78).
+
+- Use reviewdog for external PRs (#77).
+
+- Cleanup and fix macOS (#76).
+
+- Format with air, check detritus, better handling of `extra-packages` (#75).
+
+
+# indiedown 0.1.1.9037
+
+## Continuous integration
+
+- Enhance permissions for workflow (#74).
+
+
+# indiedown 0.1.1.9036
+
+## Continuous integration
+
+- Permissions, better tests for missing suggests, lints (#73).
+
+
+# indiedown 0.1.1.9035
+
+## Continuous integration
+
+- Only fail covr builds if token is given (#72).
+
+- Always use `_R_CHECK_FORCE_SUGGESTS_=false` (#71).
+
+
+# indiedown 0.1.1.9034
+
+## Continuous integration
+
+- Correct installation of xml2 (#70).
+
+
+# indiedown 0.1.1.9033
+
+## Chore
+
+- Auto-update from GitHub Actions.
+
+  Run: https://github.com/cynkra/indiedown/actions/runs/14636209573
+
+## Continuous integration
+
+- Explain (#69).
+
+- Add xml2 for covr, print testthat results (#68).
+
+- Fix (#67).
+
+- Sync (#66).
+
+
 # indiedown 0.1.1.9032
 
 ## Continuous integration
