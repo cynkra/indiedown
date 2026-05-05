@@ -20,7 +20,7 @@ Authors@R:
              role = "aut"),
       person(given = "cynkra GmbH",
              role = c("fnd", "cph"),
-             email = "mail@cynkra.com"),
+             email = "mail@cynkra.com",
              comment = c(ROR = "0335t7e62")))
 Description: Simplifies the generation of customized R Markdown PDF
     templates.  A template may include an individual logo, typography,
