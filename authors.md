@@ -14,6 +14,7 @@
 
 - **[![cynkra](https://cynkra.com/assets/images/apple-touch-icon-76x76.png)](https://cynkra.com/)**.
   Funder, copyright holder.
+  [![ROR](https://raw.githubusercontent.com/ror-community/ror-logos/main/ror-icon-rgb.svg)](https://ror.org/0335t7e62)
 
 ## Citation
 
