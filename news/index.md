@@ -1,5 +1,30 @@
 # Changelog
 
+## indiedown 0.1.1.9042
+
+### Chore
+
+- Auto-update from GitHub Actions.
+
+  Run: <https://github.com/cynkra/indiedown/actions/runs/25267027010>
+
+### Continuous integration
+
+- Cosmetics.
+
+- Bump action versions.
+
+- Install clang-format-21.
+
+- Align fledge workflow.
+
+- Harmonize.
+
+### Documentation
+
+- Add cynkra’s ROR ID
+  ([\#65](https://github.com/cynkra/indiedown/issues/65)).
+
 ## indiedown 0.1.1.9041
 
 ### Continuous integration
