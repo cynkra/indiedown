@@ -1,0 +1,32 @@
+---
+title: "Report-Title"
+subtitle: "Subtitle"
+author:
+  - "My-Name"
+  - "Our-Team"
+documentclass: article
+fontsize: 11pt
+number-sections: true
+format:
+  mypackage-pdf: default
+---
+
+```{r}
+#| include: false
+library(knitr)
+library(mypackage)
+cd_knit_chunk_opts()
+```
+
+```{r}
+#| echo: false
+#| results: asis
+cd_page_title()
+```
+
+# Customized Quarto Template
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat.

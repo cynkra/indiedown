@@ -1,0 +1,75 @@
+% mypackage Quarto extension: LaTeX preamble.
+%
+% Keep in sync with inst/indiedown/preamble.tex. Paths are relative to the
+% project root so LuaLaTeX resolves them at render time.
+
+% Fonts: configured here (not in _extension.yml mainfont/mainfontoptions)
+% because Pandoc escapes underscores in YAML font-option values, breaking
+% the `_extensions/...` path.
+\usepackage{fontspec}
+\setmainfont{regular.ttf}[
+  Path = _extensions/mypackage/mypackage/fonts/ ,
+  BoldFont = bold.ttf ,
+  ItalicFont = italic.ttf ,
+  BoldItalicFont = bolditalic.ttf ,
+  Scale = 0.92
+]
+
+% order is important here to avoid conflicts:
+% see section 14.1 of cleveref package
+\usepackage{hyperref}
+\usepackage{cleveref}
+
+% word style tabs
+\usepackage{tabto}
+
+% no indentation, space between paragraphs
+\usepackage{parskip}
+
+% provides the H float modifier
+\usepackage{float}
+
+% full width table (with kable)
+\usepackage{tabu}
+\tabulinesep=1.1mm
+
+% Support for kableExtra package
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{pdflscape}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{colortbl}
+
+% extended implementation of the array and tabular environments
+\usepackage{array}
+
+% embedd graphics
+\usepackage{graphicx}
+\setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+
+% verbatim with URL-sensitive line breaks
+\usepackage{url}
+
+% units. E.g., \unitfrac{m}{s}
+\usepackage{units}
+
+% Increase the number of simultaneous LaTeX floats
+\usepackage{morefloats}
+
+% Simple argument parsing
+\usepackage{xparse}
+
+% smaller section headings (also needed for titleformat below)
+\usepackage[small]{titlesec}
+
+% for protrusion (even margins) and expansion (fewer/better hyphenations)
+\hyphenpenalty=7500
+\pretolerance=5000
+\tolerance=9000
+
+% omit default title page
+\renewcommand\maketitle{}

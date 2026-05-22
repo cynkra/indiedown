@@ -1,5 +1,14 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown (development version)
+
+- `create_indiedown_package()` now also scaffolds a Quarto extension at
+  `inst/quarto/_extensions/<pkg>/<pkg>/` and a `use_<pkg>_quarto()` helper
+  that copies the extension and shared `fonts`/`res` assets into a project,
+  so generated packages support both `.Rmd` and `.qmd` rendering.
+- Added `inst/quarto/examples/example.qmd` to the generated skeleton.
+
+
 # indiedown 0.1.1.9044
 
 ## fledge
