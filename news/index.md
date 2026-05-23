@@ -1,5 +1,12 @@
 # Changelog
 
+## indiedown 0.1.1.9044
+
+### fledge
+
+- Bump version to 0.1.1.9042
+  ([\#86](https://github.com/cynkra/indiedown/issues/86)).
+
 ## indiedown 0.1.1.9043
 
 ### Chore
