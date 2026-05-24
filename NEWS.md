@@ -1,5 +1,14 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9045
+
+## Continuous integration
+
+- Update ccache-action reference.
+
+- Bump action version.
+
+
 # indiedown 0.1.1.9044
 
 ## fledge
