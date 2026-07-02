@@ -1,5 +1,12 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9046
+
+## Chore
+
+- Auto-update from GitHub Actions (#99).
+
+
 # indiedown 0.1.1.9045
 
 ## Continuous integration
