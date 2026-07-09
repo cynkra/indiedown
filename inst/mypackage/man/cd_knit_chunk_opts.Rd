@@ -5,32 +5,42 @@
 \title{Corporate Design: knitr Chunk Options}
 \usage{
 cd_knit_chunk_opts(
-  twocolumn = default(rmarkdown::metadata$twocolumn, FALSE),
+  metadata = rmarkdown::metadata,
   fig.width = NULL,
   fig.height = NULL,
   fig.pos = "h",
+  cache = FALSE,
   message = FALSE,
-  echo = FALSE
+  echo = FALSE,
+  tidy = FALSE
 )
 }
 \arguments{
-\item{twocolumn}{Use two-column mode? This will affect \code{fig.width} and \code{fig.height}.}
+\item{metadata}{Document metadata (YAML header); \code{twocolumn} and \code{wide}
+determine the default figure dimensions.}
 
-\item{fig.width}{Figure width. If \code{NULL}, automatically chosen based on \code{twocolumn}.}
+\item{fig.width, fig.height}{Figure width/height in inches. If \code{NULL} (the
+default), chosen automatically from \code{twocolumn}/\code{wide}.}
 
-\item{fig.height}{Figure height If \code{NULL}, automatically chosen based on \code{twocolumn}.}
+\item{fig.pos}{Floating modifier for figures.}
 
-\item{fig.pos}{Floating modifier for figures}
+\item{cache}{Should chunk output be cached?}
 
 \item{message}{Should messages be shown?}
 
-\item{echo}{Should echo be shown?}
+\item{echo}{Should source code be echoed?}
+
+\item{tidy}{Should source code be reformatted?}
 }
 \value{
-This function is called for its side effects and returns \code{NULL}, invisibly.
+This function is called for its side effects and returns \code{NULL},
+invisibly.
 }
 \description{
-Set knitr chunk options in accordance with corporate design.
+Set knitr chunk options in accordance with corporate design. Figure
+dimensions default to sensible values chosen from the \code{twocolumn} and
+\code{wide} metadata fields; all other arguments are passed through to
+\link[knitr:opts_chunk]{knitr::opts_chunk}.
 }
 \examples{
 cd_knit_chunk_opts()

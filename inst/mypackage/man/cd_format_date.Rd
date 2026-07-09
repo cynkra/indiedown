@@ -7,15 +7,16 @@
 cd_format_date(date, lang = default(rmarkdown::metadata$lang, "en-US"))
 }
 \arguments{
-\item{date}{Current date}
+\item{date}{Current date.}
 
-\item{lang}{Language, either \code{"de-DE"}, \code{"de-CH"} or \code{"en_US"}}
+\item{lang}{Language, e.g. \code{"de-DE"}, \code{"de-CH"} or \code{"en-US"}. Defaults to
+the document's \code{lang} metadata field, or \code{"en-US"}.}
 }
 \value{
-Character string, date in local format
+Character string, date in local format.
 }
 \description{
-Format date in local language format
+Format date in local language format.
 }
 \examples{
 cd_format_date("2012-01-01", "de-DE")
