@@ -67,3 +67,28 @@ test_that("typography and tables look right (details)", {
     )
   )
 })
+
+test_that("a figure looks right", {
+  expect_pdf_snapshot(
+    "figure",
+    c(
+      "---",
+      "title           : \"Figure\"",
+      "date            : \"January 1, 2026\"",
+      "output          : mypackage::mypackage",
+      "---",
+      "",
+      "```{r, include = FALSE}",
+      "library(knitr)",
+      "library(mypackage)",
+      "cd_knit_chunk_opts()",
+      "```",
+      "",
+      "# A base plot",
+      "",
+      "```{r, echo = FALSE, fig.cap = 'A scatter plot.'}",
+      "plot(1:10, (1:10)^2)",
+      "```"
+    )
+  )
+})

@@ -50,6 +50,8 @@
       mydown/tests/testthat/_snaps/visual
       mydown/tests/testthat/_snaps/visual/details-environment.txt
       mydown/tests/testthat/_snaps/visual/details-page-01.png
+      mydown/tests/testthat/_snaps/visual/figure-environment.txt
+      mydown/tests/testthat/_snaps/visual/figure-page-01.png
       mydown/tests/testthat/_snaps/visual/skeleton-environment.txt
       mydown/tests/testthat/_snaps/visual/skeleton-page-01.png
       mydown/tests/testthat/_snaps/visual/skeleton-page-02.png

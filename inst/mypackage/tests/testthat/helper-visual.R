@@ -11,6 +11,15 @@
 # only when the snapshots are (re)generated: to refresh, delete the relevant
 # `tests/testthat/_snaps/<test>` directory and re-run the tests -- both the
 # images and the environment record are then written fresh.
+#
+# Why not vdiffr? vdiffr snapshots the SVG of an R graphics object (ggplot2 /
+# grid / base). The regression surface here is the *rendered PDF page* --
+# fonts, geometry, margins, logos, title pages, two-column and float layout --
+# which is produced by pandoc + LaTeX and which vdiffr never sees (it does not
+# run LaTeX). vdiffr would only cover the plot layer, and blindly to how a plot
+# is placed on the page. It is a good complement for the graphics helpers
+# (e.g. a ggplot theme) but cannot replace rasterised-PDF comparison for what
+# these packages are for.
 
 skip_if_no_visual_snapshots <- function() {
   testthat::skip_on_cran()
