@@ -77,13 +77,13 @@ apply_default_yaml <- function(metadata) {
   # pandoc ignores 'header-includes' if includes$in_header is specified
   # https://github.com/jgm/pandoc/issues/3139
   # we can still use `header-includes` by passing it as a command line option to pandoc
-  if (!is.null(rmarkdown::metadata$`header-includes`)) {
+  if (!is.null(metadata$`header-includes`)) {
     args <- c(
       args,
       "--variable",
       paste0(
         "header-includes:",
-        paste(rmarkdown::metadata$`header-includes`, collapse = "\n")
+        paste(metadata$`header-includes`, collapse = "\n")
       )
     )
   }
