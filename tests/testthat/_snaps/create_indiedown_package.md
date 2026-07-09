@@ -17,6 +17,7 @@
       mydown/R/cd_page_title.R
       mydown/R/indiedown.R
       mydown/R/indiedown_pdf_document.R
+      mydown/air.toml
       mydown/inst
       mydown/inst/indiedown
       mydown/inst/indiedown/default.yaml
@@ -43,6 +44,10 @@
       mydown/man/indiedown_glue.Rd
       mydown/man/indiedown_path.Rd
       mydown/man/mydown.Rd
+      mydown/tests
+      mydown/tests/testthat
+      mydown/tests/testthat.R
+      mydown/tests/testthat/test-render.R
     Code
       unlink("mydown/R/cd_page_title.R")
       create_indiedown_package("mydown", overwrite = TRUE)
