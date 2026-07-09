@@ -1,5 +1,20 @@
 # Changelog
 
+## indiedown 0.1.1.9046
+
+### Chore
+
+- Auto-update from GitHub Actions
+  ([\#99](https://github.com/cynkra/indiedown/issues/99)).
+
+## indiedown 0.1.1.9045
+
+### Continuous integration
+
+- Update ccache-action reference.
+
+- Bump action version.
+
 ## indiedown 0.1.1.9044
 
 ### fledge
