@@ -6,6 +6,8 @@ author          : ["My-Name", "Our-Team"]
 documentclass   : article   # article (default) report
 fontsize        : 11pt      # 10pt 11pt (default) 12pt
 numbersections  : true
+# twocolumn     : true      # false (default) true
+# lang          : en-US     # en-US (default) de-DE
 
 output          : mypackage::mypackage
 ---
