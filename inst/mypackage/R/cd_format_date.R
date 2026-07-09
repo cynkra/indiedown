@@ -9,7 +9,10 @@
 #' cd_format_date("2012-01-01", "de-DE")
 #' cd_format_date("2012-01-01", "en-US")
 #' @export
-cd_format_date <- function(date, lang = default(rmarkdown::metadata$lang, "en-US")) {
+cd_format_date <- function(
+  date,
+  lang = default(rmarkdown::metadata$lang, "en-US")
+) {
   date <- as.Date(date)
   if (lang %in% c("german", "de-DE", "de-CH")) {
     withr::with_locale(c("LC_TIME" = "de_DE"), format(date, "%e. %B %Y"))

@@ -20,7 +20,10 @@ create_indiedown_package <- function(path, overwrite = FALSE) {
       stop("Path exists, use `overwrite = TRUE` to overwrite.", call. = FALSE)
     }
   } else if (fs::file_exists(path)) {
-    stop("Path exists and is a file or a link, remove before proceeding.", call. = FALSE)
+    stop(
+      "Path exists and is a file or a link, remove before proceeding.",
+      call. = FALSE
+    )
   }
 
   path_skeleton <- system.file("mypackage", package = "indiedown")
@@ -58,10 +61,14 @@ create_indiedown_package <- function(path, overwrite = FALSE) {
   writeLines(character(), ".here")
 
   cli_alert_success("indiedown skeleton set up at {.file {path}}")
-  cli_alert_info('See {.code vignette("indiedown")} for how to customize the {pkg_name} package')
+  cli_alert_info(
+    'See {.code vignette("indiedown")} for how to customize the {pkg_name} package'
+  )
 
   if (!rlang::is_installed("rmarkdown")) {
-    cli_alert_warning("Install the {.pkg rmarkdown} package to create documents from this template.")
+    cli_alert_warning(
+      "Install the {.pkg rmarkdown} package to create documents from this template."
+    )
   }
 
   invisible()
