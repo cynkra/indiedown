@@ -1,5 +1,12 @@
 # Changelog
 
+## indiedown 0.1.1.9047
+
+### Chore
+
+- Apply air formatting, add `air.toml`
+  ([\#101](https://github.com/cynkra/indiedown/issues/101)).
+
 ## indiedown 0.1.1.9046
 
 ### Chore
