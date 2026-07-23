@@ -1,5 +1,13 @@
 # Changelog
 
+## indiedown 0.1.1.9048
+
+### Continuous integration
+
+- Run on Ubuntu 26.04.
+
+- Align workflows with template.
+
 ## indiedown 0.1.1.9047
 
 ### Chore
