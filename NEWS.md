@@ -1,5 +1,18 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9049
+
+## Bug fixes
+
+### ci
+
+- Emit empty package matrix when there are no (rev)deps.
+
+## fledge
+
+- Bump version to 0.1.1.9043 (#93).
+
+
 # indiedown 0.1.1.9048
 
 ## Continuous integration
