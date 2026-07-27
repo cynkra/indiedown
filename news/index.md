@@ -1,5 +1,11 @@
 # Changelog
 
+## indiedown 0.1.1.9050
+
+### Continuous integration
+
+- Lock down `format-suggest` egress (audit → block).
+
 ## indiedown 0.1.1.9049
 
 ### Bug fixes
