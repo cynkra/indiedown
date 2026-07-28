@@ -1,5 +1,16 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9051
+
+## fledge
+
+- Bump version to 0.1.1.9045 (#97).
+
+- Bump version to 0.1.1.9043 (#95).
+
+- Bump version to 0.1.1.9044 (#96).
+
+
 # indiedown 0.1.1.9050
 
 ## Continuous integration
