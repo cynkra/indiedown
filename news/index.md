@@ -1,5 +1,29 @@
 # Changelog
 
+## indiedown 0.1.1.9052
+
+### Bug fixes
+
+- Engine bugfixes and backports from derived packages
+  ([\#102](https://github.com/cynkra/indiedown/issues/102)).
+
+### Features
+
+- Unify `cd_format_date()` and `cd_knit_chunk_opts()` helpers
+  ([\#103](https://github.com/cynkra/indiedown/issues/103)).
+
+### Chore
+
+- Auto-update from GitHub Actions
+  ([\#99](https://github.com/cynkra/indiedown/issues/99)).
+
+- Auto-update from GitHub Actions
+  ([\#114](https://github.com/cynkra/indiedown/issues/114)).
+
+### Continuous integration
+
+- Remove unused pr-commands workflow.
+
 ## indiedown 0.1.1.9051
 
 ### fledge
