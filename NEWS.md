@@ -1,5 +1,26 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9052
+
+## Bug fixes
+
+- Engine bugfixes and backports from derived packages (#102).
+
+## Features
+
+- Unify `cd_format_date()` and `cd_knit_chunk_opts()` helpers (#103).
+
+## Chore
+
+- Auto-update from GitHub Actions (#99).
+
+- Auto-update from GitHub Actions (#114).
+
+## Continuous integration
+
+- Remove unused pr-commands workflow.
+
+
 # indiedown 0.1.1.9051
 
 ## fledge
