@@ -1,5 +1,18 @@
 # Changelog
 
+## indiedown 0.1.1.9051
+
+### fledge
+
+- Bump version to 0.1.1.9045
+  ([\#97](https://github.com/cynkra/indiedown/issues/97)).
+
+- Bump version to 0.1.1.9043
+  ([\#95](https://github.com/cynkra/indiedown/issues/95)).
+
+- Bump version to 0.1.1.9044
+  ([\#96](https://github.com/cynkra/indiedown/issues/96)).
+
 ## indiedown 0.1.1.9050
 
 ### Continuous integration
