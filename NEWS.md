@@ -1,5 +1,18 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9053
+
+## Features
+
+- Optional margin-figure / handout module (#106).
+
+- Upstream generic table helpers and spell-check (#105).
+
+## Continuous integration
+
+- Add sharded `revdep2` workflow.
+
+
 # indiedown 0.1.1.9052
 
 ## Bug fixes
