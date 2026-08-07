@@ -15,8 +15,10 @@
       mydown/R/cd_format_date.R
       mydown/R/cd_knit_chunk_opts.R
       mydown/R/cd_page_title.R
+      mydown/R/full_width_tabular.R
       mydown/R/indiedown.R
       mydown/R/indiedown_pdf_document.R
+      mydown/R/kable_twocolumn.R
       mydown/inst
       mydown/inst/indiedown
       mydown/inst/indiedown/default.yaml
@@ -40,8 +42,10 @@
       mydown/man/cd_knit_chunk_opts.Rd
       mydown/man/cd_page_title.Rd
       mydown/man/default.Rd
+      mydown/man/full_width_tabular.Rd
       mydown/man/indiedown_glue.Rd
       mydown/man/indiedown_path.Rd
+      mydown/man/kable_twocolumn.Rd
       mydown/man/mydown.Rd
     Code
       unlink("mydown/R/cd_page_title.R")
