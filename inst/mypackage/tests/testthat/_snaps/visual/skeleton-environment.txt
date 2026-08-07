@@ -1,0 +1,12 @@
+# Toolchain used to generate the visual snapshots in this directory.
+# Pixel-exact comparisons are only stable on this toolchain; refreshed
+# only when the snapshots themselves are regenerated.
+os: Linux 6.18.5
+r: 4.5.3
+pandoc: 3.9.0.2
+latex: This is LuaHBTeX, Version 1.24.0 (TeX Live 2026)
+poppler: 24.02.0
+pdftools: 3.9.0
+rmarkdown: 2.31
+knitr: 1.51
+tinytex: 0.60
