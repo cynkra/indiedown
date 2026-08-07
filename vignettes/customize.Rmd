@@ -81,6 +81,45 @@ Indiedown packages use R functions to generate LaTeX code for customization.
 
 For most customizations, it is recommended to turn off the default LaTeX title page, and create your own title page via LaTeX commands. The basic repertory are the LaTeX commands `\large`, `\Large`, `\LARGE`, `\huge`, etc, along with `vspace{1ex}`, but all LaTeX trickery can be applied. The LaTeX helper functions should be put in the `R` folder of your package.
 
+### Reusable LaTeX Snippets
+
+**Location:** `inst/indiedown/tex/` (optional)
+
+Longer blocks of LaTeX read better when they live in their own file rather than
+in an R raw string. Put such snippets under `inst/indiedown/tex/` and read them
+with `read_tex()`. Inside a snippet, `<<var>>` markers are interpolated by
+`indiedown_glue()` from the calling function's local variables (the same `<<`
+/ `>>` delimiters used elsewhere, chosen because braces are so common in
+LaTeX).
+
+For example, `cd_page_title()` keeps its layout in `tex/page_title.tex`:
+
+```
+\vspace*{-1cm}
+\begin{center}
+  \makebox[\textwidth]{\includegraphics[width=0.1\paperwidth]{<<logo_path>>}}
+\end{center}
+
+\noindent \Huge <<title>>
+\noindent \huge <<subtitle>>
+\noindent <<date>>
+\clearpage
+```
+
+and the R function only assigns the variables and hands the snippet to
+`indiedown_glue()`:
+
+```r
+cd_page_title <- function(title = ..., subtitle = ..., date = ...) {
+  logo_path <- indiedown_path_tex("res/logo.png")
+  indiedown_glue(read_tex("page_title.tex"))
+}
+```
+
+**Naming convention:** name generators `cd_page_*()` when they produce a full
+page (e.g. a title page, which usually ends with `\clearpage`) and
+`cd_header_*()` when they produce an in-page header.
+
 
 ## Templates
 
