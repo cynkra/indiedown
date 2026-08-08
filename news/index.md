@@ -1,5 +1,19 @@
 # Changelog
 
+## indiedown 0.1.1.9053
+
+### Features
+
+- Optional margin-figure / handout module
+  ([\#106](https://github.com/cynkra/indiedown/issues/106)).
+
+- Upstream generic table helpers and spell-check
+  ([\#105](https://github.com/cynkra/indiedown/issues/105)).
+
+### Continuous integration
+
+- Add sharded `revdep2` workflow.
+
 ## indiedown 0.1.1.9052
 
 ### Bug fixes
