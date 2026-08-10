@@ -41,14 +41,15 @@ Imports:
     fs,
     gfonts,
     rlang,
-    withr
+    spelling,
+    withr,
+    xfun
 Suggests:
     callr,
     knitr (>= 1.12),
     rcmdcheck,
     rmarkdown,
     rstudioapi,
-    spelling,
     testthat (>= 3.0.0),
     tinytex
 VignetteBuilder:
