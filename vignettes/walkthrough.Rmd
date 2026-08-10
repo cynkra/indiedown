@@ -22,11 +22,13 @@ knitr::opts_chunk$set(
 indiedown does not modify the default `.tex` template of Pandoc. Instead, all modifications are applied on top of it.
 This should make it compliant with future releases of Pandoc and R Markdown.
 
-There are three possible customization points to customize an indiedown skeleton:
+There are four possible customization points to customize an indiedown skeleton:
 
 - Set defaults (such as fonts or geometry) in the YAML header at `inst/indiedown/default.yaml`
 
 - Tweak LaTeX settings at `inst/indiedown/preamble.tex`
+
+- Edit the skeleton file at `inst/rmarkdown/templates/report/skeleton/skeleton.Rmd`
 
 - Apply dynamic adjustments in `pre_processor.R` (advanced)
 
