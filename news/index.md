@@ -1,5 +1,15 @@
 # Changelog
 
+## indiedown 0.1.1.9054
+
+### Continuous integration
+
+- Wrap the commit status update into an action.
+
+- Route ccache through one-word compiler wrappers on Unix.
+
+- Name every step and restore the log entry `setup-pandoc` swallows.
+
 ## indiedown 0.1.1.9053
 
 ### Features
