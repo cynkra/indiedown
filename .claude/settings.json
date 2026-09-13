@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "tools": {
+    "bash": {
+      "autoAllow": [
+        "openspec *",
+        "git status",
+        "git branch",
+        "git log",
+        "git diff",
+        "find . -type f -name",
+        "ls -la",
+        "pwd",
+        "cat .openspec.yaml"
+      ]
+    },
+    "github": {
+      "autoAllow": [
+        "search_code",
+        "search_issues",
+        "search_pull_requests",
+        "list_pull_requests",
+        "issue_read",
+        "pull_request_read"
+      ]
+    }
+  },
+  "openspec": {
+    "enabled": true,
+    "workflows": {
+      "propose": {
+        "enabled": true,
+        "description": "Propose a new change with design, specs, and tasks"
+      },
+      "apply": {
+        "enabled": true,
+        "description": "Apply and implement a proposed change"
+      },
+      "explore": {
+        "enabled": true,
+        "description": "Explore the codebase and understand context"
+      },
+      "archive": {
+        "enabled": true,
+        "description": "Archive a completed change"
+      }
+    }
+  },
+  "github-copilot": {
+    "enabled": true,
+    "features": {
+      "code-review": true,
+      "issue-resolution": true,
+      "pull-requests": true,
+      "commit-suggestions": true
+    },
+    "integration": {
+      "auto-assign": false,
+      "auto-review-prs": false,
+      "suggest-fixes": true
+    }
+  },
+  "ai": {
+    "model": "claude-opus-4-7",
+    "temperature": 0.7
+  }
+}
