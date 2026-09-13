@@ -1,5 +1,32 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9057
+
+## Chore
+
+- Remove Copilot setup steps.
+
+- Auto-update from GitHub Actions (#114).
+
+## Continuous integration
+
+- Align with cynkratemplate.
+
+## Documentation
+
+- Point the coverage badge at the branch that exists (#121).
+
+- Harmonize README and pkgdown front page rendering (#120).
+
+## fledge
+
+- Bump version to 0.1.1.9056 (#119).
+
+- Bump version to 0.1.1.9054 (#117).
+
+- Bump version to 0.1.1.9052 (#115).
+
+
 # indiedown 0.1.1.9056
 
 ## Features
