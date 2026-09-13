@@ -42,6 +42,8 @@ create_indiedown_package <- function(path, overwrite = FALSE) {
     "inst/rmarkdown/templates/report/skeleton/skeleton.Rmd",
     "R/indiedown_pdf_document.R",
     "man/mypackage.Rd",
+    "tests/testthat.R",
+    "tests/testthat/test-render.R",
     "DESCRIPTION",
     "NAMESPACE"
   )
@@ -57,8 +59,10 @@ create_indiedown_package <- function(path, overwrite = FALSE) {
     file.path("man", paste0(pkg_name, ".Rd"))
   )
 
-  # Can't use .here as part of the template due to the leading dot
+  # Files with a leading dot are stripped from the built package, so they
+  # can't ship as part of the skeleton and must be written here instead.
   writeLines(character(), ".here")
+  writeLines("^air\\.toml$", ".Rbuildignore")
 
   cli_alert_success("indiedown skeleton set up at {.file {path}}")
   cli_alert_info(
