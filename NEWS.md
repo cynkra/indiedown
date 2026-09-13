@@ -1,5 +1,18 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9056
+
+## Features
+
+### ci
+
+- Align the `revdep2`, `revdep4` and `revdepx` subsystems with `rigraph`.
+
+## fledge
+
+- Bump version to 0.1.1.9049 (#111).
+
+
 # indiedown 0.1.1.9055
 
 ## Bug fixes
