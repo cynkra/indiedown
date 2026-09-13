@@ -16,7 +16,7 @@ This function is called for its side effects and returns \code{NULL}, invisibly.
 }
 \description{
 Set up the packages structure for an indiedown-based customized R Markdown template.
-See \code{vignette("indiedown")} for a more detailed usage example.
+ See \code{vignette("indiedown")} for a more detailed usage example.
 }
 \examples{
 path <- file.path(tempdir(), "mydown")
