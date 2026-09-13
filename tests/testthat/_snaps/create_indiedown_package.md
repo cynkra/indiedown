@@ -14,6 +14,7 @@
       mydown/R
       mydown/R/cd_format_date.R
       mydown/R/cd_knit_chunk_opts.R
+      mydown/R/cd_margin_figures.R
       mydown/R/cd_page_title.R
       mydown/R/indiedown.R
       mydown/R/indiedown_pdf_document.R
@@ -38,6 +39,7 @@
       mydown/man
       mydown/man/cd_format_date.Rd
       mydown/man/cd_knit_chunk_opts.Rd
+      mydown/man/cd_margin_figures.Rd
       mydown/man/cd_page_title.Rd
       mydown/man/default.Rd
       mydown/man/indiedown_glue.Rd
