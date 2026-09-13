@@ -1,5 +1,19 @@
 # Changelog
 
+## indiedown 0.1.1.9056
+
+### Features
+
+#### ci
+
+- Align the `revdep2`, `revdep4` and `revdepx` subsystems with
+  `rigraph`.
+
+### fledge
+
+- Bump version to 0.1.1.9049
+  ([\#111](https://github.com/cynkra/indiedown/issues/111)).
+
 ## indiedown 0.1.1.9055
 
 ### Bug fixes
