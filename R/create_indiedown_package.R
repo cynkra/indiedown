@@ -42,6 +42,8 @@ create_indiedown_package <- function(path, overwrite = FALSE) {
     "inst/rmarkdown/templates/report/skeleton/skeleton.Rmd",
     "R/indiedown_pdf_document.R",
     "man/mypackage.Rd",
+    "tests/testthat.R",
+    "tests/testthat/test-visual.R",
     "DESCRIPTION",
     "NAMESPACE"
   )
