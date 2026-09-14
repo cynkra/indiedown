@@ -18,18 +18,25 @@
 #'
 #' @return The path to the installed extension, invisibly.
 #' @export
-use_mypackage_quarto <- function(path = ".",
-                                 overwrite = FALSE,
-                                 examples = FALSE) {
+use_mypackage_quarto <- function(
+  path = ".",
+  overwrite = FALSE,
+  examples = FALSE
+) {
   pkg <- "mypackage"
 
   src_ext <- system.file(
-    "quarto", "_extensions", pkg, pkg,
+    "quarto",
+    "_extensions",
+    pkg,
+    pkg,
     package = pkg
   )
   if (!nzchar(src_ext)) {
     stop(
-      "Quarto extension assets not found in the installed ", pkg, " package.",
+      "Quarto extension assets not found in the installed ",
+      pkg,
+      " package.",
       call. = FALSE
     )
   }
@@ -40,7 +47,9 @@ use_mypackage_quarto <- function(path = ".",
   if (file.exists(dest_ext)) {
     if (!overwrite) {
       stop(
-        "'", dest_ext, "' already exists. Use `overwrite = TRUE` to replace.",
+        "'",
+        dest_ext,
+        "' already exists. Use `overwrite = TRUE` to replace.",
         call. = FALSE
       )
     }
@@ -69,9 +78,13 @@ use_mypackage_quarto <- function(path = ".",
   }
 
   message(
-    "Installed ", pkg, " Quarto extension at ",
+    "Installed ",
+    pkg,
+    " Quarto extension at ",
     file.path("_extensions", pkg, pkg),
-    ".\nUse 'format: ", pkg, "-pdf' in the YAML header of a .qmd document."
+    ".\nUse 'format: ",
+    pkg,
+    "-pdf' in the YAML header of a .qmd document."
   )
 
   invisible(dest_ext)

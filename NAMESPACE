@@ -5,5 +5,7 @@ export(dr_down)
 export(use_indiedown_gfonts)
 import(cli)
 importFrom(stats,setNames)
-importFrom(utils,installed.packages)
-importFrom(utils,packageVersion)
+importFrom(utils,
+  installed.packages,
+  packageVersion
+)

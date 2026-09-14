@@ -1,7 +1,7 @@
 Type: Package
 Package: indiedown
 Title: Individual R Markdown Templates
-Version: 0.1.1.9044
+Version: 0.1.1.9057
 Authors@R:
     c(person(given = "Christoph",
              family = "Sax",
@@ -58,4 +58,4 @@ Encoding: UTF-8
 Language: en-US
 Roxygen: list(markdown = TRUE)
 Config/Needs/website: cynkra/cynkratemplate
-Config/roxygen2/version: 8.0.0.9000
+Config/roxygen2/version: 8.1.0.9000

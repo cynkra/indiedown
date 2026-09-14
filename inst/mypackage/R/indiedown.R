@@ -3,12 +3,13 @@
 # do not customize this file!
 
 indiedown_pdf_document_with_asset <- function(includes = NULL, ...) {
-
   # file preamble
   if (file.exists(file.path(indiedown_path(), "preamble.tex"))) {
-
     file_preamble <- tempfile(fileext = ".tex")
-    txt <- readLines(file.path(indiedown_path(), "preamble.tex"), encoding = "UTF-8")
+    txt <- readLines(
+      file.path(indiedown_path(), "preamble.tex"),
+      encoding = "UTF-8"
+    )
     txt <- gsub("<<indiedown_path>>", indiedown_path_tex(), txt, fixed = TRUE)
     writeLines(txt, file_preamble)
 
@@ -16,7 +17,9 @@ indiedown_pdf_document_with_asset <- function(includes = NULL, ...) {
       includes <- rmarkdown::includes(in_header = file_preamble)
     } else {
       if ("in_header" %in% names(includes)) {
-        warning("The use of 'includes, in_header' overwrites preamble.tex from asset and may mess up the layout.")
+        warning(
+          "The use of 'includes, in_header' overwrites preamble.tex from asset and may mess up the layout."
+        )
       } else {
         includes$in_header <- file_preamble
       }
@@ -39,15 +42,30 @@ indiedown_pdf_document_with_asset <- function(includes = NULL, ...) {
   ans
 }
 
-pre_processor_basic <- function(metadata, input_file, runtime, knit_meta, files_dir, output_dir) {
+pre_processor_basic <- function(
+  metadata,
+  input_file,
+  runtime,
+  knit_meta,
+  files_dir,
+  output_dir
+) {
   args <- apply_default_yaml(metadata = metadata)
 }
 
 apply_default_yaml <- function(metadata) {
-  defaults_txt <- readLines(file.path(indiedown_path(), "default.yaml"), encoding = "UTF-8")
+  defaults_txt <- readLines(
+    file.path(indiedown_path(), "default.yaml"),
+    encoding = "UTF-8"
+  )
 
   # replace <<indiedown_path>> by package path
-  defaults_txt <- gsub("<<indiedown_path>>", indiedown_path_tex(), defaults_txt, fixed = TRUE)
+  defaults_txt <- gsub(
+    "<<indiedown_path>>",
+    indiedown_path_tex(),
+    defaults_txt,
+    fixed = TRUE
+  )
 
   defaults <- yaml::yaml.load(defaults_txt)
 
@@ -60,7 +78,14 @@ apply_default_yaml <- function(metadata) {
   # https://github.com/jgm/pandoc/issues/3139
   # we can still use `header-includes` by passing it as a command line option to pandoc
   if (!is.null(rmarkdown::metadata$`header-includes`)) {
-    args <- c(args, "--variable", paste0("header-includes:", paste(rmarkdown::metadata$`header-includes`, collapse = "\n")))
+    args <- c(
+      args,
+      "--variable",
+      paste0(
+        "header-includes:",
+        paste(rmarkdown::metadata$`header-includes`, collapse = "\n")
+      )
+    )
   }
 
   args
@@ -77,7 +102,9 @@ list_to_pandoc_args <- function(list) {
   is_character <- vapply(list, is.character, TRUE)
 
   # prepare logicals (TRUE FALSE to yes no)
-  list[is_logical] <- lapply(list[is_logical], function(x) ifelse(x, "yes", "no"))
+  list[is_logical] <- lapply(list[is_logical], function(x) {
+    ifelse(x, "yes", "no")
+  })
   # prepare character (comma separate multiple values)
   list[is_character] <- lapply(list[is_character], paste, collapse = ",")
 
@@ -150,7 +177,10 @@ indiedown_glue <- function(x, .open = "<<", .close = ">>") {
 
 # compatible with older versions. We can use raw strings from 4.0 on.
 read_tex <- function(file) {
-  paste(readLines(indiedown_path("tex", file), encoding = "UTF-8"), collapse = "\n")
+  paste(
+    readLines(indiedown_path("tex", file), encoding = "UTF-8"),
+    collapse = "\n"
+  )
 }
 
 #' Set Default Value

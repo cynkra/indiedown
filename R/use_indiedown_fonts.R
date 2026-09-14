@@ -17,9 +17,11 @@
 #'   variants = c("regular", "italic", "700", "700italic")
 #' )
 #' }
-use_indiedown_gfonts <- function(path = ".",
-                                 id = "roboto",
-                                 variants = c("regular", "300italic", "700", "700italic")) {
+use_indiedown_gfonts <- function(
+  path = ".",
+  id = "roboto",
+  variants = c("regular", "300italic", "700", "700italic")
+) {
   path_fonts <- fs::path_norm(fs::path(path, "inst", "indiedown", "fonts"))
 
   fs::dir_create(path_fonts)

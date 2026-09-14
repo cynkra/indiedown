@@ -8,21 +8,23 @@
 #'   indiedown::dr_down()
 #' }
 dr_down <- function() {
-
   # Check the version
   pandoc_v <- as.character(rmarkdown::pandoc_version())
   r_v <- paste(version$major, version$minor, sep = ".")
 
-  if (Sys.getenv("RSTUDIO") == "1" && requireNamespace("rstudioapi", quietly = TRUE)) {
+  if (
+    Sys.getenv("RSTUDIO") == "1" &&
+      requireNamespace("rstudioapi", quietly = TRUE)
+  ) {
     rstudio_v <- as.character(rstudioapi::versionInfo()$version)
   } else {
     rstudio_v <- NA_character_
   }
 
-  if(requireNamespace("tinytex", quietly = TRUE)){
+  if (requireNamespace("tinytex", quietly = TRUE)) {
     tinytex_v <- as.character(packageVersion("tinytex"))
     is_tinytex <- tinytex::is_tinytex()
-  } else{
+  } else {
     tinytex_v <- NA_character_
     is_tinytex <- FALSE
   }
@@ -67,7 +69,6 @@ dr_down <- function() {
   # clean up
   fs::dir_delete(tdir)
 
-
   cli_h1("System Information")
 
   cli_alert_info("R-Version: {version_info['r']}")
@@ -94,9 +95,12 @@ dr_down <- function() {
     cli_alert_info("Running outside of RStudio")
   }
 
-
   cli_h1("Test Runs")
-  text <- paste("Running", names(success), ifelse(success, "successfully", "unsuccessfully"))
+  text <- paste(
+    "Running",
+    names(success),
+    ifelse(success, "successfully", "unsuccessfully")
+  )
   for (i in seq_along(text)) {
     if (success[i]) {
       cli_alert_success(text[i])

@@ -12,10 +12,11 @@
 #'   title = "My Title",
 #'   subtitle = "My Subtitle"
 #' )
-cd_page_title <- function(title = default(rmarkdown::metadata$title, "Title"),
-                          subtitle = default(rmarkdown::metadata$subtitle, "Subtitle"),
-                          date = default(rmarkdown::metadata$date, cd_format_date(Sys.Date()))) {
-
+cd_page_title <- function(
+  title = default(rmarkdown::metadata$title, "Title"),
+  subtitle = default(rmarkdown::metadata$subtitle, "Subtitle"),
+  date = default(rmarkdown::metadata$date, cd_format_date(Sys.Date()))
+) {
   logo_path <- indiedown_path_tex("res/logo.png")
 
   indiedown_glue(

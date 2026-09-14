@@ -13,13 +13,14 @@
 #' cd_knit_chunk_opts()
 #'
 #' @export
-cd_knit_chunk_opts <- function(twocolumn = default(rmarkdown::metadata$twocolumn, FALSE),
-                               fig.width = NULL,
-                               fig.height = NULL,
-                               fig.pos = "h",
-                               message = FALSE,
-                               echo = FALSE) {
-
+cd_knit_chunk_opts <- function(
+  twocolumn = default(rmarkdown::metadata$twocolumn, FALSE),
+  fig.width = NULL,
+  fig.height = NULL,
+  fig.pos = "h",
+  message = FALSE,
+  echo = FALSE
+) {
   if (twocolumn) {
     fig.width <- default(fig.width, 4)
     fig.height <- default(fig.height, 3.5)

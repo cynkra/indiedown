@@ -8,7 +8,10 @@ test_that("create_indiedown_package() works", {
   withr::with_collate("C", sort(fs::dir_ls("mydown", recurse = TRUE)))
 
   unlink("mydown/R/cd_page_title.R")
-  expect_message(expect_message(create_indiedown_package("mydown", overwrite = TRUE)))
+  expect_message(expect_message(create_indiedown_package(
+    "mydown",
+    overwrite = TRUE
+  )))
 
   expect_true(file.exists("mydown/R/cd_page_title.R"))
 })

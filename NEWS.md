@@ -9,6 +9,163 @@
 - Added `inst/quarto/examples/example.qmd` to the generated skeleton.
 
 
+# indiedown 0.1.1.9057
+
+## Chore
+
+- Remove Copilot setup steps.
+
+- Auto-update from GitHub Actions (#114).
+
+## Continuous integration
+
+- Align with cynkratemplate.
+
+## Documentation
+
+- Point the coverage badge at the branch that exists (#121).
+
+- Harmonize README and pkgdown front page rendering (#120).
+
+## fledge
+
+- Bump version to 0.1.1.9056 (#119).
+
+- Bump version to 0.1.1.9054 (#117).
+
+- Bump version to 0.1.1.9052 (#115).
+
+
+# indiedown 0.1.1.9056
+
+## Features
+
+### ci
+
+- Align the `revdep2`, `revdep4` and `revdepx` subsystems with `rigraph`.
+
+## fledge
+
+- Bump version to 0.1.1.9049 (#111).
+
+
+# indiedown 0.1.1.9055
+
+## Bug fixes
+
+### ci
+
+- Backport kit fixes from `rigraph`, `duckdb-r` and `dm`.
+
+
+# indiedown 0.1.1.9054
+
+## Continuous integration
+
+- Wrap the commit status update into an action.
+
+- Route ccache through one-word compiler wrappers on Unix.
+
+- Name every step and restore the log entry `setup-pandoc` swallows.
+
+
+# indiedown 0.1.1.9053
+
+## Features
+
+- Optional margin-figure / handout module (#106).
+
+- Upstream generic table helpers and spell-check (#105).
+
+## Continuous integration
+
+- Add sharded `revdep2` workflow.
+
+
+# indiedown 0.1.1.9052
+
+## Bug fixes
+
+- Engine bugfixes and backports from derived packages (#102).
+
+## Features
+
+- Unify `cd_format_date()` and `cd_knit_chunk_opts()` helpers (#103).
+
+## Chore
+
+- Auto-update from GitHub Actions (#99).
+
+- Auto-update from GitHub Actions (#114).
+
+## Continuous integration
+
+- Remove unused pr-commands workflow.
+
+
+# indiedown 0.1.1.9051
+
+## fledge
+
+- Bump version to 0.1.1.9045 (#97).
+
+- Bump version to 0.1.1.9043 (#95).
+
+- Bump version to 0.1.1.9044 (#96).
+
+
+# indiedown 0.1.1.9050
+
+## Continuous integration
+
+- Lock down `format-suggest` egress (audit → block).
+
+
+# indiedown 0.1.1.9049
+
+## Bug fixes
+
+### ci
+
+- Emit empty package matrix when there are no (rev)deps.
+
+## fledge
+
+- Bump version to 0.1.1.9043 (#93).
+
+
+# indiedown 0.1.1.9048
+
+## Continuous integration
+
+- Run on Ubuntu 26.04.
+
+- Align workflows with template.
+
+
+# indiedown 0.1.1.9047
+
+## Chore
+
+- Apply air formatting, add `air.toml` (#101).
+
+
+# indiedown 0.1.1.9046
+
+## Chore
+
+- Auto-update from GitHub Actions (#99).
+
+
+# indiedown 0.1.1.9045
+
+## Continuous integration
+
+- Update ccache-action reference.
+
+- Bump action version.
+
+
 # indiedown 0.1.1.9044
 
 ## fledge
