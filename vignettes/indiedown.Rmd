@@ -72,6 +72,18 @@ There are three possible customization points to customize an indiedown skeleton
 See the `vignette("customize")` for details.
 
 
+## Quarto
+
+`create_indiedown_package()` also scaffolds a Quarto extension under
+`inst/quarto/_extensions/<pkg>/<pkg>/` and exports a `use_<pkg>_quarto()`
+helper. The helper copies the extension into a user's project so that a
+`.qmd` document with `format: <pkg>-pdf` in the YAML header can be
+rendered with `quarto render`. The example document at
+`inst/quarto/examples/example.qmd` shows the expected YAML header. The R
+helpers like `cd_page_title()` work unchanged inside `.qmd` files because
+they emit raw LaTeX via `knitr::asis_output()`.
+
+
 ## Corporate Design Elements
 
 Indiedown packages use R functions to generate LaTeX code for customization.

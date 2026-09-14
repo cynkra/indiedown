@@ -13,3 +13,4 @@
 ^renovate\.json$
 ^\.ccache$
 ^air\.toml$
+^TYPST\.md$
