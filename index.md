@@ -7,14 +7,14 @@ a few basic steps.
 
 Start by installing indiedown:
 
-``` chroma
+``` r
 
 install.packages("indiedown")
 ```
 
 You can also install the development version from GitHub:
 
-``` chroma
+``` r
 
 # install.packages("devtools")
 devtools::install_github("cynkra/indiedown")
@@ -24,7 +24,7 @@ To create your own customized R Markdown template, start by creating an
 indiedown template package, called `mydown` in this example. Navigate to
 the directory where you want to create the package, then:
 
-``` chroma
+``` r
 
 indiedown::create_indiedown_package("mydown")
 ```
@@ -33,7 +33,7 @@ This creates a package skeleton in the new `mydown` directory in the
 current working directory. You can build *mydown*, using “Build and
 Reload” in the RStudio or via the command line, as follows:
 
-``` chroma
+``` r
 
 devtools::install("mydown")
 ```
@@ -49,12 +49,3 @@ RStudio (after a restart).
 - See
   [`vignette("customize")`](https://indiedown.cynkra.com/articles/customize.md)
   for advanced customization.
-
-------------------------------------------------------------------------
-
-## Code of Conduct
-
-Please note that the indiedown project is released with a [Contributor
-Code of
-Conduct](https://cynkra.github.io/indiedown/CODE_OF_CONDUCT.html). By
-contributing to this project, you agree to abide by its terms.

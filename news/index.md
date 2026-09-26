@@ -1,5 +1,37 @@
 # Changelog
 
+## indiedown 0.1.1.9057
+
+### Chore
+
+- Remove Copilot setup steps.
+
+- Auto-update from GitHub Actions
+  ([\#114](https://github.com/cynkra/indiedown/issues/114)).
+
+### Continuous integration
+
+- Align with cynkratemplate.
+
+### Documentation
+
+- Point the coverage badge at the branch that exists
+  ([\#121](https://github.com/cynkra/indiedown/issues/121)).
+
+- Harmonize README and pkgdown front page rendering
+  ([\#120](https://github.com/cynkra/indiedown/issues/120)).
+
+### fledge
+
+- Bump version to 0.1.1.9056
+  ([\#119](https://github.com/cynkra/indiedown/issues/119)).
+
+- Bump version to 0.1.1.9054
+  ([\#117](https://github.com/cynkra/indiedown/issues/117)).
+
+- Bump version to 0.1.1.9052
+  ([\#115](https://github.com/cynkra/indiedown/issues/115)).
+
 ## indiedown 0.1.1.9056
 
 ### Features
