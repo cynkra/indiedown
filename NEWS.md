@@ -1,5 +1,16 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9058
+
+## Documentation
+
+- Break lines at meaning boundaries (#122).
+
+- Point the coverage badge at the branch that exists (#121).
+
+- Harmonize README and pkgdown front page rendering (#120).
+
+
 # indiedown 0.1.1.9057
 
 ## Chore
