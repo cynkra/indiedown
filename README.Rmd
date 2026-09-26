@@ -1,6 +1,10 @@
 ---
-output: downlit::readme_document
+output: cynkratemplate::readme_document
 ---
+
+<!-- README.md and index.md are generated from README.Rmd.
+     Edit that file and render it the usual way: rmarkdown::render(), devtools::build_readme(), or the Knit button.
+     The cynkratemplate package must be installed; it supplies the output format. -->
 <!-- README.md is generated from README.Rmd on GitHub Actions: do not edit by hand -->
 
 # indiedown
@@ -10,7 +14,7 @@ Individual R Markdown PDF Templates.
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R build status](https://github.com/cynkra/indiedown/workflows/rcc/badge.svg)](https://github.com/cynkra/indiedown/actions)
-[![Coverage status](https://codecov.io/gh/cynkra/indiedown/branch/main/graph/badge.svg)](https://codecov.io/github/cynkra/indiedown?branch=master)
+[![Coverage status](https://codecov.io/gh/cynkra/indiedown/graph/badge.svg)](https://app.codecov.io/gh/cynkra/indiedown/tree/main)
 ![CRAN status](https://www.r-pkg.org/badges/version/indiedown)
 <!-- badges: end -->
 
@@ -53,4 +57,5 @@ With *mydown* built and installed, our new template is available in RStudio (aft
 
 ## Code of Conduct
 
-Please note that the indiedown project is released with a [Contributor Code of Conduct](https://cynkra.github.io/indiedown/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.
+Please note that the indiedown project is released with a [Contributor Code of Conduct](https://cynkra.github.io/indiedown/CODE_OF_CONDUCT.html).
+By contributing to this project, you agree to abide by its terms.
