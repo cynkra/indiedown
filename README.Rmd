@@ -3,9 +3,8 @@ output: cynkratemplate::readme_document
 ---
 
 <!-- README.md and index.md are generated from README.Rmd.
-     Edit that file and render it the usual way: rmarkdown::render(),
-     devtools::build_readme(), or the Knit button. The cynkratemplate
-     package must be installed; it supplies the output format. -->
+     Edit that file and render it the usual way: rmarkdown::render(), devtools::build_readme(), or the Knit button.
+     The cynkratemplate package must be installed; it supplies the output format. -->
 <!-- README.md is generated from README.Rmd on GitHub Actions: do not edit by hand -->
 
 # indiedown
@@ -58,4 +57,5 @@ With *mydown* built and installed, our new template is available in RStudio (aft
 
 ## Code of Conduct
 
-Please note that the indiedown project is released with a [Contributor Code of Conduct](https://cynkra.github.io/indiedown/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.
+Please note that the indiedown project is released with a [Contributor Code of Conduct](https://cynkra.github.io/indiedown/CODE_OF_CONDUCT.html).
+By contributing to this project, you agree to abide by its terms.
