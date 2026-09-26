@@ -1,5 +1,18 @@
 # Changelog
 
+## indiedown 0.1.1.9058
+
+### Documentation
+
+- Break lines at meaning boundaries
+  ([\#122](https://github.com/cynkra/indiedown/issues/122)).
+
+- Point the coverage badge at the branch that exists
+  ([\#121](https://github.com/cynkra/indiedown/issues/121)).
+
+- Harmonize README and pkgdown front page rendering
+  ([\#120](https://github.com/cynkra/indiedown/issues/120)).
+
 ## indiedown 0.1.1.9057
 
 ### Chore
