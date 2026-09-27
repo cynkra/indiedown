@@ -1,5 +1,22 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9060
+
+## Bug fixes
+
+### ci
+
+- Restore the custom `after-install` action (#130).
+
+## Continuous integration
+
+- Run coverage checks after pkgdown push.
+
+## fledge
+
+- Bump version to 0.1.1.9055 (#118).
+
+
 # indiedown 0.1.1.9059
 
 - Refactor(ci): Serve the revdep scripts with the actions instead of copying them (cynkra/cynkratemplate#149).
