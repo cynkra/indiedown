@@ -17,6 +17,7 @@
       mydown/R/cd_page_title.R
       mydown/R/indiedown.R
       mydown/R/indiedown_pdf_document.R
+      mydown/R/use_quarto.R
       mydown/inst
       mydown/inst/indiedown
       mydown/inst/indiedown/default.yaml
@@ -29,6 +30,16 @@
       mydown/inst/indiedown/preamble.tex
       mydown/inst/indiedown/res
       mydown/inst/indiedown/res/logo.png
+      mydown/inst/quarto
+      mydown/inst/quarto/_extensions
+      mydown/inst/quarto/_extensions/mydown
+      mydown/inst/quarto/_extensions/mydown/mydown
+      mydown/inst/quarto/_extensions/mydown/mydown/_extension.yml
+      mydown/inst/quarto/_extensions/mydown/mydown/_filters
+      mydown/inst/quarto/_extensions/mydown/mydown/_filters/geometry.lua
+      mydown/inst/quarto/_extensions/mydown/mydown/preamble.tex
+      mydown/inst/quarto/examples
+      mydown/inst/quarto/examples/example.qmd
       mydown/inst/rmarkdown
       mydown/inst/rmarkdown/templates
       mydown/inst/rmarkdown/templates/report
@@ -43,6 +54,7 @@
       mydown/man/indiedown_glue.Rd
       mydown/man/indiedown_path.Rd
       mydown/man/mydown.Rd
+      mydown/man/use_mydown_quarto.Rd
     Code
       unlink("mydown/R/cd_page_title.R")
       create_indiedown_package("mydown", overwrite = TRUE)
