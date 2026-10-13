@@ -14,3 +14,4 @@
 ^\.ccache$
 ^air\.toml$
 ^index\.md$
+^TYPST\.md$

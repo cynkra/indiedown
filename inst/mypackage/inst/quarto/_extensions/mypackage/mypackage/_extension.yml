@@ -1,0 +1,26 @@
+title: mypackage PDF
+author: mypackage
+version: 0.1.0
+quarto-required: ">=1.4.0"
+contributes:
+  formats:
+    pdf:
+      pdf-engine: lualatex
+      papersize: a4
+      documentclass: article
+      fontsize: 11pt
+      number-sections: true
+      secnumdepth: 2
+      indent: false
+      compact-title: true
+      subparagraph: true
+      linestretch: 1.05
+      # Fonts are configured in preamble.tex (Pandoc escapes underscores in
+      # the `_extensions/...` Path= value when set via mainfontoptions).
+      include-in-header:
+        - preamble.tex
+      filters:
+        - _filters/geometry.lua
+      format-resources:
+        - fonts
+        - res
