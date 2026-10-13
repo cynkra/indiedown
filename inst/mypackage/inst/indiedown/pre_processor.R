@@ -8,6 +8,9 @@ pre_processor <- function(
   files_dir,
   output_dir
 ) {
+  # uncomment to require a recent pandoc (some asset packages rely on it)
+  # stopifnot(rmarkdown::pandoc_version() >= "3.1.5")
+
   # apply default.yaml (do not remove)
   args <- apply_default_yaml(metadata = metadata)
 
@@ -26,6 +29,18 @@ pre_processor <- function(
         "geometry:top=1cm,bottom=1.75cm,left=2.5cm,right=2.5cm,includehead,includefoot"
       )
     }
+  }
+
+  # pass twocolumn as classoption
+  if (isTRUE(metadata$twocolumn)) {
+    args <- c(
+      args,
+      "--variable",
+      paste0(
+        "classoption:",
+        paste(c(metadata$classoption, "twocolumn"), collapse = ",")
+      )
+    )
   }
 
   args
