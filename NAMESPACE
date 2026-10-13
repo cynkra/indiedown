@@ -2,6 +2,8 @@
 
 export(create_indiedown_package)
 export(dr_down)
+export(spell_check_rmd)
+export(update_wordlist_rmd)
 export(use_indiedown_gfonts)
 import(cli)
 importFrom(stats,setNames)
