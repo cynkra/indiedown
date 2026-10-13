@@ -43,6 +43,20 @@
       mydown/man/indiedown_glue.Rd
       mydown/man/indiedown_path.Rd
       mydown/man/mydown.Rd
+      mydown/tests
+      mydown/tests/testthat
+      mydown/tests/testthat.R
+      mydown/tests/testthat/_snaps
+      mydown/tests/testthat/_snaps/visual
+      mydown/tests/testthat/_snaps/visual/details-environment.txt
+      mydown/tests/testthat/_snaps/visual/details-page-01.png
+      mydown/tests/testthat/_snaps/visual/figure-environment.txt
+      mydown/tests/testthat/_snaps/visual/figure-page-01.png
+      mydown/tests/testthat/_snaps/visual/skeleton-environment.txt
+      mydown/tests/testthat/_snaps/visual/skeleton-page-01.png
+      mydown/tests/testthat/_snaps/visual/skeleton-page-02.png
+      mydown/tests/testthat/helper-visual.R
+      mydown/tests/testthat/test-visual.R
     Code
       unlink("mydown/R/cd_page_title.R")
       create_indiedown_package("mydown", overwrite = TRUE)
