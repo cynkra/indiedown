@@ -1,0 +1,15 @@
+---
+title: "mydown test document"
+output: mydown::mydown
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+mydown::cd_page_title()
+```
