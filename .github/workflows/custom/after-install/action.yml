@@ -3,6 +3,16 @@ name: 'Custom steps to run after R packages are installed'
 runs:
   using: "composite"
   steps:
+    # The tests of the example package call `indiedown::expect_pdf_snapshot()`.
+    # At this point the library holds no copy of the commit under test:
+    # the binary is built and installed only after the custom steps,
+    # so the library has either no indiedown or a stale one restored from the package cache,
+    # which lacks the function that the commit adds.
+    - name: Install the package under test
+      run: |
+        R CMD INSTALL .
+      shell: bash
+
     - name: Run R CMD check on example package
       run: |
         options(crayon.enabled = TRUE)
