@@ -15,7 +15,7 @@
       mydown/R/cd_format_date.R
       mydown/R/cd_knit_chunk_opts.R
       mydown/R/cd_page_title.R
-      mydown/R/indiedown.R
+      mydown/R/import-standalone-indiedown.R
       mydown/R/indiedown_pdf_document.R
       mydown/inst
       mydown/inst/indiedown
