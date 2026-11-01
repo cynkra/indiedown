@@ -149,7 +149,7 @@ for the other customization points.
 # \donttest{
 path <- file.path(tempdir(), "mydown")
 create_indiedown_package(path, overwrite = TRUE)
-#> ✔ indiedown skeleton set up at /tmp/RtmppP729N/mydown
+#> ✔ indiedown skeleton set up at /tmp/RtmppIdCmx/mydown
 #> ℹ See `vignette("indiedown")` for how to customize the mydown package
 # Use Lora, instead of default Roboto
 use_indiedown_gfonts(
