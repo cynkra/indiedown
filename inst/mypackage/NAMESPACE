@@ -2,6 +2,7 @@
 
 export(cd_format_date)
 export(cd_knit_chunk_opts)
+export(cd_margin_figures)
 export(cd_page_title)
 export(default)
 export(indiedown_glue)
