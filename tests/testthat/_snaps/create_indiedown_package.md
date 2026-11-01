@@ -55,7 +55,6 @@
       mydown/tests/testthat/_snaps/visual/skeleton-environment.txt
       mydown/tests/testthat/_snaps/visual/skeleton-page-01.png
       mydown/tests/testthat/_snaps/visual/skeleton-page-02.png
-      mydown/tests/testthat/helper-visual.R
       mydown/tests/testthat/test-visual.R
     Code
       unlink("mydown/R/cd_page_title.R")

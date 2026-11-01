@@ -2,8 +2,11 @@
 
 export(create_indiedown_package)
 export(dr_down)
+export(expect_pdf_snapshot)
+export(skip_if_no_pdf_snapshot)
 export(use_indiedown_gfonts)
 import(cli)
+importFrom(rlang,"%||%")
 importFrom(stats,setNames)
 importFrom(utils,
   installed.packages,

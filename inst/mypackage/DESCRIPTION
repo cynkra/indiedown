@@ -19,6 +19,7 @@ Imports:
     withr,
     yaml
 Suggests:
+    indiedown,
     pdftools,
     testthat (>= 3.0.0),
     tinytex

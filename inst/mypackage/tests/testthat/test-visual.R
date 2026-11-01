@@ -1,9 +1,25 @@
-# Pixel-exact visual snapshots of the rendered PDF. See helper-visual.R for
-# the mechanism and how to refresh the reference images. All fixtures use a
-# fixed date and static content so the output is deterministic.
+# Pixel-exact visual snapshots of the rendered PDF.
+# See ?indiedown::expect_pdf_snapshot for the mechanism
+# and for how to refresh the reference images.
+# All fixtures use a fixed date and static content,
+# so that the output is deterministic.
+
+# The helper lives in indiedown, which template packages only suggest.
+# Without indiedown, skip, but keep the snapshots:
+# a complete test run deletes the snapshot files that it has not seen,
+# and these can only be announced from within a test.
+if (!requireNamespace("indiedown", quietly = TRUE)) {
+  test_that("the snapshots are kept without indiedown", {
+    for (file in dir(test_path("_snaps", "visual"))) {
+      announce_snapshot_file(file)
+    }
+    skip("indiedown is not installed")
+  })
+  skip("indiedown is not installed")
+}
 
 test_that("the report skeleton looks right", {
-  expect_pdf_snapshot(
+  indiedown::expect_pdf_snapshot(
     "skeleton",
     c(
       "---",
@@ -38,7 +54,7 @@ test_that("the report skeleton looks right", {
 })
 
 test_that("typography and tables look right (details)", {
-  expect_pdf_snapshot(
+  indiedown::expect_pdf_snapshot(
     "details",
     c(
       "---",
@@ -69,7 +85,7 @@ test_that("typography and tables look right (details)", {
 })
 
 test_that("a figure looks right", {
-  expect_pdf_snapshot(
+  indiedown::expect_pdf_snapshot(
     "figure",
     c(
       "---",

@@ -1,3 +1,4 @@
+FreeType
 Lato
 Lifecycle
 LuaLaTeX
@@ -8,6 +9,7 @@ Walkthrough
 XeLaTeX
 YAML
 customizations
+fontconfig
 fontspec
 gfonts
 kableExtra
@@ -15,6 +17,10 @@ lato
 monospace
 mydown
 pandoc
+poppler
+rasterized
+rasterizes
 tex
+toolchain
 unescaped
 unsplash
