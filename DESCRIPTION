@@ -46,6 +46,8 @@ Suggests:
     callr,
     glue,
     knitr (>= 1.12),
+    pdftools,
+    png,
     rcmdcheck,
     rmarkdown,
     rstudioapi,

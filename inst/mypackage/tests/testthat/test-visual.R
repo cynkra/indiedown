@@ -1,6 +1,8 @@
-# Pixel-exact visual snapshots of the rendered PDF. See helper-visual.R for
-# the mechanism and how to refresh the reference images. All fixtures use a
-# fixed date and static content so the output is deterministic.
+# Pixel-exact visual snapshots of the rendered PDF.
+# See R/import-standalone-indiedown.R for the mechanism
+# and for how to refresh the reference images.
+# All fixtures use a fixed date and static content,
+# so that the output is deterministic.
 
 test_that("the report skeleton looks right", {
   expect_pdf_snapshot(

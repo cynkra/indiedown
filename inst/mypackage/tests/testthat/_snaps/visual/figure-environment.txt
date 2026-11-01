@@ -6,7 +6,15 @@ r: 4.5.3
 pandoc: 3.10.2
 latex: This is LuaHBTeX, Version 1.24.0 (TeX Live 2026)
 poppler: 24.02.0
+fontconfig: 2.15.0 (libfontconfig.so.1.12.1)
+freetype: libfreetype.so.6.20.1
 pdftools: 3.9.1
 rmarkdown: 2.32
 knitr: 1.52
 tinytex: 0.61
+system fonts: hidden
+fc-match Helvetica: regular.ttf: "Roboto" "Regular"
+font: bold.ttf 54e172a19cc9bd1eb67586a6002aa909
+font: bolditalic.ttf 6646a9380bcdaf80971f1393d5d983c4
+font: italic.ttf 3779a70be963e8c15cf0e1d983890df2
+font: regular.ttf 5ed52e4a52646f96e9c4b58e76114e5c

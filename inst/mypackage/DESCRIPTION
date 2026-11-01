@@ -14,12 +14,15 @@ Depends:
 Imports:
     glue,
     knitr (>= 1.12),
+    rlang (>= 1.0.0),
     rmarkdown,
     utils,
     withr,
     yaml
 Suggests:
+    callr,
     pdftools,
+    png,
     systemfonts,
     testthat (>= 3.0.0),
     tinytex
