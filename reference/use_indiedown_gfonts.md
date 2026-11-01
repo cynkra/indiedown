@@ -87,7 +87,11 @@ the following happens:
     location of `inst/indiedown` in the *installed* template package
     (using `indiedown_path_tex()` from the template package). The
     settings are handed to pandoc as variables, except for those that
-    are set in the YAML header of the document itself.
+    are set in the YAML header of the document itself. The main font is
+    chosen separately by `resolve_fonts()`: `mainfont` and
+    `mainfontoptions` from `default.yaml` are used unless the document
+    or the format names another font that is installed, see "Using a
+    different font" below.
 
 2.  The LaTeX template of pandoc turns `mainfont` and `mainfontoptions`
     into a call to the fontspec package, which looks like this (the path
@@ -122,10 +126,18 @@ running `use_indiedown_gfonts()`, re-install the package (e.g., with
   the `BoldFont`, `ItalicFont` and `BoldItalicFont` entries of
   `mainfontoptions` in `default.yaml` to the file names.
 
-- **A single document:** a setting in the YAML header of the `.Rmd`
-  replaces the corresponding entry of `default.yaml` as a whole. To
-  change the font for one document, set both `mainfont` and
-  `mainfontoptions` there.
+- **A single document:** set `mainfont` in the YAML header of the `.Rmd`
+  to the name of an installed font or to the path of a font file. The
+  `mainfontoptions` of `default.yaml` refer to the downloaded files and
+  are not applied to that font; `mainfontoptions` in the YAML header
+  are. If the font is not installed, the template's font is used
+  instead, with a message. The option `<package>.mainfont`, e.g.,
+  `mydown.mainfont`, names a font for all documents of a user.
+
+- **A font that cannot be shipped:** a licensed font, for example, can
+  be named in `preferredmainfont` (and its other faces in
+  `preferredmainfontoptions`) in `default.yaml`. It is used where it is
+  installed, and the downloaded font everywhere else.
 
 See
 [`vignette("walkthrough")`](https://indiedown.cynkra.com/articles/walkthrough.md)
@@ -149,7 +161,7 @@ for the other customization points.
 # \donttest{
 path <- file.path(tempdir(), "mydown")
 create_indiedown_package(path, overwrite = TRUE)
-#> ✔ indiedown skeleton set up at /tmp/RtmppIdCmx/mydown
+#> ✔ indiedown skeleton set up at /tmp/RtmpHQj3RJ/mydown
 #> ℹ See `vignette("indiedown")` for how to customize the mydown package
 # Use Lora, instead of default Roboto
 use_indiedown_gfonts(

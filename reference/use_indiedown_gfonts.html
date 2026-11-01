@@ -137,7 +137,11 @@ and replaces <code>&lt;&lt;indiedown_path&gt;&gt;</code> by the location of <cod
 in the <em>installed</em> template package
 (using <code>indiedown_path_tex()</code> from the template package).
 The settings are handed to pandoc as variables,
-except for those that are set in the YAML header of the document itself.</p></li>
+except for those that are set in the YAML header of the document itself.
+The main font is chosen separately by <code>resolve_fonts()</code>:
+<code>mainfont</code> and <code>mainfontoptions</code> from <code>default.yaml</code> are used
+unless the document or the format names another font that is installed,
+see "Using a different font" below.</p></li>
 <li><p>The LaTeX template of pandoc turns <code>mainfont</code> and <code>mainfontoptions</code>
 into a call to the fontspec package, which looks like this
 (the path is shortened and the line is wrapped here):</p>
@@ -173,10 +177,20 @@ or adapt <code>mainfont</code> and the <code>BoldFont</code>, <code>ItalicFont</
 <code>BoldItalicFont</code> entries of <code>mainfontoptions</code> in <code>default.yaml</code>
 to the file names.</p></li>
 <li><p><strong>A single document:</strong>
-a setting in the YAML header of the <code>.Rmd</code> replaces the
-corresponding entry of <code>default.yaml</code> as a whole.
-To change the font for one document,
-set both <code>mainfont</code> and <code>mainfontoptions</code> there.</p></li>
+set <code>mainfont</code> in the YAML header of the <code>.Rmd</code>
+to the name of an installed font or to the path of a font file.
+The <code>mainfontoptions</code> of <code>default.yaml</code> refer to the downloaded files
+and are not applied to that font;
+<code>mainfontoptions</code> in the YAML header are.
+If the font is not installed,
+the template's font is used instead, with a message.
+The option <code>&lt;package&gt;.mainfont</code>, e.g., <code>mydown.mainfont</code>,
+names a font for all documents of a user.</p></li>
+<li><p><strong>A font that cannot be shipped:</strong>
+a licensed font, for example, can be named in <code>preferredmainfont</code>
+(and its other faces in <code>preferredmainfontoptions</code>) in <code>default.yaml</code>.
+It is used where it is installed,
+and the downloaded font everywhere else.</p></li>
 </ul><p>See <code><a href="../articles/walkthrough.html">vignette("walkthrough")</a></code> for a step-by-step example
 and <code><a href="../articles/customize.html">vignette("customize")</a></code> for the other customization points.</p>
     </div>
@@ -194,7 +208,7 @@ and <code><a href="https://dreamrs.github.io/gfonts/reference/download_font.html
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"mydown"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="create_indiedown_package.html">create_indiedown_package</a></span><span class="op">(</span><span class="va">path</span>, overwrite <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> indiedown skeleton set up at <span style="color: #0000BB;">/tmp/RtmppIdCmx/mydown</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> indiedown skeleton set up at <span style="color: #0000BB;">/tmp/RtmpHQj3RJ/mydown</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> See `vignette("indiedown")` for how to customize the mydown package</span>
 <span class="r-in"><span><span class="co"># Use Lora, instead of default Roboto</span></span></span>
 <span class="r-in"><span><span class="fu">use_indiedown_gfonts</span><span class="op">(</span></span></span>

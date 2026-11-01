@@ -142,6 +142,31 @@ supports substitution of the variable
 substituted by the path to the <code>indiedown</code> folder.</p>
 </div>
 <div class="section level3">
+<h3 id="main-font">Main Font<a class="anchor" aria-label="anchor" href="#main-font"></a>
+</h3>
+<p>The skeleton ships its main font in <code>inst/indiedown/fonts</code>
+and loads it by path, via <code>mainfont</code> and
+<code>mainfontoptions</code> in <code>default.yaml</code>. The output
+therefore does not depend on the fonts installed on the system.</p>
+<p>A format can prefer a font that it cannot ship, such as a licensed or
+corporate font, with <code>preferredmainfont</code> and
+<code>preferredmainfontoptions</code> in <code>default.yaml</code>. That
+font is used if it is installed, and so are all fonts that its options
+name, such as <code>BoldFont=</code>. Otherwise, the shipped font is
+used, and a message explains how to install fonts on the current
+operating system, once per session. Installed fonts are looked up with
+<code>fc-list</code>, or with the systemfonts package where
+<code>fc-list</code> is not available, such as on macOS.</p>
+<p>A document can name another font in the <code>mainfont</code> field
+of its YAML header, and a user can name one in the option
+<code>&lt;package&gt;.mainfont</code>. The font can be the name of an
+installed font or a font file. If it is not installed, the preferred or
+shipped font is used instead, with a message. The
+<code>mainfontoptions</code> of the document apply to the named font, or
+are appended to those of the preferred or shipped font if no font is
+named.</p>
+</div>
+<div class="section level3">
 <h3 id="including-additional-assets">Including Additional Assets<a class="anchor" aria-label="anchor" href="#including-additional-assets"></a>
 </h3>
 <p>Most customized styles will include some additional assets, such as a

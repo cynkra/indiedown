@@ -72,6 +72,29 @@ variable `<<indiedown_path>`. Whenever you mention `<<indiedown_path>`
 in one of your files, it will be substituted by the path to the
 `indiedown` folder.
 
+### Main Font
+
+The skeleton ships its main font in `inst/indiedown/fonts` and loads it
+by path, via `mainfont` and `mainfontoptions` in `default.yaml`. The
+output therefore does not depend on the fonts installed on the system.
+
+A format can prefer a font that it cannot ship, such as a licensed or
+corporate font, with `preferredmainfont` and `preferredmainfontoptions`
+in `default.yaml`. That font is used if it is installed, and so are all
+fonts that its options name, such as `BoldFont=`. Otherwise, the shipped
+font is used, and a message explains how to install fonts on the current
+operating system, once per session. Installed fonts are looked up with
+`fc-list`, or with the systemfonts package where `fc-list` is not
+available, such as on macOS.
+
+A document can name another font in the `mainfont` field of its YAML
+header, and a user can name one in the option `<package>.mainfont`. The
+font can be the name of an installed font or a font file. If it is not
+installed, the preferred or shipped font is used instead, with a
+message. The `mainfontoptions` of the document apply to the named font,
+or are appended to those of the preferred or shipped font if no font is
+named.
+
 ### Including Additional Assets
 
 Most customized styles will include some additional assets, such as a
