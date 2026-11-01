@@ -566,8 +566,8 @@ default <- function(x, default = "") {
 # ## Fonts
 #
 # R's `grDevices::pdf()` device, the default device of the knitr chunks,
-# does not embed the fonts of a plot, it refers to Helvetica by name.
-# poppler substitutes the font that fontconfig offers for Helvetica,
+# does not embed the fonts of a plot, it refers to a standard font by name.
+# poppler substitutes the font that fontconfig offers for that name,
 # so the rasterized plot text would depend on the fonts of the system.
 # `expect_pdf_snapshot()` therefore sets the chunk option `fig.showtext = TRUE`
 # while it renders the document, and only then,

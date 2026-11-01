@@ -869,7 +869,7 @@ test_that("the text of plots is embedded with showtext, not referred to", {
     render()
   }
 
-  # R's pdf() device refers to Helvetica without embedding it
+  # R's pdf() device refers to a standard font without embedding it
   expect_false(embedded(render()))
   expect_true(embedded(render_with_showtext()))
 })
