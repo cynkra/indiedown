@@ -71,7 +71,12 @@ apply_default_yaml <- function(metadata) {
 
   # the main font is resolved separately, also if set in the document
   fonts <- resolve_fonts(metadata, defaults)
-  defaults[c("mainfont", "mainfontoptions")] <- NULL
+  defaults[c(
+    "mainfont",
+    "mainfontoptions",
+    "preferredmainfont",
+    "preferredmainfontoptions"
+  )] <- NULL
 
   # do not apply asset defaults if variable set in document
   defaults_applied <- defaults[setdiff(names(defaults), names(metadata))]
@@ -96,22 +101,26 @@ apply_default_yaml <- function(metadata) {
   args
 }
 
-# The main font is, in this order:
+# The main font is the first of:
 #
 # 1. the font named in the `mainfont` field of the document,
-#    or else in the option `<package>.mainfont`,
-#    if it is installed;
+#    or else in the option `<package>.mainfont`, if it is installed;
 #    it can be a font file, as a path or as a file name in the TeX tree,
-#    or the family name of a system font;
-# 2. the font configured with `mainfont` and `mainfontoptions`
-#    in default.yaml, typically font files shipped with the package
-#    in inst/indiedown/fonts and loaded by path.
+#    or the name of a system font;
+# 2. the preferred font of the format, `preferredmainfont` in default.yaml,
+#    with `preferredmainfontoptions`, if it is installed:
+#    typically a licensed or corporate font that cannot be shipped;
+# 3. the fallback font, `mainfont` in default.yaml, with `mainfontoptions`:
+#    typically font files shipped in inst/indiedown/fonts and loaded by path.
 #
-# Only a font that is named explicitly is looked up on the system,
-# so that the output does not depend on the fonts installed by default.
-# A message explains how to install a named font that is missing.
+# The preferred font counts as installed only if all fonts that it names,
+# in `preferredmainfont` and in options such as `BoldFont=`, are found.
+# If the system fonts cannot be looked up, a named font is left to LaTeX,
+# and the fallback font replaces the preferred one.
+# For a missing font, a message explains how to install fonts,
+# once per session.
 # The `mainfontoptions` of the document are used with a named font
-# and appended to those of default.yaml otherwise.
+# and appended to those of the preferred or fallback font otherwise.
 #
 # Returns a list with the pandoc variables `mainfont` and `mainfontoptions`,
 # omitting unset ones.
@@ -120,94 +129,134 @@ resolve_fonts <- function(
   defaults,
   option = paste0(utils::packageName(), ".mainfont")
 ) {
-  fallback <- list(
-    mainfont = defaults[["mainfont"]],
-    mainfontoptions = unlist(defaults[["mainfontoptions"]])
-  )
   options <- unlist(metadata[["mainfontoptions"]])
 
   font <- metadata[["mainfont"]]
-  origin <- "the `mainfont` field of the document"
+  origin <- " from the `mainfont` field of the document"
   if (is.null(font)) {
     font <- getOption(option)
-    origin <- paste0("the `", option, "` option")
+    origin <- paste0(" from the `", option, "` option")
   }
 
-  if (is.null(font)) {
-    fonts <- fallback
-    fonts$mainfontoptions <- c(fallback$mainfontoptions, options)
-  } else if (is.null(fallback$mainfont) || font_is_installed(font)) {
-    fonts <- list(mainfont = font, mainfontoptions = options)
-  } else {
+  missing <- NULL
+  if (!is.null(font)) {
+    if (is.null(defaults[["mainfont"]]) || !isFALSE(fonts_installed(font))) {
+      return(Filter(
+        Negate(is.null),
+        list(mainfont = font, mainfontoptions = options)
+      ))
+    }
+    missing <- paste0("Font \"", font, "\"", origin)
+    # the options were meant for the missing font
+    options <- NULL
+  }
+
+  fonts <- list(
+    mainfont = defaults[["mainfont"]],
+    mainfontoptions = unlist(defaults[["mainfontoptions"]])
+  )
+  preferred <- list(
+    mainfont = defaults[["preferredmainfont"]],
+    mainfontoptions = unlist(defaults[["preferredmainfontoptions"]])
+  )
+  if (!is.null(preferred$mainfont)) {
+    faces <- font_faces(preferred$mainfont, preferred$mainfontoptions)
+    if (isTRUE(all(fonts_installed(faces)))) {
+      fonts <- preferred
+    } else if (is.null(missing)) {
+      font <- preferred$mainfont
+      missing <- paste0("Preferred font \"", font, "\"")
+    }
+  }
+
+  if (!is.null(missing) && is.null(font_messages[[missing]])) {
+    font_messages[[missing]] <- TRUE
     message(
-      "Font \"",
-      font,
-      "\" from ",
-      origin,
-      " is not installed, using \"",
-      fallback$mainfont,
+      missing,
+      " was not found, using \"",
+      fonts$mainfont,
       "\" instead.\n",
-      "To use \"",
-      font,
-      "\", ",
+      "To use it, ",
       font_install_hint(font),
       "."
     )
-    fonts <- fallback
   }
 
+  fonts$mainfontoptions <- c(fonts$mainfontoptions, options)
   Filter(Negate(is.null), fonts)
 }
 
-font_is_installed <- function(font) {
-  if (is_font_file(font)) {
-    if (file.exists(font)) {
-      return(TRUE)
-    }
-    if (basename(font) != font) {
-      return(FALSE)
-    }
-    # a file name: look it up in the TeX tree
-    kpsewhich <- Sys.which("kpsewhich")
-    if (!nzchar(kpsewhich)) {
-      # cannot check, leave it to LaTeX
-      return(TRUE)
-    }
-    found <- suppressWarnings(
-      system2(kpsewhich, shQuote(font), stdout = TRUE, stderr = FALSE)
-    )
-    return(length(found) > 0)
-  }
+# missing fonts reported in this session
+font_messages <- new.env(parent = emptyenv())
 
-  names <- installed_font_names()
-  if (is.null(names)) {
-    # cannot check, leave it to LaTeX
+# The font and the fonts that its fontspec options name for other faces,
+# such as `BoldFont=`, where `*` stands for the font, as in fontspec
+font_faces <- function(font, options) {
+  pattern <- "^[[:alpha:]]+Font="
+  faces <- sub(pattern, "", grep(pattern, options, value = TRUE))
+  unique(c(font, gsub("*", font, faces, fixed = TRUE)))
+}
+
+# TRUE for each installed font, FALSE for a missing one, NA if unknown
+fonts_installed <- function(fonts) {
+  is_file <- is_font_file(fonts)
+  installed <- rep(NA, length(fonts))
+  installed[is_file] <- vapply(fonts[is_file], font_file_installed, logical(1))
+  if (!all(is_file)) {
+    names <- installed_font_names()
+    if (!is.null(names)) {
+      installed[!is_file] <- tolower(fonts[!is_file]) %in% tolower(names)
+    }
+  }
+  installed
+}
+
+font_file_installed <- function(font) {
+  if (file.exists(font)) {
     return(TRUE)
   }
-  tolower(font) %in% tolower(names)
+  if (basename(font) != font) {
+    return(FALSE)
+  }
+  # a file name: look it up in the TeX tree
+  kpsewhich <- Sys.which("kpsewhich")
+  if (!nzchar(kpsewhich)) {
+    return(NA)
+  }
+  found <- suppressWarnings(
+    system2(kpsewhich, shQuote(font), stdout = TRUE, stderr = FALSE)
+  )
+  length(found) > 0
 }
 
 is_font_file <- function(font) {
   grepl("[.](otf|ttf|otc|ttc)$", font, ignore.case = TRUE)
 }
 
-# Family and PostScript names of the installed system fonts,
-# or NULL if they cannot be determined
+# Family, full and PostScript names of the installed system fonts,
+# or NULL if they cannot be determined.
+# fc-list lists the fonts that fontconfig finds,
+# where XeTeX and LuaTeX look for system fonts on Linux
+# and with TeX Live on Windows.
+# It runs as a new process, so it sees the current FONTCONFIG_FILE,
+# which tests can set to hide the system fonts.
+# systemfonts covers systems without fc-list, such as macOS;
+# it reads the font list only once per session.
 installed_font_names <- function() {
-  if (requireNamespace("systemfonts", quietly = TRUE)) {
-    fonts <- systemfonts::system_fonts()
-    return(c(fonts$family, fonts$name))
-  }
-
   fc_list <- Sys.which("fc-list")
   if (nzchar(fc_list)) {
     out <- suppressWarnings(system2(
       fc_list,
-      c("--format", shQuote("%{family}\\n%{postscriptname}\\n")),
+      c("--format", shQuote("%{family}\\n%{fullname}\\n%{postscriptname}\\n")),
       stdout = TRUE,
       stderr = FALSE
     ))
     return(trimws(unlist(strsplit(out, ",", fixed = TRUE))))
+  }
+
+  if (requireNamespace("systemfonts", quietly = TRUE)) {
+    fonts <- systemfonts::system_fonts()
+    return(c(fonts$family, fonts$name))
   }
 
   NULL
@@ -219,6 +268,9 @@ font_install_hint <- function(font, sysname = Sys.info()[["sysname"]]) {
       "check the path, relative paths start at the directory of the document"
     )
   }
+  if (is.null(installed_font_names())) {
+    return("install the systemfonts package, which detects installed fonts")
+  }
   switch(
     sysname,
     Windows = paste(
@@ -229,10 +281,7 @@ font_install_hint <- function(font, sysname = Sys.info()[["sysname"]]) {
       "open the font files, click \"Install\" in Font Book,",
       "and restart R"
     ),
-    paste(
-      "copy the font files to ~/.local/share/fonts, run `fc-cache -f`,",
-      "and restart R"
-    )
+    "copy the font files to ~/.local/share/fonts and run `fc-cache -f`"
   )
 }
 

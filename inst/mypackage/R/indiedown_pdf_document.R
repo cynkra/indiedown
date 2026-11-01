@@ -6,12 +6,13 @@
 #' `output: mypackage::mypackage` in the R Markdown YAML header.
 #'
 #' @section Main font:
-#' The main font ships with the package.
-#' A document can use another font by setting `mainfont` in its YAML header,
-#' a user by setting the option `mypackage.mainfont`, e.g. in `.Rprofile`.
-#' The font can be the family name of an installed font or a font file.
-#' If it is not installed, the shipped font is used, and a message explains
-#' how to install it.
+#' A document can set the main font in the `mainfont` field of its YAML header,
+#' a user in the option `mypackage.mainfont`, e.g. in `.Rprofile`.
+#' The font can be the name of an installed font or a font file.
+#' Otherwise, or if that font is not installed, the format's preferred font
+#' is used if it is set in `default.yaml` and installed,
+#' and the font that ships with the package if not.
+#' A message explains how to install a missing font, once per session.
 #'
 #' @param ... Passed on to [rmarkdown::pdf_document()].
 #' @return R Markdown output format to pass to [rmarkdown::render()].

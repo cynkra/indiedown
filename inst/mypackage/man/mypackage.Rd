@@ -18,11 +18,12 @@ R Markdown output format to pass to \code{\link[rmarkdown:render]{rmarkdown::ren
 }
 \section{Main font}{
 
-The main font ships with the package.
-A document can use another font by setting \code{mainfont} in its YAML header,
-a user by setting the option \code{mypackage.mainfont}, e.g. in \code{.Rprofile}.
-The font can be the family name of an installed font or a font file.
-If it is not installed, the shipped font is used, and a message explains
-how to install it.
+A document can set the main font in the \code{mainfont} field of its YAML header,
+a user in the option \code{mypackage.mainfont}, e.g. in \code{.Rprofile}.
+The font can be the name of an installed font or a font file.
+Otherwise, or if that font is not installed, the format's preferred font
+is used if it is set in \code{default.yaml} and installed,
+and the font that ships with the package if not.
+A message explains how to install a missing font, once per session.
 }
 
