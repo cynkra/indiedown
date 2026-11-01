@@ -45,6 +45,7 @@ create_indiedown_package <- function(path, overwrite = FALSE) {
 
   files <- c(
     "inst/rmarkdown/templates/report/skeleton/skeleton.Rmd",
+    "inst/indiedown/default.yaml",
     "R/indiedown_pdf_document.R",
     "man/mypackage.Rd",
     "tests/testthat.R",

@@ -37,7 +37,13 @@ test_that("the skeleton's copy of the standalone file defines indiedown's functi
   names <- ls(copy, all.names = TRUE)
   ns <- asNamespace("indiedown")
 
-  strip <- function(f) deparse(utils::removeSource(f))
+  # the file also defines an environment, which deparses as "<environment>"
+  strip <- function(f) {
+    if (is.function(f)) {
+      f <- utils::removeSource(f)
+    }
+    deparse(f)
+  }
   expect_identical(
     lapply(mget(names, envir = copy), strip),
     lapply(mget(names, envir = ns, inherits = FALSE), strip)

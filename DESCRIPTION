@@ -50,6 +50,7 @@ Suggests:
     rmarkdown,
     rstudioapi,
     spelling,
+    systemfonts,
     testthat (>= 3.0.0),
     tinytex,
     yaml
