@@ -1,10 +1,15 @@
-# resolve_fonts() and apply_default_yaml() live in the skeleton
-# and are copied into each template package,
-# so they are tested from a fresh copy of the skeleton's code.
+# resolve_fonts() and apply_default_yaml() live in the standalone file
+# that each template package carries,
+# so they are tested from a fresh copy of the skeleton's version of it.
 local_skeleton <- function(lookup = FALSE) {
   skeleton <- new.env(parent = globalenv())
   sys.source(
-    system.file("mypackage", "R", "indiedown.R", package = "indiedown"),
+    system.file(
+      "mypackage",
+      "R",
+      "import-standalone-indiedown.R",
+      package = "indiedown"
+    ),
     envir = skeleton
   )
   skeleton$indiedown_path <- function(...) {

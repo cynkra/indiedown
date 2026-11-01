@@ -44,13 +44,16 @@ Imports:
     withr
 Suggests:
     callr,
+    glue,
     knitr (>= 1.12),
     rcmdcheck,
     rmarkdown,
     rstudioapi,
     spelling,
+    systemfonts,
     testthat (>= 3.0.0),
-    tinytex
+    tinytex,
+    yaml
 VignetteBuilder:
     knitr
 Config/testthat/edition: 3

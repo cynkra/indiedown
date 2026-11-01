@@ -1,10 +1,125 @@
 #' Download and Use Google Fonts
 #'
-#' Download and use Google fonts, using the *gfonts* package.
+#' Download a font from [Google Fonts](https://fonts.google.com)
+#' with the *gfonts* package
+#' and install it as the main font of an indiedown template package.
+#' Documents rendered with the package's output format then use that font.
+#' There is nothing to change in the `.Rmd`.
 #'
-#' @inheritParams create_indiedown_package
+#' @section Where the font files end up:
+#' The function works on the template package at `path`,
+#' as created by [create_indiedown_package()].
+#' It writes to the folder `inst/indiedown/fonts/` of that package,
+#' creating it if necessary, and
+#'
+#' - keeps only `.ttf` files:
+#'   everything else in that folder is deleted;
+#' - renames the downloaded files to `regular.ttf`, `italic.ttf`,
+#'   `bold.ttf` and `bolditalic.ttf`,
+#'   overwriting existing files with these names.
+#'
+#' The new names are assigned by position, not by inspecting the files:
+#' the first entry of `variants` becomes `regular.ttf`,
+#' the second `italic.ttf`, and so on.
+#' `variants` must therefore have exactly four entries,
+#' in the order regular, italic, bold, bold italic.
+#' The default uses the light italic (`"300italic"`) of Roboto
+#' for the italic slot.
+#'
+#' @section How the template picks up the fonts:
+#' Because the file names are always the same,
+#' the template does not need to know which font was downloaded.
+#' The skeleton's `inst/indiedown/default.yaml` refers to the four files
+#' by name:
+#'
+#' ```yaml
+#' mainfont: regular.ttf
+#' mainfontoptions:
+#' - Path=<<indiedown_path>>/fonts/
+#' - BoldFont=bold.ttf
+#' - ItalicFont=italic.ttf
+#' - BoldItalicFont=bolditalic.ttf
+#' - Scale=0.92
+#' ```
+#'
+#' When a document is rendered with the output format of the template package,
+#' for example with this YAML header in the `.Rmd` (where `mydown` is the name
+#' of your package):
+#'
+#' ```yaml
+#' output: mydown::mydown
+#' ```
+#'
+#' the following happens:
+#'
+#' 1. The `pre_processor` of the output format
+#'    (`inst/indiedown/pre_processor.R`) calls `apply_default_yaml()`,
+#'    which reads `default.yaml`
+#'    and replaces `<<indiedown_path>>` by the location of `inst/indiedown`
+#'    in the *installed* template package
+#'    (using `indiedown_path_tex()` from the template package).
+#'    The settings are handed to pandoc as variables,
+#'    except for those that are set in the YAML header of the document itself.
+#' 2. The LaTeX template of pandoc turns `mainfont` and `mainfontoptions`
+#'    into a call to the fontspec package, which looks like this
+#'    (the path is shortened and the line is wrapped here):
+#'
+#'    ```latex
+#'    \setmainfont[Path=.../mydown/indiedown/fonts/,BoldFont=bold.ttf,
+#'      ItalicFont=italic.ttf,BoldItalicFont=bolditalic.ttf,Scale=0.92]{regular.ttf}
+#'    ```
+#'
+#' 3. fontspec needs LuaLaTeX or XeLaTeX.
+#'    The skeleton's output format uses `latex_engine = "lualatex"`.
+#'
+#' The font is used for all body text:
+#' regular text, `*emphasis*` (italic), `**strong**` (bold),
+#' and both combined (bold italic).
+#' The skeleton does not set `sansfont` or `monofont`,
+#' so code and other text in a sans or monospace family
+#' are not affected.
+#'
+#' The font files are read from the installed template package.
+#' After running `use_indiedown_gfonts()`,
+#' re-install the package (e.g., with `devtools::install()`)
+#' before rendering a document.
+#'
+#' @section Using a different font:
+#' - **Another Google font:**
+#'   call `use_indiedown_gfonts()` again with another `id` and `variants`.
+#'   No other file needs to change, because the file names stay the same.
+#'   The `Scale=0.92` entry in `default.yaml` applies to all fonts;
+#'   adjust it if the new font looks too large or too small.
+#' - **A font from another source:**
+#'   copy four font files to `inst/indiedown/fonts/`
+#'   and either name them `regular.ttf`, `italic.ttf`, `bold.ttf`
+#'   and `bolditalic.ttf`,
+#'   or adapt `mainfont` and the `BoldFont`, `ItalicFont` and
+#'   `BoldItalicFont` entries of `mainfontoptions` in `default.yaml`
+#'   to the file names.
+#' - **A single document:**
+#'   a setting in the YAML header of the `.Rmd` replaces the
+#'   corresponding entry of `default.yaml` as a whole.
+#'   To change the font for one document,
+#'   set both `mainfont` and `mainfontoptions` there.
+#'
+#' See `vignette("walkthrough")` for a step-by-step example
+#' and `vignette("customize")` for the other customization points.
+#'
+#' @param path Path to the template package,
+#'   as created by [create_indiedown_package()].
+#'   The fonts are written to `inst/indiedown/fonts/` below this path.
+#' @param variants Variants to download, as named by Google Fonts
+#'   (e.g., `"regular"`, `"italic"`, `"700"`, `"700italic"`).
+#'   Exactly four, in the order regular, italic, bold, bold italic.
+#'   See the section "Where the font files end up".
 #' @inheritParams gfonts::download_font
-#' @return This function is called for its side effects and returns `NULL`, invisibly.
+#' @return This function is called for its side effects
+#'   and returns `NULL`, invisibly.
+#' @seealso
+#' - [create_indiedown_package()] to set up the template package.
+#' - [gfonts::get_all_fonts()] for the available font IDs,
+#'   and [gfonts::download_font()] for the underlying download.
 #' @export
 #' @examples
 #' \donttest{
@@ -16,6 +131,8 @@
 #'   id = "lora",
 #'   variants = c("regular", "italic", "700", "700italic")
 #' )
+#' # The files always have the same names, whatever the font
+#' list.files(file.path(path, "inst", "indiedown", "fonts"))
 #' }
 use_indiedown_gfonts <- function(
   path = ".",
