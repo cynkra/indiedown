@@ -340,6 +340,58 @@ test_that("without a font lookup, the fallback replaces the preferred font", {
   )
 })
 
+test_that("the format repeats the font message after the output is written", {
+  skip_if_not(rmarkdown::pandoc_available(), "pandoc not available")
+  skeleton <- local_skeleton()
+  skeleton$installed_font_names <- function() "Some Sans"
+
+  input <- file.path(withr::local_tempdir(), "doc.Rmd")
+  writeLines(c("---", "mainfont: Missing Sans", "---", "", "Text."), input)
+  render <- function() {
+    utils::capture.output(
+      messages <- capture_messages(rmarkdown::render(
+        input,
+        skeleton$indiedown_pdf_document_with_asset(),
+        # pandoc only, without LaTeX
+        output_file = "doc.tex",
+        envir = new.env()
+      ))
+    )
+    messages
+  }
+
+  messages <- render()
+  font <- grep('"Missing Sans"', messages, fixed = TRUE)
+  expect_length(font, 2)
+  expect_identical(messages[[font[[1]]]], messages[[font[[2]]]])
+  # the last message, after the "Output created" line
+  expect_identical(font[[2]], length(messages))
+  expect_match(messages[[font[[2]] - 1]], "Output created")
+
+  # a render without the message does not repeat it
+  messages <- render()
+  expect_false(any(grepl("Missing Sans", messages, fixed = TRUE)))
+})
+
+test_that("the font message is not repeated if the output is not written", {
+  skeleton <- local_skeleton()
+  skeleton$installed_font_names <- function() "Some Sans"
+  format <- skeleton$indiedown_pdf_document_with_asset()
+
+  expect_message(
+    format$pre_processor(
+      list(mainfont = "Missing Sans"),
+      "doc.knit.md",
+      "static",
+      list(),
+      "doc_files",
+      "."
+    ),
+    "not found"
+  )
+  expect_silent(format$on_exit())
+})
+
 test_that("apply_default_yaml() passes the preferred font to pandoc", {
   skeleton <- local_skeleton()
   dir <- withr::local_tempdir()

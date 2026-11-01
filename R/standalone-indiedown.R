@@ -28,6 +28,8 @@
 #   a font named in the document or in the option `<package>.mainfont`,
 #   then `preferredmainfont` from `default.yaml`, if installed,
 #   then the shipped `mainfont`.
+# * The output format repeats the message about a missing font
+#   at the end of the render, after the output is written.
 # * Initial version, previously copied into template packages as `R/indiedown.R`.
 #
 # nocov start
@@ -75,7 +77,50 @@ indiedown_pdf_document_with_asset <- function(includes = NULL, ...) {
   }
 
   ans$pre_processor <- pre_processor
-  ans
+  repeat_font_message(ans)
+}
+
+# The message about a missing font is shown when the pre-processor runs,
+# where the log of LaTeX scrolls it away.
+# If the render writes the output, the message is shown again
+# when rmarkdown::render() exits, after the "Output created" line,
+# also when knitting in RStudio, which renders in a separate R session.
+repeat_font_message <- function(format) {
+  state <- new.env(parent = emptyenv())
+
+  pre_processor <- format$pre_processor
+  format$pre_processor <- function(...) {
+    state$shown <- NULL
+    withCallingHandlers(
+      pre_processor(...),
+      indiedown_font_message = function(m) state$shown <- m
+    )
+  }
+
+  # runs only after the output is written
+  post_processor <- format$post_processor
+  format$post_processor <- function(metadata, input_file, output_file, ...) {
+    if (!is.null(post_processor)) {
+      output_file <- post_processor(metadata, input_file, output_file, ...)
+    }
+    state$written <- state$shown
+    output_file
+  }
+
+  on_exit <- format$on_exit
+  format$on_exit <- function() {
+    if (is.function(on_exit)) {
+      on_exit()
+    }
+    shown <- state$written
+    state$shown <- NULL
+    state$written <- NULL
+    if (!is.null(shown)) {
+      message(shown)
+    }
+  }
+
+  format
 }
 
 pre_processor_basic <- function(
@@ -154,7 +199,8 @@ apply_default_yaml <- function(metadata) {
 # If the system fonts cannot be looked up, a named font is left to LaTeX,
 # and the fallback font replaces the preferred one.
 # For a missing font, a message explains how to install fonts,
-# once per session.
+# once per session;
+# the output format repeats it at the end of the render.
 # The `mainfontoptions` of the document are used with a named font
 # and appended to those of the preferred or fallback font otherwise.
 #
@@ -207,15 +253,19 @@ resolve_fonts <- function(
 
   if (!is.null(missing) && is.null(font_messages[[missing]])) {
     font_messages[[missing]] <- TRUE
-    message(
+    text <- paste0(
       missing,
       " was not found, using \"",
       fonts$mainfont,
       "\" instead.\n",
       "To use it, ",
       font_install_hint(font),
-      "."
+      ".\n"
     )
+    message(structure(
+      class = c("indiedown_font_message", "message", "condition"),
+      list(message = text, call = NULL)
+    ))
   }
 
   fonts$mainfontoptions <- c(fonts$mainfontoptions, options)
