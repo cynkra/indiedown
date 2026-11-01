@@ -21,7 +21,9 @@ cd_page_title(
 Object of class \code{"knit_asis"} (so that knitr will treat it as is). LaTeX code for title page.
 }
 \description{
-Example function to generate a title page
+Example function to generate a title page. The LaTeX lives in a snippet
+under \code{inst/indiedown/tex/page_title.tex}; this function reads it with
+\code{read_tex()} and interpolates the local variables via \code{\link[=indiedown_glue]{indiedown_glue()}}.
 }
 \examples{
 cd_page_title(
