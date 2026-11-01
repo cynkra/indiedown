@@ -16,3 +16,13 @@ R Markdown output format to pass to \code{\link[rmarkdown:render]{rmarkdown::ren
 \code{mypackage()} is the main function of the mypackage package. Use as
 \code{output: mypackage::mypackage} in the R Markdown YAML header.
 }
+\section{Main font}{
+
+The main font ships with the package.
+A document can use another font by setting \code{mainfont} in its YAML header,
+a user by setting the option \code{mypackage.mainfont}, e.g. in \code{.Rprofile}.
+The font can be the family name of an installed font or a font file.
+If it is not installed, the shipped font is used, and a message explains
+how to install it.
+}
+

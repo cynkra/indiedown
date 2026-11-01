@@ -8,6 +8,11 @@ documentclass: article
 secnumdepth: 2
 fontsize: "11pt"
 
+# Main font, shipped in inst/indiedown/fonts and loaded by path,
+# so that the output does not depend on the fonts installed on the system.
+# A document can name another font in its `mainfont` field,
+# a user in the option `mypackage.mainfont`;
+# if that font is not installed, this one is used instead.
 mainfont: regular.ttf
 mainfontoptions:
 - Path=<<indiedown_path>>/fonts/

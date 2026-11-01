@@ -20,6 +20,7 @@ Imports:
     yaml
 Suggests:
     pdftools,
+    systemfonts,
     testthat (>= 3.0.0),
     tinytex
 Encoding: UTF-8
