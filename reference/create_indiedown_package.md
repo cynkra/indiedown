@@ -33,6 +33,6 @@ path <- file.path(tempdir(), "mydown")
 
 # set up empty R Package 'mydown'
 create_indiedown_package(path, overwrite = TRUE)
-#> ✔ indiedown skeleton set up at /tmp/Rtmpbw8kob/mydown
+#> ✔ indiedown skeleton set up at /tmp/RtmpGGmFWI/mydown
 #> ℹ See `vignette("indiedown")` for how to customize the mydown package
 ```

@@ -1,5 +1,30 @@
 # Changelog
 
+## indiedown 0.1.1.9061
+
+### Chore
+
+- Auto-update from GitHub Actions
+  ([\#132](https://github.com/cynkra/indiedown/issues/132)).
+
+## indiedown 0.1.1.9060
+
+### Bug fixes
+
+#### ci
+
+- Restore the custom `after-install` action
+  ([\#130](https://github.com/cynkra/indiedown/issues/130)).
+
+### Continuous integration
+
+- Run coverage checks after pkgdown push.
+
+### fledge
+
+- Bump version to 0.1.1.9055
+  ([\#118](https://github.com/cynkra/indiedown/issues/118)).
+
 ## indiedown 0.1.1.9059
 
 - Refactor(ci): Serve the revdep scripts with the actions instead of

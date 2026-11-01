@@ -38,7 +38,7 @@ invisibly.
 # \donttest{
 path <- file.path(tempdir(), "mydown")
 create_indiedown_package(path, overwrite = TRUE)
-#> ✔ indiedown skeleton set up at /tmp/Rtmpbw8kob/mydown
+#> ✔ indiedown skeleton set up at /tmp/RtmpGGmFWI/mydown
 #> ℹ See `vignette("indiedown")` for how to customize the mydown package
 # Use Lora, instead of default Roboto
 use_indiedown_gfonts(

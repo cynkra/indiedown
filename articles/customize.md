@@ -98,6 +98,5 @@ R Markdown Templates demonstrate the use of a customized style. R
 Markdown requires you to put them in
 `inst/rmarkdown/templates/mytemplate`. RStudio will recognize them and
 show them when you click ‘New R Markdown Document’ and ‘from Template’.
-You can also use
-[`usethis::use_rmarkdown_template()`](https://usethis.r-lib.org/reference/use_rmarkdown_template.html)
-to add a new template.
+You can also use `usethis::use_rmarkdown_template()` to add a new
+template.
