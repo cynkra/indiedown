@@ -89,6 +89,10 @@ in the \emph{installed} template package
 (using \code{indiedown_path_tex()} from the template package).
 The settings are handed to pandoc as variables,
 except for those that are set in the YAML header of the document itself.
+The main font is chosen separately by \code{resolve_fonts()}:
+\code{mainfont} and \code{mainfontoptions} from \code{default.yaml} are used
+unless the document or the format names another font that is installed,
+see "Using a different font" below.
 \item The LaTeX template of pandoc turns \code{mainfont} and \code{mainfontoptions}
 into a call to the fontspec package, which looks like this
 (the path is shortened and the line is wrapped here):
@@ -129,10 +133,20 @@ or adapt \code{mainfont} and the \code{BoldFont}, \code{ItalicFont} and
 \code{BoldItalicFont} entries of \code{mainfontoptions} in \code{default.yaml}
 to the file names.
 \item \strong{A single document:}
-a setting in the YAML header of the \code{.Rmd} replaces the
-corresponding entry of \code{default.yaml} as a whole.
-To change the font for one document,
-set both \code{mainfont} and \code{mainfontoptions} there.
+set \code{mainfont} in the YAML header of the \code{.Rmd}
+to the name of an installed font or to the path of a font file.
+The \code{mainfontoptions} of \code{default.yaml} refer to the downloaded files
+and are not applied to that font;
+\code{mainfontoptions} in the YAML header are.
+If the font is not installed,
+the template's font is used instead, with a message.
+The option \verb{<package>.mainfont}, e.g., \code{mydown.mainfont},
+names a font for all documents of a user.
+\item \strong{A font that cannot be shipped:}
+a licensed font, for example, can be named in \code{preferredmainfont}
+(and its other faces in \code{preferredmainfontoptions}) in \code{default.yaml}.
+It is used where it is installed,
+and the downloaded font everywhere else.
 }
 
 See \code{vignette("walkthrough")} for a step-by-step example
