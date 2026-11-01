@@ -23,6 +23,7 @@ Suggests:
     callr,
     pdftools,
     png,
+    systemfonts,
     testthat (>= 3.0.0),
     tinytex
 Encoding: UTF-8
