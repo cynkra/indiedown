@@ -25,12 +25,14 @@
 # customize the other files of the skeleton instead.
 # The font lookup uses the systemfonts package, version 1.3.0 or later,
 # to identify font files whose file names differ from the names of their fonts,
+# to tell the faces of a family apart in folders that `fc-list` does not list,
 # and to list the installed fonts where `fc-list` is not available, such as on macOS.
 # Without it, a font that needs it is not found, and the fallback font is used
-# with a message that says that systemfonts could not be loaded;
-# only a font named in the document is left to LaTeX
-# if the installed fonts cannot be listed and no font files were left unidentified:
-# list `systemfonts (>= 1.3.0)` in `Suggests`.
+# with a message that says that systemfonts could not be loaded.
+# A font named in the document or in the option `<package>.mainfont`
+# is left to LaTeX instead if the installed fonts cannot be listed
+# and no font files were found that only systemfonts can read.
+# List `systemfonts (>= 1.3.0)` in `Suggests`.
 #
 # The snapshot helpers `expect_pdf_snapshot()` and `skip_if_no_pdf_snapshot()`
 # at the end of the file are for the tests of a template package.
@@ -59,17 +61,30 @@
 #   It looks for the files in the folder named by the option `<package>.font_path`,
 #   in the folders of the fonts installed for the current user and for all users,
 #   and among the fonts that fc-list or systemfonts list.
+# * A font loaded from its font files gets the bold, italic and bold italic faces
+#   that its options do not name from the files of the same family in its folder,
+#   by the weight and slant that fc-list lists or systemfonts reads.
+#   If neither is available, it is loaded from its files
+#   only if its options name all these faces.
 # * The message about a missing font explains how to install fonts
 #   for the current user and how to set the option.
+#   It names the preferred font, not its file, if that font is used instead.
 # * A font named in the document or in the option `<package>.mainfont`
 #   is looked up as font files first in the folder of the option `<package>.font_path`
 #   and, on Windows, among the fonts installed for the current user,
 #   by file name, PostScript name or family name,
 #   and loaded from them if found.
 # * Font files are searched by file name in all folders first,
+#   then identified by reading them with systemfonts
+#   in the folder of the option `<package>.font_path`,
 #   then among the installed fonts,
-#   and only then identified by reading them with systemfonts,
-#   in the folders that the list of installed fonts does not cover.
+#   and last identified by reading them with systemfonts
+#   in the other folders that the list of installed fonts does not cover.
+# * The named instances of variable fonts and the fonts of font collections
+#   after the first are not loaded from their files, which would load another font.
+#   On Windows, the fonts that systemfonts lists in the folder of the fonts
+#   installed for the current user do not count as installed,
+#   because LaTeX does not find them by name.
 # * systemfonts is used only if version 1.3.0 or later can be loaded,
 #   with a warning about an earlier version.
 #   Without it, the lookup continues, and the message about a missing font
@@ -77,7 +92,7 @@
 #   it could not identify, and how to do without it.
 # * The option `<package>.system_fonts = FALSE` hides the font folders
 #   and the fonts that systemfonts lists from the lookup.
-#   `expect_pdf_snapshot()` sets it unless `system_fonts = TRUE`,
+#   `expect_pdf_snapshot()` sets it to `FALSE` unless `system_fonts = TRUE`,
 #   and unsets the options `<package>.font_path` and `<package>.mainfont`.
 # * The font folders are searched once each, what systemfonts reads from font files
 #   is cached for the session, and the installed fonts are listed once per lookup.
@@ -263,23 +278,24 @@ apply_default_yaml <- function(metadata) {
 # it is loaded from them by path, like the fallback font,
 # because LaTeX may not find an installed font by name,
 # such as a font installed for the current user on Windows.
+# The bold and italic faces that its options do not name
+# are then taken from the files of the same family in that folder,
+# see `font_from_folder()`.
 # Otherwise, it is loaded by name if the installed fonts include all its fonts.
 # A font named in the document or in the option is looked up as font files
 # first only where LaTeX does not find fonts by name:
 # in the folder of the option `<package>.font_path`, and on Windows,
 # in the folder of the fonts installed for the current user, see `font_dirs()`.
 # A family name is matched there by the upright face of regular weight.
-# Otherwise, it is loaded by name if it is installed,
-# so that LaTeX also finds the bold and italic faces that its options omit,
-# which a font loaded from a file lacks.
+# Otherwise, it is loaded by name if it is installed.
 # The option `<package>.font_path` names a folder with font files,
 # for users who cannot install fonts.
 # If the installed fonts cannot be listed, see `installed_fonts()`,
 # a font named in the document or in the option is left to LaTeX,
-# unless there were font files that systemfonts could not identify,
+# unless font files were found that systemfonts could not read,
 # and the fallback font replaces the preferred one unless its files are found.
 # For a missing font, a message explains how to make it available,
-# once per session;
+# once per session for each text of the message;
 # the output format repeats it at the end of the render.
 # If the lookup needed systemfonts but could not load it,
 # the message says that this may be why the font lookup failed.
@@ -311,6 +327,7 @@ resolve_fonts <- function(
   delayedAssign("installed", installed_fonts())
   font_lookup$no_systemfonts <- FALSE
   font_lookup$unidentified <- NULL
+  font_lookup$incomplete <- NULL
 
   # the missing font, see `font_missing()`
   missing <- NULL
@@ -319,24 +336,26 @@ resolve_fonts <- function(
       Negate(is.null),
       list(mainfont = font, mainfontoptions = options)
     )
-    files <- if (!is_font_file(font)) {
-      find_font_files(
+    if (!is_font_file(font)) {
+      files <- find_font_files(
         font_faces(font, options),
         font_path,
         installed = NULL,
         dirs = list(unseen = font_dirs()$unseen)
       )
-    }
-    if (!is.null(files)) {
-      return(font_from_files(named, files))
+      from_files <- font_from_folder(named, files, installed)
+      if (!is.null(from_files)) {
+        return(from_files)
+      }
     }
     if (is.null(defaults[["mainfont"]])) {
       return(named)
     }
     found <- fonts_installed(font, installed)
     # without a list of the installed fonts, a font is left to LaTeX,
-    # unless it may be among the font files that could not be identified
-    if (isTRUE(found) || (is.na(found) && is.null(font_lookup$unidentified))) {
+    # unless it may be among the font files that could not be read
+    unread <- c(font_lookup$unidentified, font_lookup$incomplete)
+    if (isTRUE(found) || (is.na(found) && is.null(unread))) {
       return(named)
     }
     missing <- font_missing(
@@ -356,13 +375,18 @@ resolve_fonts <- function(
     mainfont = defaults[["preferredmainfont"]],
     mainfontoptions = unlist(defaults[["preferredmainfontoptions"]])
   )
+  # the font that is used, by name
+  used <- fonts$mainfont
   if (!is.null(preferred$mainfont)) {
     faces <- font_faces(preferred$mainfont, preferred$mainfontoptions)
     files <- find_font_files(faces, font_path, installed)
-    if (!is.null(files)) {
-      fonts <- font_from_files(preferred, files)
+    from_files <- font_from_folder(preferred, files, installed)
+    if (!is.null(from_files)) {
+      fonts <- from_files
+      used <- preferred$mainfont
     } else if (isTRUE(all(fonts_installed(faces, installed)))) {
       fonts <- preferred
+      used <- preferred$mainfont
     } else if (is.null(missing)) {
       missing <- font_missing(
         paste0("Preferred font \"", preferred$mainfont, "\""),
@@ -376,7 +400,7 @@ resolve_fonts <- function(
     text <- paste0(
       missing$text,
       " was not found, using \"",
-      fonts$mainfont,
+      used,
       "\" instead.\n",
       missing$systemfonts,
       "To use it, ",
@@ -423,8 +447,10 @@ font_messages <- new.env(parent = emptyenv())
 # The state of the current lookup:
 # `no_systemfonts` is TRUE if it needed systemfonts but could not load it,
 # see `has_systemfonts()`,
-# and `unidentified` holds the folders whose font files it could not identify
-# without systemfonts, see `find_font_files()`
+# `unidentified` holds the folders whose font files it could not identify
+# without systemfonts, see `find_font_files()`,
+# and `incomplete` the folder whose files of a font it could not load,
+# because it could not tell the faces apart, see `font_from_folder()`
 font_lookup <- new.env(parent = emptyenv())
 
 # What systemfonts read from font files in this session, by path,
@@ -435,6 +461,9 @@ font_info_cache <- new.env(parent = emptyenv())
 # and how to make it available, in `hint`.
 # If the lookup needed systemfonts but could not load it,
 # `systemfonts` says so, and the hint begins with installing it.
+# If it found font files whose faces it could not tell apart,
+# `systemfonts` names their folder,
+# and the hint explains how to name all faces of the font instead.
 # If there were font files that it could not identify,
 # `systemfonts` names their folders,
 # and the hint explains how to name the files so that they are found,
@@ -451,6 +480,23 @@ font_missing <- function(text, font, hint) {
     "install systemfonts 1.3.0 or later",
     "with `install.packages(\"systemfonts\")`,\nor"
   )
+  incomplete <- font_lookup$incomplete
+  if (!is.null(incomplete)) {
+    return(list(
+      text = text,
+      systemfonts = paste0(
+        systemfonts,
+        ":\nwithout it, the bold and italic faces of the font files in \"",
+        incomplete,
+        "\" cannot be identified.\n"
+      ),
+      hint = paste(
+        install,
+        "name all faces of the font in its options,",
+        "with `BoldFont=`, `ItalicFont=` and `BoldItalicFont=`"
+      )
+    ))
+  }
   unidentified <- font_lookup$unidentified
   if (is.null(unidentified)) {
     return(list(
@@ -528,15 +574,135 @@ font_from_files <- function(font, files) {
   )
 }
 
+# The pandoc variables that load `font` from its font `files`,
+# see `font_from_files()`, or NULL if `files` is NULL.
+# fontspec finds the bold, italic and bold italic faces of a font
+# that is loaded by name, but not of a font that is loaded from a file.
+# The faces that the options of `font` do not name
+# are therefore taken from the files of the same family in the folder,
+# see `font_styles()` and `other_faces()`.
+# If the faces of these files cannot be told apart,
+# the font is loaded from its files only if its options name all faces;
+# otherwise this returns NULL and notes the folder in `font_lookup$incomplete`.
+font_from_folder <- function(font, files, installed = installed_fonts()) {
+  if (is.null(files)) {
+    return(NULL)
+  }
+  fonts <- font_from_files(font, files)
+  pattern <- "^([[:alpha:]]+Font)=(.*)$"
+  options <- grep(pattern, as.character(font$mainfontoptions), value = TRUE)
+  keys <- sub(pattern, "\\1", options)
+  unnamed <- setdiff(c("BoldFont", "ItalicFont", "BoldItalicFont"), keys)
+  if (length(unnamed) == 0) {
+    return(fonts)
+  }
+
+  main <- files[[font$mainfont]]
+  bold <- sub(pattern, "\\2", options[keys == "BoldFont"])
+  bold <- gsub("*", font$mainfont, bold, fixed = TRUE)
+  bold <- utils::head(unname(files[bold]), 1)
+  styles <- font_styles(main, installed)
+  other <- if (!is.null(styles)) other_faces(styles, main, bold, unnamed)
+  if (is.null(other)) {
+    font_lookup$incomplete <- dirname(main)
+    return(NULL)
+  }
+  fonts$mainfontoptions <- c(
+    fonts$mainfontoptions,
+    sprintf("%s=%s", names(other), basename(other))
+  )
+  fonts
+}
+
+# The `path`, `family`, `weight` and `italic` of the font files
+# in the folder of the font file `main`,
+# with the weight on the scale of fontconfig, see `font_weight()`:
+# from the `installed` fonts if they list `main`, see `installed_fonts()`,
+# or else read with systemfonts, see `font_file_info()`.
+# NULL if systemfonts is needed but cannot be loaded.
+font_styles <- function(main, installed) {
+  dir <- dirname(main)
+  styles <- installed$styles
+  if (path_key(main) %in% path_key(styles$path)) {
+    in_dir <- path_key(dirname(styles$path)) == path_key(dir)
+    return(lapply(styles, `[`, in_dir))
+  }
+  if (!has_systemfonts()) {
+    return(NULL)
+  }
+  files <- list.files(
+    dir,
+    "[.](otf|ttf)$",
+    full.names = TRUE,
+    ignore.case = TRUE
+  )
+  info <- lapply(files, font_file_info)
+  list(
+    path = files,
+    family = vapply(info, `[[`, "", "family"),
+    weight = vapply(info, `[[`, numeric(1), "weight"),
+    italic = vapply(info, `[[`, logical(1), "italic")
+  )
+}
+
+# The font files of the `unnamed` faces, of "BoldFont", "ItalicFont"
+# and "BoldItalicFont", among the font files of `styles`, see `font_styles()`,
+# named by face, chosen as fontconfig chooses the faces of an installed font:
+# of the family of the font file `main`,
+# upright with the weight closest to bold for the bold face,
+# italic with the weight closest to that of `main` for the italic face,
+# and italic with the weight closest to that of the `bold` face,
+# the named one or else the chosen one, for the bold italic face.
+# The bold face is heavier than `main`.
+# A face that the family lacks is left out, as fontspec leaves it out.
+# NULL if the family, weight or slant of `main` is not known.
+other_faces <- function(styles, main, bold, unnamed) {
+  i <- match(path_key(main), path_key(styles$path))
+  weight <- styles$weight[i]
+  family <- styles$family[i]
+  if (is.na(weight) || is.na(styles$italic[i]) || is.na(family)) {
+    return(NULL)
+  }
+  same <- tolower(styles$family) %in% tolower(family)
+  in_family <- same & !is.na(styles$weight) & !is.na(styles$italic)
+  closest <- function(italic, to, heavier = FALSE) {
+    ok <- in_family &
+      styles$italic == italic &
+      (!heavier | styles$weight > weight)
+    if (!any(ok)) {
+      return(NULL)
+    }
+    styles$path[ok][[which.min(abs(styles$weight[ok] - to))]]
+  }
+
+  if ("BoldFont" %in% unnamed) {
+    bold <- closest(italic = FALSE, to = 200, heavier = TRUE)
+  }
+  bold_weight <- styles$weight[match(path_key(bold), path_key(styles$path))]
+  if (length(bold_weight) == 0 || is.na(bold_weight)) {
+    bold_weight <- 200
+  }
+  faces <- list(
+    BoldFont = bold,
+    ItalicFont = closest(italic = TRUE, to = weight),
+    BoldItalicFont = if (length(bold) > 0) {
+      closest(italic = TRUE, to = bold_weight)
+    }
+  )
+  c(character(), unlist(faces[unnamed]))
+}
+
 # The font files of `faces`, one for each, all in the same folder,
 # named by face, or NULL if they are not found.
 # The folder `font_path` and the folders of `dirs`, see `font_dirs()`,
-# are searched by file name, each folder once,
-# then the `installed` fonts, see `installed_fonts()`,
-# by the names that they list,
-# and then the files that the list does not cover,
-# by the names that systemfonts reads from them, see `font_file_names()`:
-# those in the folder `font_path` and in the `unseen` folder,
+# are searched by file name, each folder once.
+# Then the files in the folder `font_path` are identified
+# by the names that systemfonts reads from them, see `font_file_names()`,
+# then the `installed` fonts by the names that they list,
+# see `installed_fonts()`,
+# and last the files in the other folders that the list does not cover,
+# by the names that systemfonts reads from them:
+# those in the `unseen` folder,
 # and in the `user` folders if the installed fonts cannot be listed.
 # Folders whose files could not be read without systemfonts
 # are noted in `font_lookup$unidentified`.
@@ -559,31 +725,34 @@ find_font_files <- function(
     }
   }
 
+  identify <- function(dirs) {
+    for (dir in dirs) {
+      if (length(files[[dir]]) == 0) {
+        next
+      }
+      names <- font_file_names(files[[dir]])
+      if (is.null(names)) {
+        font_lookup$unidentified <- c(font_lookup$unidentified, dir)
+        next
+      }
+      found <- match_font_files(faces, names$path, names$name)
+      if (!is.null(found)) {
+        return(found)
+      }
+    }
+    NULL
+  }
+
+  found <- identify(normalize(font_path))
+  if (!is.null(found)) {
+    return(found)
+  }
   found <- match_font_files(faces, installed$path, installed$name)
   if (!is.null(found)) {
     return(found)
   }
-
-  unlisted <- normalize(c(
-    font_path,
-    dirs$unseen,
-    if (is.null(installed)) dirs$user
-  ))
-  for (dir in unlisted) {
-    if (length(files[[dir]]) == 0) {
-      next
-    }
-    names <- font_file_names(files[[dir]])
-    if (is.null(names)) {
-      font_lookup$unidentified <- c(font_lookup$unidentified, dir)
-      next
-    }
-    found <- match_font_files(faces, names$path, names$name)
-    if (!is.null(found)) {
-      return(found)
-    }
-  }
-  NULL
+  unlisted <- normalize(c(dirs$unseen, if (is.null(installed)) dirs$user))
+  identify(setdiff(unlisted, normalize(font_path)))
 }
 
 # The `.otf` and `.ttf` files in `dir` and its subfolders,
@@ -654,18 +823,21 @@ font_dirs <- function(
 
 # The first files, by folder, whose `font_names` match `faces`:
 # one file for each face, all in the same folder, named by face, or NULL.
-# Font collections are skipped, because fontspec would need the index.
+# Faces that are aliases, such as a family name and a PostScript name,
+# can share a file.
+# Font collections are skipped, because fontspec would need the index,
+# and so are paths that are NA, see `installed_fonts()`.
 match_font_files <- function(faces, paths, font_names) {
   if (is.null(font_names)) {
     return(NULL)
   }
-  keep <- grepl("[.](otf|ttf)$", paths, ignore.case = TRUE)
+  keep <- !is.na(paths) & grepl("[.](otf|ttf)$", paths, ignore.case = TRUE)
   paths <- paths[keep]
   font_names <- tolower(font_names[keep])
   for (dir in unique(dirname(paths))) {
     in_dir <- dirname(paths) == dir
     files <- paths[in_dir][match(tolower(faces), font_names[in_dir])]
-    if (!anyNA(files) && !anyDuplicated(files)) {
+    if (!anyNA(files)) {
       names(files) <- faces
       return(files)
     }
@@ -685,20 +857,17 @@ font_file_names <- function(files) {
   info <- lapply(files, font_file_info)
   name <- vapply(info, `[[`, "", "name")
   family <- vapply(info, `[[`, "", "family")
-  # upright first, then by the distance of the weight from normal
-  rank <- vapply(
-    info,
-    function(x) 10 * x$italic + abs(x$weight - 4),
-    numeric(1)
-  )
-  by_rank <- order(rank)
+  italic <- vapply(info, `[[`, logical(1), "italic")
+  weight <- vapply(info, `[[`, numeric(1), "weight")
+  # upright first, then by the distance of the weight from regular
+  by_rank <- order(italic, abs(weight - 80))
   regular <- by_rank[!duplicated(family[by_rank]) & !is.na(family[by_rank])]
   list(path = c(files, files[regular]), name = c(name, family[regular]))
 }
 
 # The PostScript `name`, the `family`, whether `italic`,
-# and the `weight` of a font file, as the level of `systemfonts::font_info()`,
-# where 4 is normal, with NA where they cannot be read.
+# and the `weight` of a font file, see `font_weight()`,
+# with NA where they cannot be read.
 # They are read once per session for each file,
 # and again if the file is modified.
 font_file_info <- function(file) {
@@ -714,7 +883,7 @@ font_file_info <- function(file) {
         name = as.character(info$name[[1]]),
         family = as.character(info$family[[1]]),
         italic = isTRUE(info$italic[[1]]),
-        weight = as.integer(info$weight[[1]])
+        weight = font_weight(info$weight[[1]])
       )
     },
     error = function(e) {
@@ -722,13 +891,30 @@ font_file_info <- function(file) {
         name = NA_character_,
         family = NA_character_,
         italic = FALSE,
-        weight = NA_integer_
+        weight = NA_real_
       )
     }
   )
   cached$mtime <- mtime
   font_info_cache[[file]] <- cached
   cached
+}
+
+# The weight of fonts on the scale of fontconfig, where 80 is regular
+# and 200 is bold, from the `level` that systemfonts reports
+font_weight <- function(level) {
+  levels <- c(
+    "thin",
+    "ultralight",
+    "light",
+    "normal",
+    "medium",
+    "semibold",
+    "bold",
+    "ultrabold",
+    "heavy"
+  )
+  c(0, 40, 50, 80, 100, 180, 200, 205, 210)[match(as.character(level), levels)]
 }
 
 # TRUE if systemfonts can be loaded in version 1.3.0 or later,
@@ -798,10 +984,14 @@ is_font_file <- function(font) {
 
 # The installed system fonts, as a list with the `path` of each font file
 # and its `name`s, both repeated as needed,
-# and the `family` names of all fonts,
+# the `family` names of all fonts,
+# and the `styles` of their font files, as `font_styles()` returns them,
 # or NULL if they cannot be listed.
 # The names are the PostScript and full names with fc-list,
 # and the PostScript names with systemfonts.
+# The `path` is NA for the named instances of a variable font
+# and for the fonts of a font collection after the first,
+# because loading the file by path loads its first font.
 # fc-list lists the fonts that fontconfig finds,
 # where XeTeX and LuaTeX look for system fonts on Linux
 # and with TeX Live on Windows.
@@ -810,6 +1000,8 @@ is_font_file <- function(font) {
 # systemfonts covers systems without fc-list, such as macOS,
 # if it can be loaded, see `has_systemfonts()`;
 # it reads the font list only once per session.
+# The fonts that it lists in the `unseen` folder, see `font_dirs()`,
+# are left out, because LaTeX does not find them by name.
 # It does not see FONTCONFIG_FILE,
 # so it is not used if the option `<package>.system_fonts` is `FALSE`,
 # see `font_dirs()`, and no font is listed then.
@@ -818,35 +1010,99 @@ installed_fonts <- function(
 ) {
   fc_list <- Sys.which("fc-list")
   if (nzchar(fc_list)) {
+    format <- paste0(
+      "%{file}\\t%{index}\\t%{postscriptname}\\t%{fullname}\\t",
+      "%{family}\\t%{weight}\\t%{slant}\\n"
+    )
     out <- suppressWarnings(system2(
       fc_list,
-      c(
-        "--format",
-        shQuote("%{file}\\t%{postscriptname}\\t%{fullname}\\t%{family}\\n")
-      ),
+      c("--format", shQuote(format)),
       stdout = TRUE,
       stderr = FALSE
     ))
     fields <- lapply(strsplit(out, "\t", fixed = TRUE), function(x) {
-      c(x, character(4))[1:4]
+      c(x, character(7))[1:7]
     })
+    field <- function(i) vapply(fields, `[[`, "", i)
     split_names <- function(x) trimws(unlist(strsplit(x, ",", fixed = TRUE)))
-    font_names <- lapply(fields, function(x) split_names(x[2:3]))
-    return(list(
-      path = rep(vapply(fields, `[[`, "", 1), lengths(font_names)),
-      name = as.character(unlist(font_names)),
-      family = as.character(split_names(vapply(fields, `[[`, "", 4)))
+    number <- function(x) suppressWarnings(as.numeric(x))
+    return(installed_font_list(
+      path = field(1),
+      index = number(field(2)),
+      names = lapply(fields, function(x) split_names(x[3:4])),
+      families = lapply(field(5), split_names),
+      weight = number(field(6)),
+      italic = number(field(7)) > 0
     ))
   }
 
   if (isFALSE(system_fonts)) {
-    return(list(path = character(), name = character(), family = character()))
+    return(installed_font_list())
   }
   if (!has_systemfonts()) {
     return(NULL)
   }
   fonts <- systemfonts::system_fonts()
-  list(path = fonts$path, name = fonts$name, family = fonts$family)
+  fonts <- fonts[!in_dirs(fonts$path, font_dirs()$unseen), ]
+  installed_font_list(
+    path = fonts$path,
+    index = fonts$index,
+    names = as.list(fonts$name),
+    families = as.list(fonts$family),
+    weight = font_weight(fonts$weight),
+    italic = fonts$italic
+  )
+}
+
+# The list that `installed_fonts()` returns,
+# from the `path`, `index`, `names`, `families`, `weight` and `italic`
+# of each font, where `weight` is on the scale of fontconfig.
+# A font at an `index` other than 0 is not loaded by loading its file,
+# so its path is NA, and it has no styles.
+installed_font_list <- function(
+  path = character(),
+  index = numeric(),
+  names = list(),
+  families = list(),
+  weight = numeric(),
+  italic = logical()
+) {
+  first <- index %in% 0
+  family <- vapply(
+    families,
+    function(x) if (length(x) > 0) x[[1]] else NA_character_,
+    ""
+  )
+  path <- as.character(path)
+  path[!first] <- NA
+  list(
+    path = rep(path, lengths(names)),
+    name = as.character(unlist(names)),
+    family = as.character(unlist(families)),
+    styles = list(
+      path = path[first],
+      family = family[first],
+      weight = as.numeric(weight[first]),
+      italic = as.logical(italic[first])
+    )
+  )
+}
+
+# TRUE for the `paths` in one of the folders `dirs` or in their subfolders
+in_dirs <- function(paths, dirs) {
+  paths <- path_key(paths)
+  found <- rep(FALSE, length(paths))
+  for (dir in sub("/*$", "/", path_key(dirs))) {
+    found <- found | startsWith(paths, dir)
+  }
+  found
+}
+
+# `paths` for comparing them: with forward slashes,
+# and in lower case on Windows, where paths ignore case
+path_key <- function(paths, windows = .Platform$OS.type == "windows") {
+  paths <- gsub("\\", "/", as.character(paths), fixed = TRUE)
+  if (windows) tolower(paths) else paths
 }
 
 # Family, full and PostScript names of the `installed` fonts,

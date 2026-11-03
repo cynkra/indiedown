@@ -138,14 +138,15 @@ to the name of an installed font or to the path of a font file.
 The \code{mainfontoptions} of \code{default.yaml} refer to the downloaded files
 and are not applied to that font;
 \code{mainfontoptions} in the YAML header are.
-If the font is not installed,
+If the font is not found,
 the template's font is used instead, with a message.
 The option \verb{<package>.mainfont}, e.g., \code{mydown.mainfont},
 names a font for all documents of a user.
 \item \strong{A font that cannot be shipped:}
 a licensed font, for example, can be named in \code{preferredmainfont}
 (and its other faces in \code{preferredmainfontoptions}) in \code{default.yaml}.
-It is used where it is installed,
+Name all four faces, with \verb{BoldFont=}, \verb{ItalicFont=} and \verb{BoldItalicFont=}.
+It is used where it is found,
 and the downloaded font everywhere else.
 Its fonts are found by PostScript name or by file name
 and loaded from their files,
