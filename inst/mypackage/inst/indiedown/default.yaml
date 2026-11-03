@@ -8,12 +8,14 @@ documentclass: article
 secnumdepth: 2
 fontsize: "11pt"
 
-# Preferred main font, used if it is installed on the system,
+# Preferred main font, used if it is installed on the system
+# or in the folder named by the option `mypackage.font_path`,
 # e.g. a licensed or corporate font that cannot be shipped with the package.
-# All fonts named here, also in the options, must be installed.
-# preferredmainfont: Corporate Sans Medium
+# All fonts named here, also in the options, must be found.
+# Name them by PostScript name or file name to load them from their files.
+# preferredmainfont: CorporateSans-Medium
 # preferredmainfontoptions:
-# - BoldFont=Corporate Sans Heavy
+# - BoldFont=CorporateSans-Heavy
 
 # Fallback main font, shipped in inst/indiedown/fonts and loaded by path,
 # so that the output does not depend on the fonts installed on the system.

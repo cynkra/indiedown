@@ -12,6 +12,8 @@
 #' Otherwise, or if that font is not installed, the format's preferred font
 #' is used if it is set in `default.yaml` and installed,
 #' and the font that ships with the package if not.
+#' The preferred font is loaded from its font files,
+#' which can also be in a folder named by the option `mypackage.font_path`.
 #' A message explains how to install a missing font, once per session.
 #'
 #' @param ... Passed on to [rmarkdown::pdf_document()].

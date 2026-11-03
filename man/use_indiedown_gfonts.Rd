@@ -147,6 +147,11 @@ a licensed font, for example, can be named in \code{preferredmainfont}
 (and its other faces in \code{preferredmainfontoptions}) in \code{default.yaml}.
 It is used where it is installed,
 and the downloaded font everywhere else.
+Its fonts are found by PostScript name or by file name
+and loaded from their files,
+so it is enough to install the font for the current user.
+Users who cannot install fonts can copy the font files to a folder
+and name it in the option \verb{<package>.font_path}, e.g., \code{mydown.font_path}.
 }
 
 See \code{vignette("walkthrough")} for a step-by-step example

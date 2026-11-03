@@ -24,6 +24,8 @@ The font can be the name of an installed font or a font file.
 Otherwise, or if that font is not installed, the format's preferred font
 is used if it is set in \code{default.yaml} and installed,
 and the font that ships with the package if not.
+The preferred font is loaded from its font files,
+which can also be in a folder named by the option \code{mypackage.font_path}.
 A message explains how to install a missing font, once per session.
 }
 

@@ -116,6 +116,11 @@
 #'   (and its other faces in `preferredmainfontoptions`) in `default.yaml`.
 #'   It is used where it is installed,
 #'   and the downloaded font everywhere else.
+#'   Its fonts are found by PostScript name or by file name
+#'   and loaded from their files,
+#'   so it is enough to install the font for the current user.
+#'   Users who cannot install fonts can copy the font files to a folder
+#'   and name it in the option `<package>.font_path`, e.g., `mydown.font_path`.
 #'
 #' See `vignette("walkthrough")` for a step-by-step example
 #' and `vignette("customize")` for the other customization points.
