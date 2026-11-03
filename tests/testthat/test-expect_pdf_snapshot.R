@@ -15,7 +15,19 @@ run_snapshot_tests <- function(dir, code) {
     stop_on_failure = FALSE,
     stop_on_warning = FALSE
   ))
-  as.data.frame(results)
+  # The messages of the failed expectations of each test
+  failures <- vapply(
+    results,
+    function(test) {
+      failed <- Filter(
+        function(x) inherits(x, "expectation_failure"),
+        test$results
+      )
+      paste(vapply(failed, conditionMessage, character(1)), collapse = "\n")
+    },
+    character(1)
+  )
+  cbind(as.data.frame(results), failures = failures)
 }
 
 local_snaps <- function(files, .local_envir = parent.frame()) {
@@ -786,6 +798,11 @@ test_that("expect_pdf_snapshot() fails if the document has fewer pages", {
   for (i in 1:2) {
     results <- run_snapshot_tests(dir, test)
     expect_equal(results$failed, 1)
+    expect_match(
+      results$failures,
+      "page count of `doc` changed: 1 rendered, 2 in the snapshot",
+      fixed = TRUE
+    )
     expect_setequal(dir(snaps), all)
   }
 
@@ -822,14 +839,16 @@ test_that("expect_pdf_snapshot() fails if the document has more pages", {
   for (i in 1:2) {
     results <- run_snapshot_tests(dir, test)
     expect_equal(results$failed, 1)
+    expect_match(
+      results$failures,
+      "page count of `doc` changed: 2 rendered, 1 in the snapshot",
+      fixed = TRUE
+    )
     expect_setequal(dir(snaps), kept)
   }
 })
 
 test_that("pdf_snapshot_pages() lists the page snapshots of a name", {
-  withr::local_options(testthat.snapshotter = NULL)
-  expect_null(pdf_snapshot_pages("doc"))
-
   dir <- local_snaps(c(
     "doc-page-01.png",
     "doc-page-02.png",
@@ -847,6 +866,18 @@ test_that("pdf_snapshot_pages() lists the page snapshots of a name", {
     pdf_snapshot_pages("doc"),
     c("doc-page-01.png", "doc-page-02.png")
   )
+})
+
+test_that("pdf_snapshot_pages() fails if the snapshot directory is unknown", {
+  withr::local_options(testthat.snapshotter = NULL)
+  expect_error(pdf_snapshot_pages("doc"), "snapshot directory")
+
+  withr::local_options(testthat.snapshotter = list(snap_dir = "_snaps"))
+  expect_error(pdf_snapshot_pages("doc"), "internals of testthat")
+
+  # Outside of a test run, there is nothing to check
+  withr::local_envvar(TESTTHAT = "false")
+  expect_null(pdf_snapshot_pages("doc"))
 })
 
 test_that("expect_pdf_snapshot() sets `fig.showtext` for the rendering only", {

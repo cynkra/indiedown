@@ -566,7 +566,8 @@ default <- function(x, default = "") {
 # If the document has more or fewer pages than there are page snapshots,
 # the test fails, and only the pages that have a snapshot are compared.
 # The page snapshots are looked up in the snapshot directory of the test file
-# that testthat uses while it runs the tests.
+# that testthat uses while it runs the tests,
+# and an error is thrown if that directory cannot be determined.
 # To accept a new page count, delete the snapshot files of `name`.
 #
 # Pixel-exact comparisons are only stable on a fixed toolchain,
@@ -824,11 +825,27 @@ plot_font_files <- function(dir) {
 
 # The file names of the page snapshots of `name`
 # in the snapshot directory of the current test file,
-# or `NULL` if testthat is not taking snapshots.
+# or `NULL` outside of a test run.
+# testthat exports no function for that directory:
+# it is read from testthat's internal snapshot reporter,
+# and an error says so if that is not possible,
+# rather than silently skipping the check of the page count.
 pdf_snapshot_pages <- function(name) {
-  snapshotter <- getOption("testthat.snapshotter")
-  if (is.null(snapshotter) || !rlang::is_string(snapshotter$file)) {
+  if (!testthat::is_testing()) {
     return(NULL)
+  }
+  snapshotter <- getOption("testthat.snapshotter")
+  if (
+    !rlang::is_string(snapshotter$snap_dir) ||
+      !rlang::is_string(snapshotter$file)
+  ) {
+    rlang::abort(c(
+      "Can't find the snapshot directory of the current test file.",
+      i = paste(
+        "The page count of a PDF snapshot is checked",
+        "with internals of testthat, which may have changed."
+      )
+    ))
   }
   files <- dir(file.path(snapshotter$snap_dir, snapshotter$file))
   prefix <- paste0(name, "-")
