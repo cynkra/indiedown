@@ -549,19 +549,6 @@ test_that("installed fonts are looked up with systemfonts without fc-list", {
   )
 })
 
-# Copies font files of the skeleton to `dir`, renamed to `names`
-copy_fonts <- function(dir, files, names = files) {
-  dir.create(dir, recursive = TRUE, showWarnings = FALSE)
-  stopifnot(file.copy(
-    file.path(
-      system.file("mypackage/inst/indiedown/fonts", package = "indiedown"),
-      files
-    ),
-    file.path(dir, names)
-  ))
-  normalizePath(dir, "/")
-}
-
 # A preferred font named by PostScript name, with all its faces
 roboto <- c(
   defaults,
@@ -1413,6 +1400,24 @@ test_that("unidentified font files count against a named font only on Windows", 
     fixed = TRUE
   )
   expect_identical(fonts, list(mainfont = "Arial"))
+
+  # on macOS and Linux, it could not be verified
+  # if the faces of its font files cannot be told apart
+  folder <- copy_fonts(withr::local_tempdir(), "regular.ttf", "Arial.ttf")
+  expect_message(
+    fonts <- skeleton$resolve_fonts(
+      list(mainfont = "Arial"),
+      defaults,
+      font_path = folder
+    ),
+    paste0(
+      'Font "Arial" from the `mainfont` field of the document ',
+      'could not be verified, ',
+      'using "regular.ttf" instead.\n'
+    ),
+    fixed = TRUE
+  )
+  expect_identical(fonts, defaults)
 })
 
 test_that("systemfonts is not needed for fonts found otherwise", {

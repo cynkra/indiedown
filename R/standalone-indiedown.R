@@ -107,7 +107,9 @@
 #   and the installed fonts are listed once per lookup.
 #   The hint for installing a font asks to restart R,
 #   because systemfonts lists the installed fonts only once per session.
-# * A named font file is left as named if it is in the `Path=` of the options.
+# * A named font file is left as named if it is in the `Path=` of the options,
+#   without checking its other faces,
+#   and a relative `Path=` is resolved against the working directory.
 #   A `Path=` in the options is replaced if the font is loaded from another folder.
 # * If a named font cannot be verified, because the installed fonts cannot be listed
 #   and font files could not be identified, the message says so
@@ -360,7 +362,9 @@ resolve_fonts <- function(
       Negate(is.null),
       list(mainfont = font, mainfontoptions = options)
     )
-    # a font file in the `Path=` of the document is left as named
+    # a font file in the `Path=` of the document is left as named,
+    # and LaTeX is left to find its other faces without checking them here;
+    # a relative `Path=` is resolved against the working directory
     document_path <- sub("^Path=", "", grep("^Path=", options, value = TRUE))
     if (any(file.exists(file.path(document_path, font)))) {
       return(named)
