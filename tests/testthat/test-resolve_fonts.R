@@ -208,6 +208,46 @@ test_that("a font file in the Path= of the document is left as named", {
   expect_identical(fonts$mainfontoptions[[1]], paste0("Path=", other, "/"))
 })
 
+# A kpsewhich that finds only the font file `found`, first in the PATH
+local_kpsewhich <- function(found, .env = parent.frame()) {
+  bin <- withr::local_tempdir(.local_envir = .env)
+  writeLines(
+    c(
+      "#!/bin/sh",
+      sprintf("[ \"$1\" = '%s' ] && echo '/texmf/%s'", found, found)
+    ),
+    file.path(bin, "kpsewhich")
+  )
+  Sys.chmod(file.path(bin, "kpsewhich"), "755")
+  withr::local_envvar(
+    PATH = paste(bin, Sys.getenv("PATH"), sep = .Platform$path.sep),
+    .local_envir = .env
+  )
+}
+
+test_that("a font file in a relative Path= of the document is left as named", {
+  skeleton <- local_skeleton()
+  withr::local_dir(withr::local_tempdir())
+  copy_fonts("fonts", "regular.ttf", "my-font.otf")
+
+  expect_silent(
+    args <- skeleton$apply_default_yaml(
+      list(mainfont = "my-font.otf", mainfontoptions = "Path=fonts/")
+    )
+  )
+  expect_true("mainfont:my-font.otf" %in% args)
+  expect_true("mainfontoptions:Path=fonts/" %in% args)
+
+  # also with an `Extension=`, which fontspec appends to the name,
+  # and with spaces and braces that fontspec removes
+  named <- list(
+    mainfont = "my-font",
+    mainfontoptions = c(" Path = {fonts/} ", "Extension=.otf", "Scale=0.9")
+  )
+  expect_silent(fonts <- skeleton$resolve_fonts(named, defaults))
+  expect_identical(fonts, named)
+})
+
 test_that("a font file name is looked up in the TeX tree", {
   skeleton <- local_skeleton()
   skeleton$Sys.which <- function(names) ""
@@ -218,14 +258,116 @@ test_that("a font file name is looked up in the TeX tree", {
     list(mainfont = "some.otf")
   )
 
-  skip_if(!nzchar(Sys.which("kpsewhich")), "kpsewhich not available")
+  skip_on_os("windows")
   skeleton <- local_skeleton()
+  withr::local_dir(withr::local_tempdir())
+  local_kpsewhich("found.otf")
+  expect_silent(
+    fonts <- skeleton$resolve_fonts(list(mainfont = "found.otf"), defaults)
+  )
+  expect_identical(fonts, list(mainfont = "found.otf"))
   expect_message(
-    skeleton$resolve_fonts(
+    fonts <- skeleton$resolve_fonts(
       list(mainfont = "no-such-font-file.otf"),
       defaults
     ),
     "not found"
+  )
+  expect_identical(fonts, defaults)
+})
+
+test_that("a font file name with an Extension= is looked up in the TeX tree", {
+  skip_on_os("windows")
+  # no lookup by name
+  skeleton <- local_skeleton()
+  withr::local_dir(withr::local_tempdir())
+  local_kpsewhich("found.otf")
+
+  named <- list(mainfont = "found", mainfontoptions = "Extension=.otf")
+  expect_silent(fonts <- skeleton$resolve_fonts(named, defaults))
+  expect_identical(fonts, named)
+
+  named$mainfont <- "missing"
+  expect_message(
+    fonts <- skeleton$resolve_fonts(named, defaults),
+    paste0(
+      'Font "missing" from the `mainfont` field of the document was not found, ',
+      'using "regular.ttf" instead.\n',
+      "To use it, check the path"
+    ),
+    fixed = TRUE
+  )
+  expect_identical(fonts, defaults)
+
+  # with a `Path=`, the file is looked up only in its folder
+  named <- list(mainfont = "found.otf", mainfontoptions = "Path=fonts/")
+  expect_message(
+    fonts <- skeleton$resolve_fonts(named, defaults),
+    "check the path",
+    fixed = TRUE
+  )
+  expect_identical(fonts, defaults)
+
+  # without kpsewhich, LaTeX has to find it
+  withr::local_envvar(PATH = R.home("bin"))
+  named <- list(mainfont = "missing", mainfontoptions = "Extension=.otf")
+  expect_silent(fonts <- skeleton$resolve_fonts(named, defaults))
+  expect_identical(fonts, named)
+})
+
+test_that("an Extension= is replaced if the font is loaded from another folder", {
+  skeleton <- local_skeleton()
+  dir <- copy_fonts(
+    withr::local_tempdir(),
+    c("regular.ttf", "bold.ttf"),
+    c("my-font.ttf", "my-bold.ttf")
+  )
+  named <- list(
+    mainfont = "my-font",
+    mainfontoptions = c(
+      "Path=nowhere/",
+      "Extension=.ttf",
+      "BoldFont=my-bold",
+      "ItalicFont=*",
+      "BoldItalicFont=my-bold"
+    )
+  )
+  expect_silent(
+    fonts <- skeleton$resolve_fonts(named, defaults, font_path = dir)
+  )
+  expect_identical(
+    fonts,
+    list(
+      mainfont = "my-font.ttf",
+      mainfontoptions = c(
+        paste0("Path=", dir, "/"),
+        "BoldFont=my-bold.ttf",
+        "ItalicFont=my-font.ttf",
+        "BoldItalicFont=my-bold.ttf"
+      )
+    )
+  )
+})
+
+test_that("a folder is written for fontspec in Path=", {
+  skeleton <- local_skeleton()
+  expect_identical(skeleton$fontspec_path("/a b/fonts/"), "/a b/fonts/")
+  expect_identical(
+    skeleton$fontspec_path("/a b,c=d/%#~{}^\\/", windows = FALSE),
+    paste0(
+      "{/a\\csname c_space_tl\\endcsname b,c=d/",
+      "\\csname c_percent_str\\endcsname ",
+      "\\csname c_hash_str\\endcsname ",
+      "\\csname c_tilde_str\\endcsname ",
+      "\\csname c_left_brace_str\\endcsname ",
+      "\\csname c_right_brace_str\\endcsname ",
+      "\\csname c_circumflex_str\\endcsname ",
+      "\\csname c_backslash_str\\endcsname /}"
+    )
+  )
+  expect_identical(
+    skeleton$fontspec_path(c("C:\\Fonts, A\\", "C:/B/"), windows = TRUE),
+    c("{C:/Fonts, A/}", "C:/B/")
   )
 })
 
@@ -896,7 +1038,10 @@ test_that("font files are loaded by path", {
 
   expect_identical(
     skeleton$font_from_files(list(mainfont = "A"), c(A = "/f/JANE~1/a.otf")),
-    list(mainfont = "a.otf", mainfontoptions = "Path=/f/JANE\\string~1/")
+    list(
+      mainfont = "a.otf",
+      mainfontoptions = "Path=/f/JANE\\csname c_tilde_str\\endcsname 1/"
+    )
   )
   expect_identical(
     skeleton$font_from_files(
@@ -1619,9 +1764,9 @@ test_that("PostScript names are read once per file and session", {
   expect_identical(read, 3)
 })
 
-# The fonts that XeLaTeX embeds for the pandoc variables `fonts`,
-# with text in each face
-xelatex_fonts <- function(fonts) {
+# The fonts that XeLaTeX, or another `engine`,
+# embeds for the pandoc variables `fonts`, with text in each face
+latex_fonts <- function(fonts, engine = "xelatex") {
   dir <- withr::local_tempdir()
   writeLines(
     c(
@@ -1641,7 +1786,7 @@ xelatex_fonts <- function(fonts) {
   withr::with_dir(
     dir,
     system2(
-      "xelatex",
+      engine,
       c("-interaction=nonstopmode", "fonts.tex"),
       stdout = FALSE,
       stderr = FALSE
@@ -1655,6 +1800,73 @@ xelatex_fonts <- function(fonts) {
     fonts$name[fonts$embedded]
   ))
 }
+
+test_that("fonts are loaded from folders with special characters in their paths", {
+  # the fallback font, from a template package in a library with such a path,
+  # which YAML would also read otherwise, as a comment
+  skeleton <- local_skeleton()
+  special <- file.path(withr::local_tempdir(), "a, b=c%d #e~f{g}h^i")
+  dir.create(special)
+  file.copy(skeleton$indiedown_path(), special, recursive = TRUE)
+  plain_args <- skeleton$apply_default_yaml(list())
+  skeleton$indiedown_path <- function(...) file.path(special, "indiedown", ...)
+  args <- skeleton$apply_default_yaml(list())
+  variables <- function(args) {
+    value <- function(name) {
+      pattern <- paste0("^", name, ":")
+      sub(pattern, "", grep(pattern, args, value = TRUE))
+    }
+    list(
+      mainfont = value("mainfont"),
+      mainfontoptions = value("mainfontoptions")
+    )
+  }
+  fallback <- variables(args)
+  expect_identical(
+    fallback$mainfontoptions,
+    paste0(
+      "Path=",
+      skeleton$fontspec_path(file.path(special, "indiedown", "fonts/")),
+      ",BoldFont=bold.ttf,ItalicFont=italic.ttf,BoldItalicFont=bolditalic.ttf",
+      ",Scale=0.92"
+    )
+  )
+
+  # a font that the lookup finds in the folder of the option
+  dir <- copy_fonts(
+    file.path(special, "fonts"),
+    c("regular.ttf", "bold.ttf"),
+    c("my-font.ttf", "my-bold.ttf")
+  )
+  named <- list(
+    mainfont = "my-font.ttf",
+    mainfontoptions = c(
+      "BoldFont=my-bold.ttf",
+      "ItalicFont=*",
+      "BoldItalicFont=my-bold.ttf"
+    )
+  )
+  found <- skeleton$resolve_fonts(named, defaults, font_path = dir)
+  expect_identical(
+    found$mainfontoptions[[1]],
+    paste0("Path=", skeleton$fontspec_path(paste0(dir, "/")))
+  )
+
+  skip_on_cran()
+  skip_if_not_installed("pdftools")
+  for (engine in c("xelatex", "lualatex")) {
+    if (!nzchar(Sys.which(engine))) {
+      next
+    }
+    faces <- latex_fonts(variables(plain_args), engine)
+    expect_length(faces, 4)
+    expect_identical(latex_fonts(fallback, engine), faces)
+    expect_identical(
+      latex_fonts(found, engine),
+      c("Roboto-Bold", "Roboto-Regular")
+    )
+  }
+})
 
 test_that("the faces that the options do not name are loaded from the family", {
   skip_if_not_installed("systemfonts", "1.3.0")
@@ -1727,8 +1939,8 @@ test_that("the faces that the options do not name are loaded from the family", {
     "LMSans10-Oblique",
     "LMSans10-Regular"
   )
-  expect_identical(xelatex_fonts(fonts), lm_faces)
-  expect_identical(xelatex_fonts(named_fonts), lm_faces)
+  expect_identical(latex_fonts(fonts), lm_faces)
+  expect_identical(latex_fonts(named_fonts), lm_faces)
 })
 
 test_that("the faces are chosen by family, slant and weight", {

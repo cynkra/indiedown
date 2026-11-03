@@ -107,10 +107,20 @@
 #   and the installed fonts are listed once per lookup.
 #   The hint for installing a font asks to restart R,
 #   because systemfonts lists the installed fonts only once per session.
-# * A named font file is left as named if it is in the `Path=` of the options,
-#   without checking its other faces,
-#   and a relative `Path=` is resolved against the working directory.
-#   A `Path=` in the options is replaced if the font is loaded from another folder.
+# * A named font whose options give a `Path=` or an `Extension=`,
+#   which fontspec loads from a file, is left as named with its options
+#   if that file is found, without checking its other faces:
+#   the font name with the extension appended, in the folder of `Path=`,
+#   resolved against the working directory, or else in the TeX tree.
+#   Otherwise, the message asks to check the path.
+#   A `Path=` and an `Extension=` in the options are replaced
+#   if the font is loaded from another folder.
+# * The folder in a `Path=` that the lookup writes,
+#   and the folder of the package in a `Path=` of `default.yaml`,
+#   are written so that commas, equals signs and the characters
+#   `%`, `#`, `~`, `{`, `}`, `^` and `\` do not break the fontspec options.
+#   `<<indiedown_path>>` is replaced after `default.yaml` is read,
+#   so that its characters do not change how the YAML is read.
 # * If a named font cannot be verified, because the installed fonts cannot be listed
 #   and font files could not be identified, the message says so
 #   instead of saying that it was not found.
@@ -234,16 +244,23 @@ apply_default_yaml <- function(metadata) {
     file.path(indiedown_path(), "default.yaml"),
     encoding = "UTF-8"
   )
-
-  # replace <<indiedown_path>> by package path
-  defaults_txt <- gsub(
-    "<<indiedown_path>>",
-    indiedown_path_tex(),
-    defaults_txt,
-    fixed = TRUE
-  )
-
   defaults <- yaml::yaml.load(defaults_txt)
+
+  # replace <<indiedown_path>> by package path after reading the YAML,
+  # so that the characters of the path do not change how it is read,
+  # and for fontspec in the value of a `Path=` option, see `fontspec_path()`
+  placeholder <- "<<indiedown_path>>"
+  defaults <- rapply(
+    as.list(defaults),
+    function(x) {
+      is_path <- grepl(paste0("^Path=.*", placeholder), x)
+      path <- gsub(placeholder, indiedown_path(), x[is_path], fixed = TRUE)
+      x[is_path] <- paste0("Path=", fontspec_path(substring(path, 6)))
+      gsub(placeholder, indiedown_path_tex(), x, fixed = TRUE)
+    },
+    classes = "character",
+    how = "replace"
+  )
 
   # the main font is resolved separately, also if set in the document
   fonts <- resolve_fonts(metadata, defaults)
@@ -308,6 +325,12 @@ apply_default_yaml <- function(metadata) {
 # and a font file only by its file name, not by its path.
 # Otherwise, it is loaded by name if it is installed,
 # or as a font file if the file exists or is in the TeX tree.
+# A font whose options give a `Path=` or an `Extension=` is a font file
+# for fontspec, the name with the extension appended:
+# it is left as named, with its options, if the file is in the folder
+# of `Path=`, resolved against the working directory,
+# or else, without `Path=`, if it is in the TeX tree,
+# and LaTeX is left to find its other faces without checking them here.
 # The option `<package>.font_path` names a folder with font files,
 # for users who cannot install fonts.
 # If the installed fonts cannot be listed, see `installed_fonts()`,
@@ -362,12 +385,23 @@ resolve_fonts <- function(
       Negate(is.null),
       list(mainfont = font, mainfontoptions = options)
     )
-    # a font file in the `Path=` of the document is left as named,
-    # and LaTeX is left to find its other faces without checking them here;
-    # a relative `Path=` is resolved against the working directory
-    document_path <- sub("^Path=", "", grep("^Path=", options, value = TRUE))
-    if (any(file.exists(file.path(document_path, font)))) {
-      return(named)
+    # a font that fontspec loads from a file, see above,
+    # is left as named if the file is found,
+    # and is missing otherwise, unless it is found in the folders below
+    file <- font
+    found <- NULL
+    path <- utils::tail(fontspec_option(options, "Path"), 1)
+    extension <- utils::tail(fontspec_option(options, "Extension"), 1)
+    if (length(c(path, extension)) > 0) {
+      file <- paste0(font, extension)
+      found <- if (length(path) > 0 && nzchar(path)) {
+        file.exists(file.path(path, file))
+      } else {
+        font_file_installed(file)
+      }
+      if (!isFALSE(found)) {
+        return(named)
+      }
     }
     # the folder of the fonts that LaTeX does not find by name
     unseen <- normalize_dirs(font_dirs()$unseen)
@@ -387,11 +421,13 @@ resolve_fonts <- function(
     if (is.null(defaults[["mainfont"]])) {
       return(named)
     }
-    found <- fonts_installed(font, installed)
+    if (is.null(found)) {
+      found <- fonts_installed(font, installed)
+    }
     missing <- font_missing(
       paste0("Font \"", font, "\"", origin),
-      font,
-      font_install_hint(font)
+      file,
+      font_install_hint(file)
     )
     # without a list of the installed fonts, a font is left to LaTeX,
     # unless its font files could not be loaded,
@@ -622,9 +658,10 @@ font_faces <- function(font, options) {
 # `font_faces()`: with `Path=` and file names, like the fallback font
 font_from_files <- function(font, files) {
   pattern <- "^([[:alpha:]]+Font=)(.*)$"
-  # the files are in one folder, which replaces a `Path=` of the options
+  # the files are in one folder, which replaces a `Path=` of the options,
+  # and are named with their extensions, which replace an `Extension=`
   options <- grep(
-    "^Path=",
+    "^\\s*(Path|Extension)\\s*=",
     as.character(font$mainfontoptions),
     value = TRUE,
     invert = TRUE
@@ -637,9 +674,58 @@ font_from_files <- function(font, files) {
   list(
     mainfont = basename(files[[font$mainfont]]),
     mainfontoptions = c(
-      paste0("Path=", sanitize_tex(dirname(files[[1]])), "/"),
+      paste0("Path=", fontspec_path(paste0(dirname(files[[1]]), "/"))),
       options
     )
+  )
+}
+
+# The values of the fontspec option `key` in `options`,
+# without the spaces and one level of braces around them
+fontspec_option <- function(options, key) {
+  pattern <- paste0("^\\s*", key, "\\s*=\\s*(.*?)\\s*$")
+  values <- grep(pattern, as.character(options), value = TRUE, perl = TRUE)
+  values <- sub(pattern, "\\1", values, perl = TRUE)
+  sub("^[{](.*)[}]$", "\\1", values)
+}
+
+# The folder `path` as the value of a fontspec option such as `Path=`.
+# The characters that LaTeX reads as commands or comments
+# are written as the strings of expl3 that hold them,
+# with the spaces if there are such characters,
+# because a space after a command is dropped.
+# A value with a comma or an equals sign is put in braces,
+# which keep the fontspec options apart.
+# On Windows, backslashes separate folders, and become forward slashes.
+fontspec_path <- function(path, windows = .Platform$OS.type == "windows") {
+  if (windows) {
+    path <- gsub("\\", "/", path, fixed = TRUE)
+  }
+  strings <- c(
+    `\\` = "c_backslash_str",
+    `%` = "c_percent_str",
+    `#` = "c_hash_str",
+    `~` = "c_tilde_str",
+    `{` = "c_left_brace_str",
+    `}` = "c_right_brace_str",
+    `^` = "c_circumflex_str",
+    ` ` = "c_space_tl"
+  )
+  vapply(
+    strsplit(path, ""),
+    function(chars) {
+      escape <- chars %in% names(strings)
+      if (any(escape & chars != " ")) {
+        chars[escape] <- paste0(
+          "\\csname ",
+          strings[chars[escape]],
+          "\\endcsname "
+        )
+      }
+      value <- paste(chars, collapse = "")
+      if (any(chars %in% c(",", "="))) paste0("{", value, "}") else value
+    },
+    ""
   )
 }
 
