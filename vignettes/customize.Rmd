@@ -84,7 +84,7 @@ The output therefore does not depend on the fonts installed on the system.
 
 A format can prefer a font that it cannot ship, such as a licensed or corporate font, with `preferredmainfont` and `preferredmainfontoptions` in `default.yaml`.
 That font is used if it is found, and so are all fonts that its options name, such as `BoldFont=`.
-It is loaded from its font files, found by file name or PostScript name in the folder named by the option `<package>.font_path`, in the folders of the fonts installed for the current user and for all users, or among the installed fonts.
+It is loaded from its font files, found by file name in the folder named by the option `<package>.font_path` and in the folders of the fonts installed for the current user and for all users, by name among the installed fonts, or by PostScript name in the folder of the option and, on Windows, in the folder of the fonts installed for the current user.
 If it is not found, the shipped font is used, and a message explains how to install fonts on the current operating system, once per session.
 Installed fonts are listed with `fc-list`, or with the systemfonts package where `fc-list` is not available, such as on macOS.
 systemfonts 1.3.0 or later also reads the PostScript names of font files: list `systemfonts (>= 1.3.0)` in the `Suggests` field of the template package.

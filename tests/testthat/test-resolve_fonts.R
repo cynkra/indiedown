@@ -478,7 +478,7 @@ test_that("installed fonts are looked up with the current fontconfig setup", {
 })
 
 test_that("installed fonts are looked up with systemfonts without fc-list", {
-  skip_if_not_installed("systemfonts")
+  skip_if_not_installed("systemfonts", "1.3.0")
   skeleton <- local_skeleton(lookup = TRUE)
   skeleton$Sys.which <- function(names) ""
 
@@ -575,8 +575,9 @@ test_that("the preferred font is loaded from the files of the installed fonts", 
 })
 
 test_that("fonts installed for the current user on Windows are found", {
-  skip_if_not_installed("systemfonts")
+  skip_if_not_installed("systemfonts", "1.3.0")
   skeleton <- local_skeleton()
+  skeleton$installed_font_names <- function(...) character()
   skeleton$Sys.info <- function() c(sysname = "Windows")
   appdata <- withr::local_tempdir()
   windir <- withr::local_tempdir()
@@ -586,16 +587,21 @@ test_that("fonts installed for the current user on Windows are found", {
     file.path(appdata, "Microsoft", "Windows", "Fonts"),
     c("regular.ttf", "bold.ttf")
   )
-  # the fonts for all users come second
-  copy_fonts(
-    file.path(windir, "Fonts"),
-    c("regular.ttf", "bold.ttf"),
-    c("Roboto-Regular.ttf", "Roboto-Bold.ttf")
-  )
 
   expect_identical(
     skeleton$resolve_fonts(list(), roboto)$mainfontoptions[1:2],
     c(paste0("Path=", user, "/"), "BoldFont=bold.ttf")
+  )
+
+  # file names come first, also those of the fonts for all users
+  system <- copy_fonts(
+    file.path(windir, "Fonts"),
+    c("regular.ttf", "bold.ttf"),
+    c("Roboto-Regular.ttf", "Roboto-Bold.ttf")
+  )
+  expect_identical(
+    skeleton$resolve_fonts(list(), roboto)$mainfontoptions[1:2],
+    c(paste0("Path=", system, "/"), "BoldFont=Roboto-Bold.ttf")
   )
 })
 
@@ -753,21 +759,24 @@ test_that("font files are loaded by path", {
   )
 })
 
-test_that("PostScript names are read from font files with systemfonts", {
-  skip_if_not_installed("systemfonts")
+test_that("font names are read from font files with systemfonts", {
+  skip_if_not_installed("systemfonts", "1.3.0")
   skeleton <- local_skeleton()
-  dir <- copy_fonts(withr::local_tempdir(), c("regular.ttf", "bold.ttf"))
+  dir <- copy_fonts(withr::local_tempdir(), c("bold.ttf", "regular.ttf"))
   writeLines("not a font", file.path(dir, "broken.ttf"))
+  files <- file.path(dir, c("bold.ttf", "broken.ttf", "regular.ttf"))
 
+  # with the family name for the regular face
   expect_identical(
-    skeleton$font_postscript_names(
-      file.path(dir, c("regular.ttf", "broken.ttf", "bold.ttf"))
-    ),
-    c("Roboto-Regular", NA, "Roboto-Bold")
+    skeleton$font_file_names(files),
+    list(
+      path = files[c(1:3, 3)],
+      name = c("Roboto-Bold", NA, "Roboto-Regular", "Roboto")
+    )
   )
 
   local_systemfonts()
-  expect_null(skeleton$font_postscript_names(file.path(dir, "regular.ttf")))
+  expect_null(skeleton$font_file_names(files))
 })
 
 test_that("get_indiedown_option() reads the option of the package", {
@@ -928,8 +937,6 @@ test_that("without fc-list and systemfonts, the fallback font is used", {
       "which may be why the font lookup failed.\n",
       "To use it, install systemfonts 1.3.0 or later ",
       'with `install.packages("systemfonts")`,\n',
-      "or rename its font files to the PostScript names of their fonts, ",
-      'such as "Licensed Sans Medium.otf",\n',
       "or copy its font files to ~/.local/share/fonts,\n"
     ),
     fixed = TRUE
@@ -972,7 +979,7 @@ test_that("an old systemfonts gives a warning and the fallback font", {
 
   # once per session
   expect_silent(skeleton$resolve_fonts(list(), roboto))
-  expect_null(skeleton$font_postscript_names(file.path(dir, "a.ttf")))
+  expect_null(skeleton$font_file_names(file.path(dir, "a.ttf")))
 })
 
 test_that("font files are recognised by PostScript name with systemfonts", {
@@ -1015,14 +1022,114 @@ test_that("font files are recognised by PostScript name with systemfonts", {
   expect_message(
     fonts <- skeleton$resolve_fonts(list(), roboto, font_path = dir),
     paste0(
+      'Preferred font "Roboto-Regular" was not found, ',
+      'using "regular.ttf" instead.\n',
+      "The systemfonts package could not be loaded, ",
+      "which may be why the font lookup failed:\n",
+      'without it, the font files in "',
+      dir,
+      '" cannot be identified.\n',
       "To use it, install systemfonts 1.3.0 or later ",
       'with `install.packages("systemfonts")`,\n',
-      "or rename its font files to the PostScript names of their fonts, ",
+      "or copy its font files to a folder, ",
+      "rename them to the PostScript names of their fonts, ",
       'such as "Roboto-Regular.otf",\n',
-      'or check that the folder "',
-      dir,
-      '" from the option `indiedown.font_path` holds its font files.\n'
+      'and set `options(indiedown.font_path = "<folder>")`.\n'
     ),
+    fixed = TRUE
+  )
+  expect_identical(fonts, defaults)
+
+  # also for a named font, which is not left to LaTeX
+  # when the installed fonts cannot be listed
+  skeleton$installed_fonts <- function(...) NULL
+  skeleton$installed_font_names <- function(...) NULL
+  expect_message(
+    fonts <- skeleton$resolve_fonts(
+      list(mainfont = "Roboto-BoldItalic"),
+      roboto,
+      font_path = dir
+    ),
+    'Font "Roboto-BoldItalic" from the `mainfont` field of the document was not found',
+    fixed = TRUE
+  )
+  expect_identical(fonts, defaults)
+})
+
+test_that("a family name is loaded from the files of its regular face", {
+  skip_if_not_installed("systemfonts", "1.3.0")
+  skeleton <- local_skeleton()
+  skeleton$Sys.info <- function() c(sysname = "Windows")
+  appdata <- withr::local_tempdir()
+  withr::local_envvar(LOCALAPPDATA = appdata, WINDIR = withr::local_tempdir())
+  user <- copy_fonts(
+    file.path(appdata, "Microsoft", "Windows", "Fonts"),
+    c("bolditalic.ttf", "bold.ttf", "italic.ttf", "regular.ttf"),
+    c("a.ttf", "b.ttf", "c.ttf", "d.ttf")
+  )
+  # systemfonts lists the fonts installed for the current user,
+  # which LaTeX does not find by name
+  skeleton$installed_fonts <- function(...) {
+    list(
+      path = file.path(user, "d.ttf"),
+      name = "Roboto-Regular",
+      family = "Roboto"
+    )
+  }
+  skeleton$installed_font_names <- function(...) "Roboto"
+
+  expect_identical(
+    skeleton$resolve_fonts(list(mainfont = "Roboto"), roboto),
+    list(mainfont = "d.ttf", mainfontoptions = paste0("Path=", user, "/"))
+  )
+
+  # without systemfonts, the message names the folder
+  # instead of asking to install the font for the current user
+  local_systemfonts()
+  skeleton$installed_fonts <- no_fonts
+  skeleton$installed_font_names <- function(...) character()
+  expect_message(
+    fonts <- skeleton$resolve_fonts(list(mainfont = "Roboto"), roboto),
+    paste0(
+      'without it, the font files in "',
+      user,
+      '" cannot be identified.\n'
+    ),
+    fixed = TRUE
+  )
+  expect_identical(fonts$mainfont, "regular.ttf")
+  message <- expect_message(
+    skeleton$resolve_fonts(list(), roboto),
+    "copy its font files to a folder",
+    fixed = TRUE
+  )
+  expect_no_match(conditionMessage(message), "for the current user")
+})
+
+test_that("systemfonts is not needed for fonts found otherwise", {
+  skeleton <- local_skeleton()
+  skeleton$installed_font_names <- function(...) character()
+  local_systemfonts("1.2.3")
+  # an unrelated font in a user folder, the preferred font in a system folder
+  user <- copy_fonts(
+    file.path(withr::local_tempdir(), "fonts"),
+    "regular.ttf",
+    "other.ttf"
+  )
+  system <- copy_fonts(
+    withr::local_tempdir(),
+    c("regular.ttf", "bold.ttf"),
+    c("Roboto-Regular.ttf", "Roboto-Bold.ttf")
+  )
+  skeleton$font_dirs <- function(...) list(user = user, system = system)
+  expect_silent(fonts <- skeleton$resolve_fonts(list(), roboto))
+  expect_identical(fonts$mainfontoptions[[1]], paste0("Path=", system, "/"))
+
+  # a missing font, with a list of the installed fonts
+  unlink(system, recursive = TRUE)
+  expect_message(
+    fonts <- skeleton$resolve_fonts(list(), roboto),
+    "To use it, copy its font files to ~/.local/share/fonts,",
     fixed = TRUE
   )
   expect_identical(fonts, defaults)
@@ -1168,14 +1275,17 @@ test_that("PostScript names are read once per file and session", {
     .package = "systemfonts"
   )
 
-  names <- c("Roboto-Regular", "Roboto-Bold")
-  expect_identical(skeleton$font_postscript_names(files), names)
+  names <- list(
+    path = files[c(1, 2, 1)],
+    name = c("Roboto-Regular", "Roboto-Bold", "Roboto")
+  )
+  expect_identical(skeleton$font_file_names(files), names)
   expect_identical(read, 2)
-  expect_identical(skeleton$font_postscript_names(files), names)
+  expect_identical(skeleton$font_file_names(files), names)
   expect_identical(read, 2)
 
   # again after a change
   Sys.setFileTime(files[[1]], Sys.time() + 60)
-  expect_identical(skeleton$font_postscript_names(files), names)
+  expect_identical(skeleton$font_file_names(files), names)
   expect_identical(read, 3)
 })
