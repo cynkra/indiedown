@@ -42,6 +42,14 @@
 # ## Changelog
 #
 # 2026-11-03:
+# * `get_indiedown_option()` reads the option `<package>.<name>`
+#   of the package that holds this file, for use as a default in function signatures.
+#   `resolve_fonts()` and `find_font_files()` take the options as arguments with it,
+#   instead of option names.
+# * `find_font_files()` searches the Linux font folders recursively, down to three levels:
+#   `~/.local/share/fonts`, `~/.fonts`, `$XDG_DATA_HOME/fonts`,
+#   `/usr/local/share/fonts` and `/usr/share/fonts`, also without `fc-list`.
+#   The hint for installing a font on Linux asks to copy it to `~/.local/share/fonts`.
 # * `resolve_fonts()` loads the preferred font from its font files by path,
 #   so that LaTeX does not have to find an installed font by name.
 #   It looks for the files in the folder named by the option `<package>.font_path`,
@@ -247,17 +255,20 @@ apply_default_yaml <- function(metadata) {
 resolve_fonts <- function(
   metadata,
   defaults,
-  option = paste0(utils::packageName(), ".mainfont"),
-  path_option = paste0(utils::packageName(), ".font_path")
+  mainfont = get_indiedown_option("mainfont"),
+  font_path = get_indiedown_option("font_path")
 ) {
   options <- unlist(metadata[["mainfontoptions"]])
-  font_path <- getOption(path_option)
 
   font <- metadata[["mainfont"]]
   origin <- " from the `mainfont` field of the document"
   if (is.null(font)) {
-    font <- getOption(option)
-    origin <- paste0(" from the `", option, "` option")
+    font <- mainfont
+    origin <- paste0(
+      " from the `",
+      indiedown_option_name("mainfont"),
+      "` option"
+    )
   }
 
   # the start of the message about a missing font and how to install it
@@ -298,11 +309,7 @@ resolve_fonts <- function(
     } else if (isTRUE(all(fonts_installed(faces)))) {
       fonts <- preferred
     } else if (is.null(missing)) {
-      missing <- preferred_font_missing(
-        preferred$mainfont,
-        font_path,
-        path_option
-      )
+      missing <- preferred_font_missing(preferred$mainfont, font_path)
     }
   }
 
@@ -327,12 +334,34 @@ resolve_fonts <- function(
   Filter(Negate(is.null), fonts)
 }
 
+# The value of the option `<package>.<name>`,
+# where `<package>` is the package that holds this file, such as `zueridown`,
+# or `default` if the option is not set.
+# This is how a template package reads its options,
+# e.g. `font_path = get_indiedown_option("font_path")` in a function signature.
+get_indiedown_option <- function(name, default = NULL) {
+  getOption(indiedown_option_name(name), default)
+}
+
+# The name of the option `<package>.<name>`, as users set it.
+# The package is the one that holds this file, found from `env`.
+# Where this file is not part of a package, such as when it is sourced,
+# or `env` is the global environment, the package is taken to be `indiedown`.
+indiedown_option_name <- function(
+  name,
+  env = environment(indiedown_option_name)
+) {
+  package <- utils::packageName(env)
+  paste0(if (is.null(package)) "indiedown" else package, ".", name)
+}
+
 # missing fonts reported in this session
 font_messages <- new.env(parent = emptyenv())
 
 # The start of the message about the missing preferred font,
 # and how to make it available
-preferred_font_missing <- function(font, font_path, path_option) {
+preferred_font_missing <- function(font, font_path) {
+  path_option <- indiedown_option_name("font_path")
   lookup <- !is.null(installed_font_names())
   found <- if (lookup) {
     " was not found"
@@ -398,15 +427,13 @@ font_from_files <- function(font, files) {
 # the folders of the fonts installed for all users by file name,
 # and then the installed fonts that `installed_fonts()` lists,
 # by PostScript name and full name.
-find_font_files <- function(faces, font_path = NULL) {
+find_font_files <- function(
+  faces,
+  font_path = get_indiedown_option("font_path")
+) {
   dirs <- font_dirs()
   for (dir in c(font_path, dirs$user, dirs$system)) {
-    files <- list.files(
-      normalizePath(dir, "/", mustWork = FALSE),
-      "[.](otf|ttf)$",
-      full.names = TRUE,
-      ignore.case = TRUE
-    )
+    files <- list_font_files(normalizePath(dir, "/", mustWork = FALSE))
     stems <- sub("[.][^.]*$", "", basename(files))
     found <- match_font_files(faces, files, stems)
     if (is.null(found) && !(dir %in% dirs$system)) {
@@ -420,11 +447,34 @@ find_font_files <- function(faces, font_path = NULL) {
   match_font_files(faces, fonts$path, fonts$name)
 }
 
+# The `.otf` and `.ttf` files in `dir` and its subfolders,
+# down to `depth` levels and at most `limit` files,
+# so that large font collections are searched in bounded time.
+list_font_files <- function(dir, depth = 3, limit = 5000) {
+  files <- list.files(
+    dir,
+    "[.](otf|ttf)$",
+    full.names = TRUE,
+    ignore.case = TRUE
+  )
+  if (depth > 0) {
+    for (subdir in list.dirs(dir, recursive = FALSE)) {
+      if (length(files) >= limit) {
+        break
+      }
+      files <- c(files, list_font_files(subdir, depth - 1, limit))
+    }
+  }
+  utils::head(files, limit)
+}
+
 # The folders of the fonts installed for the current user and for all users,
 # where fc-list may not see them.
 # TeX Live's fontconfig on Windows, which XeTeX and fc-list use,
 # only sees the fonts installed for all users.
-# On other systems, fc-list sees the installed fonts.
+# On Linux, the folders are those that fontconfig reads,
+# so that fonts are found also where `fc-list` is not installed,
+# as in minimal containers.
 font_dirs <- function(sysname = Sys.info()[["sysname"]]) {
   switch(
     sysname,
@@ -433,7 +483,16 @@ font_dirs <- function(sysname = Sys.info()[["sysname"]]) {
       system = file.path(Sys.getenv("WINDIR"), "Fonts")
     ),
     Darwin = list(user = "~/Library/Fonts", system = "/Library/Fonts"),
-    list()
+    list(
+      user = c(
+        "~/.local/share/fonts",
+        "~/.fonts",
+        if (nzchar(Sys.getenv("XDG_DATA_HOME"))) {
+          file.path(Sys.getenv("XDG_DATA_HOME"), "fonts")
+        }
+      ),
+      system = c("/usr/local/share/fonts", "/usr/share/fonts")
+    )
   )
 }
 
@@ -579,7 +638,7 @@ font_install_hint <- function(font, sysname = Sys.info()[["sysname"]]) {
       "(Settings > Personalization > Fonts, or right-click > Install)"
     ),
     Darwin = "open its font files and click \"Install\" in Font Book",
-    "copy its font files to ~/.local/share/fonts and run `fc-cache -f`"
+    "copy its font files to ~/.local/share/fonts"
   )
 }
 
