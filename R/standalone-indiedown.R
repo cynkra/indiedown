@@ -29,6 +29,8 @@
 # unless its font files were found but their faces cannot be told apart,
 # or the folder of the fonts installed for the current user on Windows,
 # which LaTeX does not see, holds font files that only systemfonts can read.
+# If the folder of the option `<package>.font_path` holds such files,
+# the message is shown, but the font is still left to LaTeX.
 # List `systemfonts (>= 1.3.0)` in `Suggests`.
 #
 # The snapshot helpers `expect_pdf_snapshot()` and `skip_if_no_pdf_snapshot()`
@@ -70,8 +72,10 @@
 #   is looked up as font files first in the folder of the option `<package>.font_path`
 #   and, on Windows, among the fonts installed for the current user,
 #   by file name, PostScript name or family name,
+#   or by file name if it is named as a font file without a folder,
 #   and loaded from them if found.
-# * Font files are searched by file name in all folders first,
+# * Font files are searched by file name, with or without the extension,
+#   in all folders first,
 #   then identified by reading them with systemfonts
 #   in the folder of the option `<package>.font_path`,
 #   then among the installed fonts,
@@ -89,8 +93,11 @@
 #   it could not identify, and how to do without it.
 #   A font named in the document is left to LaTeX
 #   if the installed fonts cannot be listed, as before,
-#   unless such font files are in the folder of the fonts installed
+#   unless its font files were found but their faces could not be told apart,
+#   or such font files are in the folder of the fonts installed
 #   for the current user on Windows, which LaTeX does not see.
+#   If they are in the folder of the option `<package>.font_path` instead,
+#   it is left to LaTeX with the message.
 # * The option `<package>.system_fonts = FALSE` hides the font folders
 #   and the fonts that systemfonts lists from the lookup.
 #   `expect_pdf_snapshot()` sets it to `FALSE` unless `system_fonts = TRUE`,
@@ -265,7 +272,7 @@ apply_default_yaml <- function(metadata) {
 #
 # 1. the font named in the `mainfont` field of the document,
 #    or else in the option `<package>.mainfont`, if it is found;
-#    it can be a font file, as a path or as a file name in the TeX tree,
+#    it can be a font file, as a path or as a file name,
 #    or the name of a font;
 # 2. the preferred font of the format, `preferredmainfont` in default.yaml,
 #    with `preferredmainfontoptions`, if it is found:
@@ -288,8 +295,10 @@ apply_default_yaml <- function(metadata) {
 # first only where LaTeX does not find fonts by name:
 # in the folder of the option `<package>.font_path`, and on Windows,
 # in the folder of the fonts installed for the current user, see `font_dirs()`.
-# A family name is matched there by the upright face of regular weight.
-# Otherwise, it is loaded by name if it is installed.
+# A family name is matched there by the upright face of regular weight,
+# and a font file only by its file name, not by its path.
+# Otherwise, it is loaded by name if it is installed,
+# or as a font file if the file exists or is in the TeX tree.
 # The option `<package>.font_path` names a folder with font files,
 # for users who cannot install fonts.
 # If the installed fonts cannot be listed, see `installed_fonts()`,
@@ -298,6 +307,9 @@ apply_default_yaml <- function(metadata) {
 # or font files that systemfonts could not read were found
 # in the folder of the fonts installed for the current user on Windows,
 # and the fallback font replaces the preferred one unless its files are found.
+# If such font files were found in the folder of the option instead,
+# the named font is still left to LaTeX, but with a message,
+# because LaTeX does not find a font in that folder by name.
 # For a missing font, a message explains how to make it available,
 # once per session for each text of the message;
 # the output format repeats it at the end of the render.
@@ -342,7 +354,8 @@ resolve_fonts <- function(
     )
     # the folder of the fonts that LaTeX does not find by name
     unseen <- normalize_dirs(font_dirs()$unseen)
-    if (!is_font_file(font)) {
+    # a font file is looked up in the folders only by its file name
+    if (!is_font_file(font) || basename(font) == font) {
       files <- find_font_files(
         font_faces(font, options),
         font_path,
@@ -358,6 +371,11 @@ resolve_fonts <- function(
       return(named)
     }
     found <- fonts_installed(font, installed)
+    missing <- font_missing(
+      paste0("Font \"", font, "\"", origin),
+      font,
+      font_install_hint(font)
+    )
     # without a list of the installed fonts, a font is left to LaTeX,
     # unless its font files could not be loaded,
     # or it may be among the font files that LaTeX does not find by name
@@ -367,13 +385,20 @@ resolve_fonts <- function(
       intersect(font_lookup$unidentified, unseen)
     )
     if (isTRUE(found) || (is.na(found) && length(unread) == 0)) {
+      # it may also be among the font files that could not be identified
+      # in the other folders, which LaTeX does not see either
+      if (is.na(found) && length(font_lookup$unidentified) > 0) {
+        show_font_message(paste0(
+          missing$text,
+          " is left to LaTeX, which may not find it.\n",
+          missing$systemfonts,
+          "If LaTeX does not find it, ",
+          missing$hint,
+          ".\n"
+        ))
+      }
       return(named)
     }
-    missing <- font_missing(
-      paste0("Font \"", font, "\"", origin),
-      font,
-      font_install_hint(font)
-    )
     # the options were meant for the missing font
     options <- NULL
   }
@@ -408,7 +433,7 @@ resolve_fonts <- function(
   }
 
   if (!is.null(missing)) {
-    text <- paste0(
+    show_font_message(paste0(
       missing$text,
       " was not found, using \"",
       used,
@@ -417,18 +442,22 @@ resolve_fonts <- function(
       "To use it, ",
       missing$hint,
       ".\n"
-    )
-    if (is.null(font_messages[[text]])) {
-      font_messages[[text]] <- TRUE
-      message(structure(
-        class = c("indiedown_font_message", "message", "condition"),
-        list(message = text, call = NULL)
-      ))
-    }
+    ))
   }
 
   fonts$mainfontoptions <- c(fonts$mainfontoptions, options)
   Filter(Negate(is.null), fonts)
+}
+
+# Shows the message about a missing font, once per session for each `text`
+show_font_message <- function(text) {
+  if (is.null(font_messages[[text]])) {
+    font_messages[[text]] <- TRUE
+    message(structure(
+      class = c("indiedown_font_message", "message", "condition"),
+      list(message = text, call = NULL)
+    ))
+  }
 }
 
 # The value of the option `<package>.<name>`,
@@ -529,9 +558,9 @@ font_missing <- function(text, font, hint) {
       hint,
       ".\nIf its font files are among those that cannot be identified, ",
       "copy them to a folder,\n",
-      "rename them to the PostScript names of their fonts, such as \"",
-      font,
-      ".otf\",\nand set `options(",
+      "rename them to the font names that are looked up, such as \"",
+      if (is_font_file(font)) font else paste0(font, ".otf"),
+      "\",\nand set `options(",
       indiedown_option_name("font_path"),
       " = \"<folder>\")`"
     )
@@ -707,8 +736,9 @@ other_faces <- function(styles, main, bold, unnamed) {
 # The font files of `faces`, one for each, all in the same folder,
 # named by face, or NULL if they are not found.
 # The folder `font_path` and the folders of `dirs`, see `font_dirs()`,
-# are searched by file name, each folder once.
-# Then the files in the folder `font_path` are identified
+# are searched by file name, with or without the extension, each folder once.
+# Faces named as font files, with the extension, are only found so.
+# Otherwise, the files in the folder `font_path` are identified next
 # by the names that systemfonts reads from them, see `font_file_names()`,
 # then the `installed` fonts by the names that they list,
 # see `installed_fonts()`,
@@ -728,11 +758,20 @@ find_font_files <- function(
   folders <- c(font_path, dirs$unseen, dirs$user, dirs$system)
   for (dir in normalize_dirs(folders)) {
     files[[dir]] <- list_font_files(dir)
-    stems <- sub("[.][^.]*$", "", basename(files[[dir]]))
-    found <- match_font_files(faces, files[[dir]], stems)
+    # with or without the extension
+    names <- basename(files[[dir]])
+    found <- match_font_files(
+      faces,
+      rep(files[[dir]], 2),
+      c(sub("[.][^.]*$", "", names), names)
+    )
     if (!is.null(found)) {
       return(found)
     }
+  }
+  # font files named with their extension are found by file name only
+  if (all(is_font_file(faces))) {
+    return(NULL)
   }
 
   identify <- function(dirs) {

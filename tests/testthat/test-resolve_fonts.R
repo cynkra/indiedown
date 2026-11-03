@@ -673,6 +673,96 @@ test_that("a named font that is only found as files is loaded from them", {
   )
 })
 
+test_that("a font named as a font file is found by its file name", {
+  skeleton <- local_skeleton()
+  appdata <- withr::local_tempdir()
+  withr::local_envvar(LOCALAPPDATA = appdata, WINDIR = withr::local_tempdir())
+  roboto_files <- c("Roboto-Regular.ttf", "Roboto-Bold.ttf")
+  dir <- copy_fonts(
+    withr::local_tempdir(),
+    c("regular.ttf", "bold.ttf"),
+    roboto_files
+  )
+  faces <- c(
+    "BoldFont=Roboto-Bold.ttf",
+    "ItalicFont=*",
+    "BoldItalicFont=Roboto-Bold.ttf"
+  )
+  loaded <- function(dir) {
+    list(
+      mainfont = "Roboto-Regular.ttf",
+      mainfontoptions = c(
+        paste0("Path=", dir, "/"),
+        "BoldFont=Roboto-Bold.ttf",
+        "ItalicFont=Roboto-Regular.ttf",
+        "BoldItalicFont=Roboto-Bold.ttf"
+      )
+    )
+  }
+
+  # the preferred font, in the folder of the option
+  preferred <- c(
+    defaults,
+    list(
+      preferredmainfont = "Roboto-Regular.ttf",
+      preferredmainfontoptions = faces
+    )
+  )
+  expect_silent(
+    fonts <- skeleton$resolve_fonts(list(), preferred, font_path = dir)
+  )
+  expect_identical(fonts, loaded(dir))
+
+  # a named font, in the folder of the option
+  named <- list(mainfont = "Roboto-Regular.ttf", mainfontoptions = faces)
+  expect_silent(
+    fonts <- skeleton$resolve_fonts(named, defaults, font_path = dir)
+  )
+  expect_identical(fonts, loaded(dir))
+
+  # and among the fonts installed for the current user on Windows
+  skeleton$Sys.info <- function() c(sysname = "Windows")
+  user <- copy_fonts(
+    file.path(appdata, "Microsoft", "Windows", "Fonts"),
+    c("regular.ttf", "bold.ttf"),
+    roboto_files
+  )
+  expect_identical(skeleton$resolve_fonts(named, defaults), loaded(user))
+
+  # but not with a folder
+  named$mainfont <- file.path("fonts", "Roboto-Regular.ttf")
+  expect_message(
+    fonts <- skeleton$resolve_fonts(named, defaults, font_path = dir),
+    "check the path",
+    fixed = TRUE
+  )
+  expect_identical(fonts, defaults)
+})
+
+test_that("the message about unidentified files keeps the extension of a file", {
+  skeleton <- local_skeleton()
+  skeleton$installed_font_names <- function(...) character()
+  local_systemfonts()
+  dir <- copy_fonts(
+    withr::local_tempdir(),
+    c("regular.ttf", "bold.ttf"),
+    c("a.ttf", "b.ttf")
+  )
+  preferred <- c(
+    defaults,
+    list(
+      preferredmainfont = "Roboto-Regular.ttf",
+      preferredmainfontoptions = "BoldFont=Roboto-Bold"
+    )
+  )
+  expect_message(
+    fonts <- skeleton$resolve_fonts(list(), preferred, font_path = dir),
+    'such as "Roboto-Regular.ttf",\n',
+    fixed = TRUE
+  )
+  expect_identical(fonts, defaults)
+})
+
 test_that("the message about the preferred font explains the option", {
   skeleton <- local_skeleton()
   skeleton$installed_font_names <- function(...) character()
@@ -712,7 +802,8 @@ test_that("the folders of installed fonts depend on the system", {
   skeleton <- local_skeleton()
   withr::local_envvar(
     LOCALAPPDATA = "C:/Users/me/AppData/Local",
-    WINDIR = "C:/Windows"
+    WINDIR = "C:/Windows",
+    XDG_DATA_HOME = NA
   )
 
   expect_identical(
@@ -867,10 +958,11 @@ test_that("the arguments take the place of the options", {
   )
 })
 
-# Licensed Sans in the files of Roboto, in the Linux folders of the home folder
+# Licensed Sans in the files of Roboto, in the Linux folders of the home folder,
+# with XDG_DATA_HOME unset, so that fontconfig reads ~/.local/share/fonts
 local_linux_fonts <- function(skeleton, subdir, env = parent.frame()) {
   home <- withr::local_tempdir(.local_envir = env)
-  withr::local_envvar(HOME = home, XDG_DATA_HOME = "", .local_envir = env)
+  withr::local_envvar(HOME = home, XDG_DATA_HOME = NA, .local_envir = env)
   linux <- skeleton$dirs_of("Linux")
   skeleton$font_dirs <- function(...) linux
   copy_fonts(
@@ -907,10 +999,19 @@ test_that("fonts in ~/.local/share/fonts are found with fc-list", {
   skip_if_not(nzchar(Sys.which("fc-list")), "fc-list not available")
   skeleton <- local_skeleton(lookup = TRUE)
   home <- local_linux_fonts(skeleton, ".local/share/fonts")
-  expect_silent(fonts <- skeleton$resolve_fonts(list(), roboto))
+  copy_fonts(file.path(home, ".local/share/fonts"), "bolditalic.ttf", "x.ttf")
+  # without systemfonts, only fc-list tells the faces apart
+  # that the options do not name
+  local_systemfonts()
+  expect_silent(fonts <- skeleton$resolve_fonts(list(), roboto_bold))
   expect_identical(
-    fonts$mainfontoptions[[1]],
-    paste0("Path=", normalizePath(home, "/"), "/.local/share/fonts/")
+    fonts$mainfontoptions,
+    c(
+      paste0("Path=", normalizePath(home, "/"), "/.local/share/fonts/"),
+      "BoldFont=Roboto-Bold.ttf",
+      "ItalicFont=x.ttf",
+      "BoldItalicFont=x.ttf"
+    )
   )
 })
 
@@ -1070,7 +1171,7 @@ test_that("font files are recognised by PostScript name with systemfonts", {
       '" from the option `indiedown.font_path` holds its font files.\n',
       "If its font files are among those that cannot be identified, ",
       "copy them to a folder,\n",
-      "rename them to the PostScript names of their fonts, ",
+      "rename them to the font names that are looked up, ",
       'such as "Roboto-Regular.otf",\n',
       'and set `options(indiedown.font_path = "<folder>")`.\n'
     ),
@@ -1079,15 +1180,36 @@ test_that("font files are recognised by PostScript name with systemfonts", {
   expect_identical(fonts, defaults)
 
   # a named font is left to LaTeX when the installed fonts cannot be listed,
-  # because LaTeX finds the fonts that are installed by name
+  # because LaTeX finds the fonts that are installed by name,
+  # but not those among the unidentified files in the folder of the option
   skeleton$installed_fonts <- function(...) NULL
   skeleton$installed_font_names <- function(...) NULL
-  expect_silent(
+  expect_message(
     fonts <- skeleton$resolve_fonts(
       list(mainfont = "Roboto-BoldItalic"),
       roboto,
       font_path = dir
-    )
+    ),
+    paste0(
+      'Font "Roboto-BoldItalic" from the `mainfont` field of the document ',
+      "is left to LaTeX, which may not find it.\n",
+      "The systemfonts package could not be loaded, ",
+      "which may be why the font lookup failed:\n",
+      'without it, the font files in "',
+      dir,
+      '" cannot be identified.\n',
+      "If LaTeX does not find it, install systemfonts 1.3.0 or later ",
+      'with `install.packages("systemfonts")`,\n',
+      "or ",
+      skeleton$font_install_hint("Roboto-BoldItalic"),
+      ".\n",
+      "If its font files are among those that cannot be identified, ",
+      "copy them to a folder,\n",
+      "rename them to the font names that are looked up, ",
+      'such as "Roboto-BoldItalic.otf",\n',
+      'and set `options(indiedown.font_path = "<folder>")`.\n'
+    ),
+    fixed = TRUE
   )
   expect_identical(fonts, list(mainfont = "Roboto-BoldItalic"))
 })
@@ -1163,7 +1285,7 @@ test_that("a family name is loaded from the files of its regular face", {
       "to a folder with its font files.\n",
       "If its font files are among those that cannot be identified, ",
       "copy them to a folder,\n",
-      "rename them to the PostScript names of their fonts, ",
+      "rename them to the font names that are looked up, ",
       'such as "Roboto-Regular.otf",\n',
       'and set `options(indiedown.font_path = "<folder>")`.\n'
     ),
@@ -1204,7 +1326,7 @@ test_that("unidentified font files count against a named font only on Windows", 
       "(Settings > Personalization > Fonts, or right-click > Install).\n",
       "If its font files are among those that cannot be identified, ",
       "copy them to a folder,\n",
-      "rename them to the PostScript names of their fonts, ",
+      "rename them to the font names that are looked up, ",
       'such as "Arial.otf",\n',
       'and set `options(indiedown.font_path = "<folder>")`.\n'
     ),
@@ -1218,20 +1340,30 @@ test_that("unidentified font files count against a named font only on Windows", 
   )
   expect_identical(fonts, list(mainfont = "Arial"))
 
-  # elsewhere, LaTeX finds an installed font by name,
-  # also next to unidentified font files in the folder of the option
+  # elsewhere, LaTeX finds an installed font by name
   skeleton$Sys.info <- function() c(sysname = "Darwin")
+  expect_silent(
+    fonts <- skeleton$resolve_fonts(list(mainfont = "Arial"), roboto)
+  )
+  expect_identical(fonts, list(mainfont = "Arial"))
+  # also next to unidentified font files in the folder of the option,
+  # which may hold the font under other names, as the message explains
   dir <- copy_fonts(
     withr::local_tempdir(),
     c("regular.ttf", "bold.ttf"),
     c("Corporate Sans Medium.ttf", "Corporate Sans Heavy.ttf")
   )
-  expect_silent(
+  expect_message(
     fonts <- skeleton$resolve_fonts(
       list(mainfont = "Arial"),
       roboto,
       font_path = dir
-    )
+    ),
+    paste0(
+      "is left to LaTeX, which may not find it.\n",
+      "The systemfonts package could not be loaded"
+    ),
+    fixed = TRUE
   )
   expect_identical(fonts, list(mainfont = "Arial"))
 })
