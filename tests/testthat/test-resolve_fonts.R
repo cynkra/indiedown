@@ -322,33 +322,21 @@ test_that("a missing named font falls back to the preferred font", {
   )
 })
 
-test_that("without a font lookup, the fallback replaces the preferred font", {
-  skeleton <- local_skeleton()
-  skeleton$installed_font_names <- function() NULL
-
-  expect_message(
-    fonts <- skeleton$resolve_fonts(
-      list(),
-      preferred
-    ),
-    paste0(
-      "Preferred font \"Licensed Sans Medium\" cannot be looked up ",
-      "without fc-list or the systemfonts package, ",
-      "using \"regular.ttf\" instead.\n",
-      "To use it, install the systemfonts package,\n",
-      "or set `options(indiedown.font_path = \"<folder>\")` to a folder with its font files.\n"
-    ),
-    fixed = TRUE
+test_that("without fc-list, the lookup of installed fonts requires systemfonts", {
+  skeleton <- local_skeleton(lookup = TRUE)
+  skeleton$Sys.which <- function(names) ""
+  # systemfonts is missing
+  local_mocked_bindings(
+    check_installed = function(pkg, reason = NULL, ...) {
+      stop("missing ", pkg, " ", reason, call. = FALSE)
+    },
+    .package = "rlang"
   )
-  expect_identical(fonts, defaults)
 
-  # a named font is left to LaTeX
-  expect_identical(
-    skeleton$resolve_fonts(
-      list(mainfont = "Some Sans"),
-      preferred
-    ),
-    list(mainfont = "Some Sans")
+  expect_error(
+    skeleton$resolve_fonts(list(), preferred),
+    "missing systemfonts to look up installed fonts when `fc-list` is not available.",
+    fixed = TRUE
   )
 })
 
@@ -498,11 +486,6 @@ test_that("installed fonts are looked up with systemfonts without fc-list", {
     skeleton$installed_font_names(),
     c(system$family, system$name)
   )
-
-  # without systemfonts, installed fonts cannot be looked up
-  skeleton$requireNamespace <- function(...) FALSE
-  expect_null(skeleton$installed_fonts())
-  expect_null(skeleton$installed_font_names())
 })
 
 # Copies font files of the skeleton to `dir`, renamed to `names`
