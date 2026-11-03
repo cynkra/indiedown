@@ -334,7 +334,7 @@ resolve_fonts <- function(
 }
 
 # The value of the option `<package>.<name>`,
-# where `<package>` is the package that holds this file, such as `zueridown`,
+# where `<package>` is the package that holds this file, such as `mydown`,
 # or `default` if the option is not set.
 # This is how a template package reads its options,
 # e.g. `font_path = get_indiedown_option("font_path")` in a function signature.
