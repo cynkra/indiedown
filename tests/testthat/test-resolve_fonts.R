@@ -353,6 +353,10 @@ test_that("a folder is written for fontspec in Path=", {
   skeleton <- local_skeleton()
   expect_identical(skeleton$fontspec_path("/a b/fonts/"), "/a b/fonts/")
   expect_identical(
+    skeleton$fontspec_path("/a  b/fonts/"),
+    "/a\\csname c_space_tl\\endcsname \\csname c_space_tl\\endcsname b/fonts/"
+  )
+  expect_identical(
     skeleton$fontspec_path("/a b,c=d/%#~{}^\\/", windows = FALSE),
     paste0(
       "{/a\\csname c_space_tl\\endcsname b,c=d/",
@@ -368,6 +372,52 @@ test_that("a folder is written for fontspec in Path=", {
   expect_identical(
     skeleton$fontspec_path(c("C:\\Fonts, A\\", "C:/B/"), windows = TRUE),
     c("{C:/Fonts, A/}", "C:/B/")
+  )
+})
+
+test_that("fontspec options in one string are split at commas outside braces", {
+  skeleton <- local_skeleton()
+  expect_null(skeleton$split_font_options(NULL))
+  expect_null(skeleton$split_font_options(""))
+  expect_identical(
+    skeleton$split_font_options(
+      c("Path={/a,b=c}/,BoldFont=x.otf, Scale=0.9", "Color=red")
+    ),
+    c("Path={/a,b=c}/", "BoldFont=x.otf", "Scale=0.9", "Color=red")
+  )
+  expect_identical(
+    skeleton$split_font_options(list("A=1", "B=2")),
+    c("A=1", "B=2")
+  )
+})
+
+test_that("the mainfontoptions of the document written as one string are split", {
+  skeleton <- local_skeleton()
+  skeleton$has_systemfonts <- function() FALSE
+  document <- copy_fonts(
+    withr::local_tempdir(),
+    c("bolditalic.ttf", "bold.ttf"),
+    c("my-font.otf", "my-bold.otf")
+  )
+  named <- list(
+    mainfont = "my-font.otf",
+    mainfontoptions = paste0(
+      "Path=",
+      document,
+      "/,BoldFont=my-bold.otf,Scale=0.9"
+    )
+  )
+  expect_silent(fonts <- skeleton$resolve_fonts(named, defaults))
+  expect_identical(
+    fonts,
+    list(
+      mainfont = "my-font.otf",
+      mainfontoptions = c(
+        paste0("Path=", document, "/"),
+        "BoldFont=my-bold.otf",
+        "Scale=0.9"
+      )
+    )
   )
 })
 
@@ -1865,6 +1915,65 @@ test_that("fonts are loaded from folders with special characters in their paths"
       latex_fonts(found, engine),
       c("Roboto-Bold", "Roboto-Regular")
     )
+  }
+})
+
+test_that("a default.yaml with the font options in one string is read like a list", {
+  skeleton <- local_skeleton()
+  plain_args <- skeleton$apply_default_yaml(list())
+
+  # the template package in a library with a run of spaces in its path
+  library <- file.path(withr::local_tempdir(), "two  spaces")
+  dir.create(library)
+  file.copy(skeleton$indiedown_path(), library, recursive = TRUE)
+  skeleton$indiedown_path <- function(...) file.path(library, "indiedown", ...)
+  yaml_file <- file.path(library, "indiedown", "default.yaml")
+  lines <- readLines(yaml_file)
+  start <- grep("^mainfontoptions:", lines)
+  end <- start + 5
+  stopifnot(grepl("^- Scale", lines[end]), !grepl("^- ", lines[end + 1]))
+  writeLines(
+    c(
+      lines[seq_len(start - 1)],
+      paste0(
+        'mainfontoptions: "Path=<<indiedown_path>>/fonts/,BoldFont=bold.ttf,',
+        'ItalicFont=italic.ttf,BoldItalicFont=bolditalic.ttf,Scale=0.92"'
+      ),
+      lines[-seq_len(end)]
+    ),
+    yaml_file
+  )
+  args <- skeleton$apply_default_yaml(list())
+  variables <- function(args) {
+    value <- function(name) {
+      pattern <- paste0("^", name, ":")
+      sub(pattern, "", grep(pattern, args, value = TRUE))
+    }
+    list(
+      mainfont = value("mainfont"),
+      mainfontoptions = value("mainfontoptions")
+    )
+  }
+  options <- variables(args)$mainfontoptions
+  expect_identical(
+    options,
+    paste0(
+      "Path=",
+      skeleton$fontspec_path(file.path(library, "indiedown", "fonts/")),
+      ",BoldFont=bold.ttf,ItalicFont=italic.ttf,BoldItalicFont=bolditalic.ttf",
+      ",Scale=0.92"
+    )
+  )
+
+  skip_on_cran()
+  skip_if_not_installed("pdftools")
+  for (engine in c("xelatex", "lualatex")) {
+    if (!nzchar(Sys.which(engine))) {
+      next
+    }
+    faces <- latex_fonts(variables(plain_args), engine)
+    expect_length(faces, 4)
+    expect_identical(latex_fonts(variables(args), engine), faces)
   }
 })
 

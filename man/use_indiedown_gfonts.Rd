@@ -83,10 +83,15 @@ the following happens:
 \enumerate{
 \item The \code{pre_processor} of the output format
 (\code{inst/indiedown/pre_processor.R}) calls \code{apply_default_yaml()},
-which reads \code{default.yaml}
-and replaces \verb{<<indiedown_path>>} by the location of \code{inst/indiedown}
-in the \emph{installed} template package
-(using \code{indiedown_path_tex()} from the template package).
+which reads \code{default.yaml},
+and then replaces \verb{<<indiedown_path>>} by the location of \code{inst/indiedown}
+in the \emph{installed} template package.
+This happens after the YAML is read,
+so that the characters of the location do not change how it is read.
+In the value of \verb{Path=} the location is written so that LaTeX reads it as is,
+and elsewhere \code{indiedown_path_tex()} of the template package is used.
+Options may also be given as one string joined by commas,
+which is split at the commas outside braces.
 The settings are handed to pandoc as variables,
 except for those that are set in the YAML header of the document itself.
 The main font is chosen separately by \code{resolve_fonts()}:

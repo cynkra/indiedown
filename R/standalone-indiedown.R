@@ -121,6 +121,13 @@
 #   `%`, `#`, `~`, `{`, `}`, `^` and `\` do not break the fontspec options.
 #   `<<indiedown_path>>` is replaced after `default.yaml` is read,
 #   so that its characters do not change how the YAML is read.
+#   Runs of spaces are written the same way, because LaTeX reads them as one space.
+#   A double quote in the folder is not supported: fontspec quotes the file name,
+#   and XeTeX cannot escape a double quote in it.
+# * The `mainfontoptions` and `preferredmainfontoptions` of `default.yaml`,
+#   and the `mainfontoptions` of the document, may also be written as one string
+#   of options joined by commas.
+#   It is split at the commas outside braces first, so that `Path=` takes only its own value.
 # * If a named font cannot be verified, because the installed fonts cannot be listed
 #   and font files could not be identified, the message says so
 #   instead of saying that it was not found.
@@ -250,6 +257,12 @@ apply_default_yaml <- function(metadata) {
   # so that the characters of the path do not change how it is read,
   # and for fontspec in the value of a `Path=` option, see `fontspec_path()`
   placeholder <- "<<indiedown_path>>"
+  for (key in intersect(
+    names(defaults),
+    c("mainfontoptions", "preferredmainfontoptions")
+  )) {
+    defaults[[key]] <- as.list(split_font_options(unlist(defaults[[key]])))
+  }
   defaults <- rapply(
     as.list(defaults),
     function(x) {
@@ -358,7 +371,7 @@ resolve_fonts <- function(
   mainfont = get_indiedown_option("mainfont"),
   font_path = get_indiedown_option("font_path")
 ) {
-  options <- unlist(metadata[["mainfontoptions"]])
+  options <- split_font_options(unlist(metadata[["mainfontoptions"]]))
 
   font <- metadata[["mainfont"]]
   origin <- " from the `mainfont` field of the document"
@@ -682,6 +695,38 @@ font_from_files <- function(font, files) {
 
 # The values of the fontspec option `key` in `options`,
 # without the spaces and one level of braces around them
+# The fontspec options in `x`, a character vector whose elements may each hold
+# several options joined by commas, as one string in a YAML file or a document.
+# The commas inside braces belong to the value of an option and do not split it.
+split_font_options <- function(x) {
+  if (is.null(x)) {
+    return(NULL)
+  }
+  split_one <- function(string) {
+    parts <- character()
+    start <- 1L
+    depth <- 0L
+    chars <- strsplit(string, "")[[1]]
+    for (i in seq_along(chars)) {
+      if (chars[[i]] == "{") {
+        depth <- depth + 1L
+      } else if (chars[[i]] == "}") {
+        depth <- max(depth - 1L, 0L)
+      } else if (chars[[i]] == "," && depth == 0L) {
+        parts <- c(parts, substr(string, start, i - 1L))
+        start <- i + 1L
+      }
+    }
+    if (length(parts) == 0) {
+      return(string)
+    }
+    trimws(c(parts, substr(string, start, nchar(string))))
+  }
+  x <- unlist(lapply(as.character(x), split_one))
+  x <- x[nzchar(x)]
+  if (length(x) > 0) x else NULL
+}
+
 fontspec_option <- function(options, key) {
   pattern <- paste0("^\\s*", key, "\\s*=\\s*(.*?)\\s*$")
   values <- grep(pattern, as.character(options), value = TRUE, perl = TRUE)
@@ -692,8 +737,10 @@ fontspec_option <- function(options, key) {
 # The folder `path` as the value of a fontspec option such as `Path=`.
 # The characters that LaTeX reads as commands or comments
 # are written as the strings of expl3 that hold them,
-# with the spaces if there are such characters,
-# because a space after a command is dropped.
+# with the spaces if there are such characters or a run of spaces,
+# because a space after a command is dropped, and LaTeX reads a run of spaces as one.
+# A double quote cannot be written: fontspec quotes the file name for XeTeX,
+# which has no way to escape it, so a folder with a double quote is not supported.
 # A value with a comma or an equals sign is put in braces,
 # which keep the fontspec options apart.
 # On Windows, backslashes separate folders, and become forward slashes.
@@ -712,10 +759,11 @@ fontspec_path <- function(path, windows = .Platform$OS.type == "windows") {
     ` ` = "c_space_tl"
   )
   vapply(
-    strsplit(path, ""),
-    function(chars) {
+    path,
+    function(path) {
+      chars <- strsplit(path, "")[[1]]
       escape <- chars %in% names(strings)
-      if (any(escape & chars != " ")) {
+      if (any(escape & chars != " ") || grepl("  ", path, fixed = TRUE)) {
         chars[escape] <- paste0(
           "\\csname ",
           strings[chars[escape]],
@@ -725,7 +773,8 @@ fontspec_path <- function(path, windows = .Platform$OS.type == "windows") {
       value <- paste(chars, collapse = "")
       if (any(chars %in% c(",", "="))) paste0("{", value, "}") else value
     },
-    ""
+    "",
+    USE.NAMES = FALSE
   )
 }
 
