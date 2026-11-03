@@ -169,6 +169,45 @@ test_that("a font file is looked up as a file", {
   expect_identical(fonts, defaults)
 })
 
+test_that("a font file in the Path= of the document is left as named", {
+  skeleton <- local_skeleton()
+  skeleton$has_systemfonts <- function() FALSE
+  document <- copy_fonts(
+    withr::local_tempdir(),
+    c("bolditalic.ttf", "bold.ttf"),
+    c("my-font.otf", "my-bold.otf")
+  )
+  other <- copy_fonts(
+    withr::local_tempdir(),
+    c("bolditalic.ttf", "bold.ttf"),
+    c("my-font.otf", "my-bold.otf")
+  )
+  named <- list(
+    mainfont = "my-font.otf",
+    mainfontoptions = c(
+      paste0("Path=", document, "/"),
+      "BoldFont=my-bold.otf",
+      "ItalicFont=my-font.otf",
+      "BoldItalicFont=my-bold.otf"
+    )
+  )
+
+  # the file is in the folder of the document, which is also in the option
+  expect_silent(
+    fonts <- skeleton$resolve_fonts(named, defaults, font_path = other)
+  )
+  expect_identical(fonts, named)
+
+  # otherwise it is loaded from the folder of the option, with one Path= only
+  named$mainfontoptions[[1]] <- paste0("Path=", withr::local_tempdir(), "/")
+  expect_silent(
+    fonts <- skeleton$resolve_fonts(named, defaults, font_path = other)
+  )
+  expect_identical(fonts$mainfont, "my-font.otf")
+  expect_identical(sum(grepl("^Path=", fonts$mainfontoptions)), 1L)
+  expect_identical(fonts$mainfontoptions[[1]], paste0("Path=", other, "/"))
+})
+
 test_that("a font file name is looked up in the TeX tree", {
   skeleton <- local_skeleton()
   skeleton$Sys.which <- function(names) ""
@@ -199,6 +238,13 @@ test_that("without a configured font, the named font is used as is", {
   )
 })
 
+test_that("the hints ask to restart R, which systemfonts needs to see new fonts", {
+  skeleton <- local_skeleton()
+  for (sysname in c("Windows", "Darwin", "Linux")) {
+    expect_match(skeleton$font_install_hint("Arial", sysname), "and restart R$")
+  }
+})
+
 test_that("the message explains how to install fonts on each system", {
   skeleton <- local_skeleton()
   skeleton$installed_font_names <- function(...) character()
@@ -211,7 +257,7 @@ test_that("the message explains how to install fonts on each system", {
   expect_match(skeleton$font_install_hint("A", "Darwin"), "Font Book")
   expect_identical(
     skeleton$font_install_hint("A", "Linux"),
-    "copy its font files to ~/.local/share/fonts"
+    "copy its font files to ~/.local/share/fonts, and restart R"
   )
 })
 
@@ -775,7 +821,7 @@ test_that("the message about the preferred font explains the option", {
     paste0(
       "Preferred font \"Licensed Sans Medium\" was not found, ",
       "using \"regular.ttf\" instead.\n",
-      "To use it, copy its font files to ~/.local/share/fonts,\n",
+      "To use it, copy its font files to ~/.local/share/fonts, and restart R,\n",
       "or set `options(indiedown.font_path = \"<folder>\")` to a folder with its font files.\n"
     ),
     fixed = TRUE
@@ -1067,7 +1113,7 @@ test_that("without fc-list and systemfonts, the fallback font is used", {
       "which may be why the font lookup failed.\n",
       "To use it, install systemfonts 1.3.0 or later ",
       'with `install.packages("systemfonts")`,\n',
-      "or copy its font files to ~/.local/share/fonts,\n"
+      "or copy its font files to ~/.local/share/fonts, and restart R,\n"
     ),
     fixed = TRUE
   )
@@ -1280,7 +1326,7 @@ test_that("a family name is loaded from the files of its regular face", {
       "To use it, install systemfonts 1.3.0 or later ",
       'with `install.packages("systemfonts")`,\n',
       "or install its font files for the current user ",
-      "(Settings > Personalization > Fonts, or right-click > Install),\n",
+      "(Settings > Personalization > Fonts, or right-click > Install), and restart R,\n",
       'or set `options(indiedown.font_path = "<folder>")` ',
       "to a folder with its font files.\n",
       "If its font files are among those that cannot be identified, ",
@@ -1313,7 +1359,8 @@ test_that("unidentified font files count against a named font only on Windows", 
   expect_message(
     fonts <- skeleton$resolve_fonts(list(mainfont = "Arial"), roboto),
     paste0(
-      'Font "Arial" from the `mainfont` field of the document was not found, ',
+      'Font "Arial" from the `mainfont` field of the document ',
+      'could not be verified, ',
       'using "regular.ttf" instead.\n',
       "The systemfonts package could not be loaded, ",
       "which may be why the font lookup failed:\n",
@@ -1323,7 +1370,7 @@ test_that("unidentified font files count against a named font only on Windows", 
       "To use it, install systemfonts 1.3.0 or later ",
       'with `install.packages("systemfonts")`,\n',
       "or install its font files for the current user ",
-      "(Settings > Personalization > Fonts, or right-click > Install).\n",
+      "(Settings > Personalization > Fonts, or right-click > Install), and restart R.\n",
       "If its font files are among those that cannot be identified, ",
       "copy them to a folder,\n",
       "rename them to the font names that are looked up, ",
@@ -1392,7 +1439,7 @@ test_that("systemfonts is not needed for fonts found otherwise", {
   unlink(system, recursive = TRUE)
   expect_message(
     fonts <- skeleton$resolve_fonts(list(), roboto),
-    "To use it, copy its font files to ~/.local/share/fonts,",
+    "To use it, copy its font files to ~/.local/share/fonts, and restart R,",
     fixed = TRUE
   )
   expect_identical(fonts, defaults)

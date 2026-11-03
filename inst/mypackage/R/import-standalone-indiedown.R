@@ -110,6 +110,13 @@
 # * Each font folder is searched once for each font that is looked up,
 #   what systemfonts reads from font files is cached for the session,
 #   and the installed fonts are listed once per lookup.
+#   The hint for installing a font asks to restart R,
+#   because systemfonts lists the installed fonts only once per session.
+# * A named font file is left as named if it is in the `Path=` of the options.
+#   A `Path=` in the options is replaced if the font is loaded from another folder.
+# * If a named font cannot be verified, because the installed fonts cannot be listed
+#   and font files could not be identified, the message says so
+#   instead of saying that it was not found.
 # * The message about a missing font is shown once per session for each text,
 #   so that changed advice is shown again.
 #
@@ -352,11 +359,17 @@ resolve_fonts <- function(
 
   # the missing font, see `font_missing()`
   missing <- NULL
+  unverified <- FALSE
   if (!is.null(font)) {
     named <- Filter(
       Negate(is.null),
       list(mainfont = font, mainfontoptions = options)
     )
+    # a font file in the `Path=` of the document is left as named
+    document_path <- sub("^Path=", "", grep("^Path=", options, value = TRUE))
+    if (any(file.exists(file.path(document_path, font)))) {
+      return(named)
+    }
     # the folder of the fonts that LaTeX does not find by name
     unseen <- normalize_dirs(font_dirs()$unseen)
     # a font file is looked up in the folders only by its file name
@@ -406,6 +419,7 @@ resolve_fonts <- function(
     }
     # the options were meant for the missing font
     options <- NULL
+    unverified <- is.na(found)
   }
 
   fonts <- list(
@@ -440,7 +454,11 @@ resolve_fonts <- function(
   if (!is.null(missing)) {
     show_font_message(paste0(
       missing$text,
-      " was not found, using \"",
+      if (unverified) {
+        " could not be verified, using \""
+      } else {
+        " was not found, using \""
+      },
       used,
       "\" instead.\n",
       missing$systemfonts,
@@ -605,7 +623,13 @@ font_faces <- function(font, options) {
 # `font_faces()`: with `Path=` and file names, like the fallback font
 font_from_files <- function(font, files) {
   pattern <- "^([[:alpha:]]+Font=)(.*)$"
-  options <- as.character(font$mainfontoptions)
+  # the files are in one folder, which replaces a `Path=` of the options
+  options <- grep(
+    "^Path=",
+    as.character(font$mainfontoptions),
+    value = TRUE,
+    invert = TRUE
+  )
   is_face <- grepl(pattern, options)
   faces <- sub(pattern, "\\2", options[is_face])
   faces <- gsub("*", font$mainfont, faces, fixed = TRUE)
@@ -1058,7 +1082,10 @@ is_font_file <- function(font) {
 # which tests can set to hide the system fonts.
 # systemfonts covers systems without fc-list, such as macOS,
 # if it can be loaded, see `has_systemfonts()`;
-# it reads the font list only once per session.
+# it caches the font list for the session,
+# so a font installed since needs a restart of R to be seen.
+# The cache is not reset with `systemfonts::reset_font_cache()`,
+# which also changes the fonts that graphics devices find.
 # The fonts that it lists in the `unseen` folder, see `font_dirs()`,
 # are left out, because LaTeX does not find them by name.
 # It does not see FONTCONFIG_FILE,
@@ -1180,10 +1207,14 @@ font_install_hint <- function(font, sysname = Sys.info()[["sysname"]]) {
     sysname,
     Windows = paste(
       "install its font files for the current user",
-      "(Settings > Personalization > Fonts, or right-click > Install)"
+      "(Settings > Personalization > Fonts, or right-click > Install),",
+      "and restart R"
     ),
-    Darwin = "open its font files and click \"Install\" in Font Book",
-    "copy its font files to ~/.local/share/fonts"
+    Darwin = paste(
+      "open its font files and click \"Install\" in Font Book,",
+      "and restart R"
+    ),
+    "copy its font files to ~/.local/share/fonts, and restart R"
   )
 }
 
