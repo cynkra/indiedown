@@ -26,12 +26,35 @@ local_skeleton <- function(lookup = FALSE) {
   if (!lookup) {
     # fail if the system is searched for a font name,
     # and find no installed font files
-    skeleton$installed_font_names <- function() {
+    skeleton$installed_font_names <- function(...) {
       stop("unexpected system font lookup")
     }
-    skeleton$installed_fonts <- function() NULL
+    skeleton$installed_fonts <- no_fonts
   }
   skeleton
+}
+
+# No installed fonts, as fc-list lists them on a system without fonts
+no_fonts <- function(...) {
+  list(path = character(), name = character(), family = character())
+}
+
+# systemfonts as if it were missing, or installed in an `old` version
+local_systemfonts <- function(old = NULL, .env = parent.frame()) {
+  local_mocked_bindings(
+    is_installed = function(pkg, ..., version = NULL) {
+      !is.null(old) && is.null(version)
+    },
+    .package = "rlang",
+    .env = .env
+  )
+  if (!is.null(old)) {
+    local_mocked_bindings(
+      packageVersion = function(...) package_version(old),
+      .package = "utils",
+      .env = .env
+    )
+  }
 }
 
 defaults <- list(
@@ -65,7 +88,7 @@ test_that("the document's mainfontoptions are appended to the configured ones", 
 
 test_that("an installed font named in the document is used", {
   skeleton <- local_skeleton()
-  skeleton$installed_font_names <- function() c("Some Sans", "SomeSans")
+  skeleton$installed_font_names <- function(...) c("Some Sans", "SomeSans")
 
   expect_identical(
     skeleton$resolve_fonts(
@@ -85,7 +108,7 @@ test_that("an installed font named in the document is used", {
 
 test_that("a missing font named in the document falls back with a message", {
   skeleton <- local_skeleton()
-  skeleton$installed_font_names <- function() "Some Sans"
+  skeleton$installed_font_names <- function(...) "Some Sans"
 
   expect_message(
     fonts <- skeleton$resolve_fonts(
@@ -99,7 +122,7 @@ test_that("a missing font named in the document falls back with a message", {
 
 test_that("the option names a font if the document does not", {
   skeleton <- local_skeleton()
-  skeleton$installed_font_names <- function() c("Some Sans", "Other Sans")
+  skeleton$installed_font_names <- function(...) c("Some Sans", "Other Sans")
   withr::local_options(indiedown.mainfont = "Some Sans")
 
   expect_identical(
@@ -178,7 +201,7 @@ test_that("without a configured font, the named font is used as is", {
 
 test_that("the message explains how to install fonts on each system", {
   skeleton <- local_skeleton()
-  skeleton$installed_font_names <- function() character()
+  skeleton$installed_font_names <- function(...) character()
 
   expect_match(
     skeleton$font_install_hint("A", "Windows"),
@@ -203,7 +226,7 @@ test_that("apply_default_yaml() passes the resolved font to pandoc", {
     all = FALSE
   )
 
-  skeleton$installed_font_names <- function() "Some Sans"
+  skeleton$installed_font_names <- function(...) "Some Sans"
   args <- skeleton$apply_default_yaml(list(mainfont = "Some Sans"))
   expect_true("mainfont:Some Sans" %in% args)
   expect_false(any(grepl("^mainfontoptions:", args)))
@@ -229,7 +252,7 @@ preferred <- c(
 
 test_that("the preferred font is used if it is installed", {
   skeleton <- local_skeleton()
-  skeleton$installed_font_names <- function() {
+  skeleton$installed_font_names <- function(...) {
     c("Licensed Sans Medium", "Licensed Sans Heavy", "Some Sans")
   }
 
@@ -263,7 +286,7 @@ test_that("the preferred font is used if it is installed", {
 
 test_that("a missing preferred font falls back, with one message per session", {
   skeleton <- local_skeleton()
-  skeleton$installed_font_names <- function() "Some Sans"
+  skeleton$installed_font_names <- function(...) "Some Sans"
 
   expect_message(
     fonts <- skeleton$resolve_fonts(
@@ -288,7 +311,7 @@ test_that("a missing preferred font falls back, with one message per session", {
 
 test_that("the preferred font needs all fonts that its options name", {
   skeleton <- local_skeleton()
-  skeleton$installed_font_names <- function() "Licensed Sans Medium"
+  skeleton$installed_font_names <- function(...) "Licensed Sans Medium"
 
   expect_message(
     fonts <- skeleton$resolve_fonts(list(), preferred),
@@ -304,7 +327,7 @@ test_that("the preferred font needs all fonts that its options name", {
 
 test_that("a missing named font falls back to the preferred font", {
   skeleton <- local_skeleton()
-  skeleton$installed_font_names <- function() {
+  skeleton$installed_font_names <- function(...) {
     c("Licensed Sans Medium", "Licensed Sans Heavy")
   }
 
@@ -322,28 +345,10 @@ test_that("a missing named font falls back to the preferred font", {
   )
 })
 
-test_that("without fc-list, the lookup of installed fonts requires systemfonts", {
-  skeleton <- local_skeleton(lookup = TRUE)
-  skeleton$Sys.which <- function(names) ""
-  # systemfonts is missing
-  local_mocked_bindings(
-    check_installed = function(pkg, reason = NULL, ...) {
-      stop("missing ", pkg, " ", reason, call. = FALSE)
-    },
-    .package = "rlang"
-  )
-
-  expect_error(
-    skeleton$resolve_fonts(list(), preferred),
-    "missing systemfonts to look up installed fonts when `fc-list` is not available.",
-    fixed = TRUE
-  )
-})
-
 test_that("the format repeats the font message after the output is written", {
   skip_if_not(rmarkdown::pandoc_available(), "pandoc not available")
   skeleton <- local_skeleton()
-  skeleton$installed_font_names <- function() "Some Sans"
+  skeleton$installed_font_names <- function(...) "Some Sans"
 
   input <- file.path(withr::local_tempdir(), "doc.Rmd")
   writeLines(c("---", "mainfont: Missing Sans", "---", "", "Text."), input)
@@ -375,7 +380,7 @@ test_that("the format repeats the font message after the output is written", {
 
 test_that("the font message is not repeated if the output is not written", {
   skeleton <- local_skeleton()
-  skeleton$installed_font_names <- function() "Some Sans"
+  skeleton$installed_font_names <- function(...) "Some Sans"
   format <- skeleton$indiedown_pdf_document_with_asset()
 
   expect_message(
@@ -408,7 +413,7 @@ test_that("apply_default_yaml() passes the preferred font to pandoc", {
     file.path(dir, "default.yaml")
   )
   skeleton$indiedown_path <- function(...) file.path(dir, ...)
-  skeleton$installed_font_names <- function() {
+  skeleton$installed_font_names <- function(...) {
     c("Licensed Sans Medium", "Licensed Sans Heavy")
   }
 
@@ -597,7 +602,7 @@ test_that("fonts installed for the current user on Windows are found", {
 test_that("fonts installed for all users are found by file name only", {
   skip_if_not_installed("systemfonts")
   skeleton <- local_skeleton()
-  skeleton$installed_font_names <- function() character()
+  skeleton$installed_font_names <- function(...) character()
   skeleton$Sys.info <- function() c(sysname = "Windows")
   windir <- withr::local_tempdir()
   withr::local_envvar(LOCALAPPDATA = withr::local_tempdir(), WINDIR = windir)
@@ -622,7 +627,7 @@ test_that("fonts installed for all users are found by file name only", {
 
 test_that("a named font that is only found as files is loaded from them", {
   skeleton <- local_skeleton()
-  skeleton$installed_font_names <- function() "Some Sans"
+  skeleton$installed_font_names <- function(...) "Some Sans"
   dir <- copy_fonts(withr::local_tempdir(), "regular.ttf", "Roboto-Regular.ttf")
   withr::local_options(indiedown.font_path = dir)
 
@@ -640,7 +645,7 @@ test_that("a named font that is only found as files is loaded from them", {
 
 test_that("the message about the preferred font explains the option", {
   skeleton <- local_skeleton()
-  skeleton$installed_font_names <- function() character()
+  skeleton$installed_font_names <- function(...) character()
 
   expect_message(
     skeleton$resolve_fonts(
@@ -657,7 +662,7 @@ test_that("the message about the preferred font explains the option", {
   )
 
   skeleton <- local_skeleton()
-  skeleton$installed_font_names <- function() character()
+  skeleton$installed_font_names <- function(...) character()
   withr::local_options(indiedown.font_path = "/no/such/folder")
   expect_message(
     fonts <- skeleton$resolve_fonts(
@@ -684,7 +689,8 @@ test_that("the folders of installed fonts depend on the system", {
     skeleton$font_dirs("Windows"),
     list(
       user = "C:/Users/me/AppData/Local/Microsoft/Windows/Fonts",
-      system = "C:/Windows/Fonts"
+      system = "C:/Windows/Fonts",
+      unseen = "C:/Users/me/AppData/Local/Microsoft/Windows/Fonts"
     )
   )
   expect_identical(
@@ -760,7 +766,7 @@ test_that("PostScript names are read from font files with systemfonts", {
     c("Roboto-Regular", NA, "Roboto-Bold")
   )
 
-  skeleton$requireNamespace <- function(...) FALSE
+  local_systemfonts()
   expect_null(skeleton$font_postscript_names(file.path(dir, "regular.ttf")))
 })
 
@@ -817,7 +823,7 @@ test_that("the options are the defaults of the arguments", {
 
 test_that("the arguments take the place of the options", {
   skeleton <- local_skeleton()
-  skeleton$installed_font_names <- function() c("Some Sans", "Other Sans")
+  skeleton$installed_font_names <- function(...) c("Some Sans", "Other Sans")
   withr::local_options(indiedown.mainfont = "Some Sans")
   expect_identical(
     skeleton$resolve_fonts(list(), defaults, mainfont = "Other Sans"),
@@ -906,4 +912,270 @@ test_that("the search of the font folders is bounded", {
   file.create(file.path(dir, c("a/1.otf", "a/b/2.OTF", "e.txt")))
   expect_length(skeleton$list_font_files(dir, limit = 2), 2)
   expect_length(skeleton$list_font_files(dir, limit = 1), 1)
+})
+
+test_that("without fc-list and systemfonts, the fallback font is used", {
+  skeleton <- local_skeleton(lookup = TRUE)
+  skeleton$Sys.which <- function(names) ""
+  local_systemfonts()
+
+  expect_message(
+    fonts <- skeleton$resolve_fonts(list(), preferred),
+    paste0(
+      'Preferred font "Licensed Sans Medium" was not found, ',
+      'using "regular.ttf" instead.\n',
+      "The systemfonts package could not be loaded, ",
+      "which may be why the font lookup failed.\n",
+      "To use it, install systemfonts 1.3.0 or later ",
+      'with `install.packages("systemfonts")`,\n',
+      "or rename its font files to the PostScript names of their fonts, ",
+      'such as "Licensed Sans Medium.otf",\n',
+      "or copy its font files to ~/.local/share/fonts,\n"
+    ),
+    fixed = TRUE
+  )
+  expect_identical(fonts, defaults)
+  expect_null(skeleton$installed_fonts())
+
+  # a named font is left to LaTeX
+  expect_silent(
+    fonts <- skeleton$resolve_fonts(list(mainfont = "Some Sans"), preferred)
+  )
+  expect_identical(fonts, list(mainfont = "Some Sans"))
+})
+
+test_that("an old systemfonts gives a warning and the fallback font", {
+  skeleton <- local_skeleton()
+  skeleton$installed_font_names <- function(...) character()
+  local_systemfonts("1.2.3")
+  # the files of the preferred font, but not by name, and an unrelated font
+  dir <- copy_fonts(
+    withr::local_tempdir(),
+    c("italic.ttf", "regular.ttf", "bold.ttf"),
+    c("other.ttf", "a.ttf", "b.ttf")
+  )
+  withr::local_options(indiedown.font_path = dir)
+
+  expect_warning(
+    expect_message(
+      fonts <- skeleton$resolve_fonts(list(), roboto),
+      "The systemfonts package could not be loaded",
+      fixed = TRUE
+    ),
+    paste0(
+      "The font lookup needs systemfonts 1.3.0 or later, ",
+      "but version 1.2.3 is installed.\n"
+    ),
+    fixed = TRUE
+  )
+  expect_identical(fonts$mainfont, "regular.ttf")
+
+  # once per session
+  expect_silent(skeleton$resolve_fonts(list(), roboto))
+  expect_null(skeleton$font_postscript_names(file.path(dir, "a.ttf")))
+})
+
+test_that("font files are recognised by PostScript name with systemfonts", {
+  skip_if_not_installed("systemfonts", "1.3.0")
+  skeleton <- local_skeleton()
+  skeleton$installed_font_names <- function(...) character()
+  dir <- copy_fonts(
+    withr::local_tempdir(),
+    c("italic.ttf", "regular.ttf", "bold.ttf", "bolditalic.ttf"),
+    c("other.ttf", "a.ttf", "b.ttf", "c.ttf")
+  )
+
+  expect_identical(
+    skeleton$resolve_fonts(list(), roboto, font_path = dir),
+    list(
+      mainfont = "a.ttf",
+      mainfontoptions = c(
+        paste0("Path=", dir, "/"),
+        "BoldFont=b.ttf",
+        "ItalicFont=a.ttf",
+        "Scale=0.9"
+      )
+    )
+  )
+  # also a named font
+  expect_identical(
+    skeleton$resolve_fonts(
+      list(mainfont = "Roboto-BoldItalic", mainfontoptions = "Scale=0.9"),
+      roboto,
+      font_path = dir
+    ),
+    list(
+      mainfont = "c.ttf",
+      mainfontoptions = c(paste0("Path=", dir, "/"), "Scale=0.9")
+    )
+  )
+
+  # without systemfonts, the message explains how to do without it
+  local_systemfonts()
+  expect_message(
+    fonts <- skeleton$resolve_fonts(list(), roboto, font_path = dir),
+    paste0(
+      "To use it, install systemfonts 1.3.0 or later ",
+      'with `install.packages("systemfonts")`,\n',
+      "or rename its font files to the PostScript names of their fonts, ",
+      'such as "Roboto-Regular.otf",\n',
+      'or check that the folder "',
+      dir,
+      '" from the option `indiedown.font_path` holds its font files.\n'
+    ),
+    fixed = TRUE
+  )
+  expect_identical(fonts, defaults)
+})
+
+test_that("an installed named font is loaded by name, also with its files", {
+  skeleton <- local_skeleton()
+  skeleton$installed_font_names <- function(...) "Roboto-Regular"
+  # LaTeX finds fonts in the folders of the user by name on Linux,
+  # with the bold and italic faces
+  local_linux_fonts(skeleton, ".local/share/fonts")
+  expect_identical(
+    skeleton$resolve_fonts(list(mainfont = "Roboto-Regular"), roboto),
+    list(mainfont = "Roboto-Regular")
+  )
+})
+
+test_that("a named font installed for the current user on Windows is loaded by path", {
+  skeleton <- local_skeleton()
+  skeleton$installed_font_names <- function(...) "Roboto-Regular"
+  skeleton$Sys.info <- function() c(sysname = "Windows")
+  appdata <- withr::local_tempdir()
+  withr::local_envvar(LOCALAPPDATA = appdata, WINDIR = withr::local_tempdir())
+  user <- copy_fonts(
+    file.path(appdata, "Microsoft", "Windows", "Fonts"),
+    c("regular.ttf", "bold.ttf"),
+    c("Roboto-Regular.ttf", "Roboto-Bold.ttf")
+  )
+  expect_identical(
+    skeleton$resolve_fonts(
+      list(
+        mainfont = "Roboto-Regular",
+        mainfontoptions = "BoldFont=Roboto-Bold"
+      ),
+      roboto
+    ),
+    list(
+      mainfont = "Roboto-Regular.ttf",
+      mainfontoptions = c(
+        paste0("Path=", user, "/"),
+        "BoldFont=Roboto-Bold.ttf"
+      )
+    )
+  )
+})
+
+test_that("the message is shown again if its advice changes", {
+  skeleton <- local_skeleton()
+  skeleton$installed_font_names <- function(...) character()
+  expect_message(skeleton$resolve_fonts(list(), preferred), "was not found")
+  expect_silent(skeleton$resolve_fonts(list(), preferred))
+  expect_message(
+    skeleton$resolve_fonts(list(), preferred, font_path = "/no/fonts/a"),
+    "/no/fonts/a",
+    fixed = TRUE
+  )
+  expect_message(
+    skeleton$resolve_fonts(list(), preferred, font_path = "/no/fonts/b"),
+    "/no/fonts/b",
+    fixed = TRUE
+  )
+})
+
+test_that("the option system_fonts hides the installed fonts", {
+  skip_if_not_installed("systemfonts")
+  skeleton <- local_skeleton(lookup = TRUE)
+  home <- withr::local_tempdir()
+  withr::local_envvar(HOME = home, XDG_DATA_HOME = "", PATH = R.home("bin"))
+  skeleton$font_dirs <- skeleton$dirs_of
+  dir <- copy_fonts(
+    file.path(home, ".local", "share", "fonts"),
+    c("regular.ttf", "bold.ttf"),
+    c("Roboto-Regular.ttf", "Roboto-Bold.ttf")
+  )
+  expect_identical(
+    skeleton$resolve_fonts(list(), roboto)$mainfontoptions[[1]],
+    paste0("Path=", dir, "/")
+  )
+
+  local_mocked_bindings(
+    system_fonts = function(...) stop("systemfonts is not used"),
+    .package = "systemfonts"
+  )
+  withr::local_options(indiedown.system_fonts = FALSE)
+  expect_identical(skeleton$font_dirs("Linux"), list())
+  expect_identical(skeleton$installed_fonts(), no_fonts())
+  expect_message(
+    fonts <- skeleton$resolve_fonts(list(), roboto),
+    "was not found"
+  )
+  expect_identical(fonts, defaults)
+})
+
+test_that("the lookup lists the installed fonts once and each folder once", {
+  skeleton <- local_skeleton(lookup = TRUE)
+  # XDG_DATA_HOME is ~/.local/share, as by default
+  home <- withr::local_tempdir()
+  withr::local_envvar(
+    HOME = home,
+    XDG_DATA_HOME = file.path(home, ".local/share")
+  )
+  linux <- skeleton$dirs_of("Linux")
+  skeleton$font_dirs <- function(...) linux
+  calls <- new.env()
+  calls$fonts <- 0
+  calls$dirs <- character()
+  skeleton$installed_fonts <- function(...) {
+    calls$fonts <- calls$fonts + 1
+    no_fonts()
+  }
+  skeleton$list_font_files <- function(dir, ...) {
+    calls$dirs <- c(calls$dirs, dir)
+    character()
+  }
+
+  expect_message(
+    skeleton$resolve_fonts(list(mainfont = "Missing"), preferred),
+    "not found"
+  )
+  expect_identical(calls$fonts, 1)
+  expect_identical(
+    calls$dirs,
+    c(
+      file.path(home, ".local", "share", "fonts"),
+      file.path(home, ".fonts"),
+      normalizePath(c("/usr/local/share/fonts", "/usr/share/fonts"), "/", FALSE)
+    )
+  )
+})
+
+test_that("PostScript names are read once per file and session", {
+  skip_if_not_installed("systemfonts", "1.3.0")
+  skeleton <- local_skeleton()
+  dir <- copy_fonts(withr::local_tempdir(), c("regular.ttf", "bold.ttf"))
+  files <- file.path(dir, c("regular.ttf", "bold.ttf"))
+  read <- 0
+  font_info <- systemfonts::font_info
+  local_mocked_bindings(
+    font_info = function(...) {
+      read <<- read + 1
+      font_info(...)
+    },
+    .package = "systemfonts"
+  )
+
+  names <- c("Roboto-Regular", "Roboto-Bold")
+  expect_identical(skeleton$font_postscript_names(files), names)
+  expect_identical(read, 2)
+  expect_identical(skeleton$font_postscript_names(files), names)
+  expect_identical(read, 2)
+
+  # again after a change
+  Sys.setFileTime(files[[1]], Sys.time() + 60)
+  expect_identical(skeleton$font_postscript_names(files), names)
+  expect_identical(read, 3)
 })
