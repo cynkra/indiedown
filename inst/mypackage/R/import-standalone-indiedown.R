@@ -6,7 +6,7 @@
 # ---
 # repo: cynkra/indiedown
 # file: standalone-indiedown.R
-# last-updated: 2026-11-01
+# last-updated: 2026-11-03
 # license: https://github.com/cynkra/indiedown/blob/main/LICENSE.md
 # imports: [glue, knitr (>= 1.12), rlang (>= 1.0.0), rmarkdown, utils, withr, yaml]
 # ---
@@ -39,6 +39,11 @@
 # A template package can exclude the file with a `.covrignore` file.
 #
 # ## Changelog
+#
+# 2026-11-03:
+# * `expect_pdf_snapshot()` fails if the number of pages differs
+#   from the number of page snapshots,
+#   instead of deleting the snapshots of surplus pages.
 #
 # 2026-11-01:
 # * `expect_pdf_snapshot()` draws the text of plots with showtext
@@ -558,6 +563,12 @@ default <- function(x, default = "") {
 # To refresh the snapshots and the record,
 # delete the snapshot files of `name` and run the tests again.
 #
+# If the document has more or fewer pages than there are page snapshots,
+# the test fails, and only the pages that have a snapshot are compared.
+# The page snapshots are looked up in the snapshot directory of the test file
+# that testthat uses while it runs the tests.
+# To accept a new page count, delete the snapshot files of `name`.
+#
 # Pixel-exact comparisons are only stable on a fixed toolchain,
 # so `skip_if_no_pdf_snapshot()` skips on systems other than Linux.
 # A positive `tolerance` accepts small differences.
@@ -668,9 +679,13 @@ expect_pdf_snapshot <- function(
     file.path(dir, record)
   )
 
+  # A change of the page count fails, see "Snapshot files" above
+  snaps <- pdf_snapshot_pages(name)
+  same_count <- length(snaps) %in% c(0, length(pages))
+
   # Injecting the file name gives a readable label in failure messages
   compare <- compare_png(tolerance)
-  for (page in pages) {
+  for (page in pages[same_count | pages %in% snaps]) {
     rlang::inject(testthat::expect_snapshot_file(
       file.path(dir, !!page),
       compare = compare
@@ -681,7 +696,22 @@ expect_pdf_snapshot <- function(
     compare = compare_true
   ))
 
-  taken <- TRUE
+  if (!same_count) {
+    testthat::fail(sprintf(
+      paste(
+        "The page count of `%s` changed: %d rendered, %d in the snapshot.",
+        "To accept the change, delete the snapshot files of `%s`",
+        "and run the tests again."
+      ),
+      name,
+      length(pages),
+      length(snaps),
+      name
+    ))
+  }
+
+  # After a failure, the existing snapshot files are kept
+  taken <- same_count
   invisible()
 }
 
@@ -790,6 +820,20 @@ plot_font_files <- function(dir) {
     italic = face(italic & !bold),
     bolditalic = face(bold & italic)
   )
+}
+
+# The file names of the page snapshots of `name`
+# in the snapshot directory of the current test file,
+# or `NULL` if testthat is not taking snapshots.
+pdf_snapshot_pages <- function(name) {
+  snapshotter <- getOption("testthat.snapshotter")
+  if (is.null(snapshotter) || !rlang::is_string(snapshotter$file)) {
+    return(NULL)
+  }
+  files <- dir(file.path(snapshotter$snap_dir, snapshotter$file))
+  prefix <- paste0(name, "-")
+  rest <- substring(files, nchar(prefix) + 1)
+  files[startsWith(files, prefix) & grepl("^page-[0-9]+[.]png$", rest)]
 }
 
 announce_pdf_snapshot <- function(name) {
