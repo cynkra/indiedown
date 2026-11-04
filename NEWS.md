@@ -1,5 +1,12 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9063
+
+## Features
+
+- Load the preferred font from its font files, also when installed for the current user (#143).
+
+
 # indiedown 0.1.1.9062
 
 ## Features
