@@ -1,5 +1,26 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9062
+
+## Features
+
+- Add `expect_pdf_snapshot()` to the standalone file for pixel snapshots of rendered PDF documents (#139).
+
+- Resolve the main font of template packages with `resolve_fonts()`, preferring an installed font (#136).
+
+- Ship the template package code as a standalone file for `usethis::use_standalone()` (#137).
+
+## Documentation
+
+- Explain where `use_indiedown_gfonts()` fonts are picked up (#10, #135).
+
+## Testing
+
+- Regenerate figure snapshot for the current toolchain (#138).
+
+- Pixel-exact visual snapshots in the skeleton (#108).
+
+
 # indiedown 0.1.1.9061
 
 ## Chore

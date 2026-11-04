@@ -83,10 +83,15 @@ the following happens:
 \enumerate{
 \item The \code{pre_processor} of the output format
 (\code{inst/indiedown/pre_processor.R}) calls \code{apply_default_yaml()},
-which reads \code{default.yaml}
-and replaces \verb{<<indiedown_path>>} by the location of \code{inst/indiedown}
-in the \emph{installed} template package
-(using \code{indiedown_path_tex()} from the template package).
+which reads \code{default.yaml},
+and then replaces \verb{<<indiedown_path>>} by the location of \code{inst/indiedown}
+in the \emph{installed} template package.
+This happens after the YAML is read,
+so that the characters of the location do not change how it is read.
+In the value of \verb{Path=} the location is written so that LaTeX reads it as is,
+and elsewhere \code{indiedown_path_tex()} of the template package is used.
+Options may also be given as one string joined by commas,
+which is split at the commas outside braces.
 The settings are handed to pandoc as variables,
 except for those that are set in the YAML header of the document itself.
 The main font is chosen separately by \code{resolve_fonts()}:
@@ -138,15 +143,21 @@ to the name of an installed font or to the path of a font file.
 The \code{mainfontoptions} of \code{default.yaml} refer to the downloaded files
 and are not applied to that font;
 \code{mainfontoptions} in the YAML header are.
-If the font is not installed,
+If the font is not found,
 the template's font is used instead, with a message.
 The option \verb{<package>.mainfont}, e.g., \code{mydown.mainfont},
 names a font for all documents of a user.
 \item \strong{A font that cannot be shipped:}
 a licensed font, for example, can be named in \code{preferredmainfont}
 (and its other faces in \code{preferredmainfontoptions}) in \code{default.yaml}.
-It is used where it is installed,
+Name all four faces, with \verb{BoldFont=}, \verb{ItalicFont=} and \verb{BoldItalicFont=}.
+It is used where it is found,
 and the downloaded font everywhere else.
+Its fonts are found by PostScript name or by file name
+and loaded from their files,
+so it is enough to install the font for the current user.
+Users who cannot install fonts can copy the font files to a folder
+and name it in the option \verb{<package>.font_path}, e.g., \code{mydown.font_path}.
 }
 
 See \code{vignette("walkthrough")} for a step-by-step example

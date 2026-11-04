@@ -1,7 +1,7 @@
 Type: Package
 Package: indiedown
 Title: Individual R Markdown Templates
-Version: 0.1.1.9061
+Version: 0.1.1.9062
 Authors@R:
     c(person(given = "Christoph",
              family = "Sax",
@@ -54,7 +54,7 @@ Suggests:
     showtext,
     spelling,
     sysfonts,
-    systemfonts,
+    systemfonts (>= 1.3.0),
     testthat (>= 3.0.0),
     tinytex,
     yaml
