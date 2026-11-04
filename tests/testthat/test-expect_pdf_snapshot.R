@@ -136,6 +136,8 @@ test_that("skip_if_no_pdf_snapshot() skips unless the toolchain is complete", {
   skip_if_not_installed("rmarkdown")
   skip_if_not_installed("pdftools")
   skip_if_not_installed("callr")
+  skip_if_not_installed("showtext")
+  skip_if_not_installed("sysfonts")
 
   withr::local_envvar(NOT_CRAN = "true")
   local_mocked_bindings(is_linux = function() TRUE, has_latex = function() TRUE)
@@ -168,6 +170,38 @@ test_that("skip_if_no_pdf_snapshot() skips unless the toolchain is complete", {
     skip_message(skip_if_no_pdf_snapshot()),
     "pandoc is not available"
   )
+})
+
+test_that("skip_if_no_pdf_snapshot() skips without showtext or sysfonts", {
+  skip_if_not_installed("rmarkdown")
+  skip_if_not_installed("pdftools")
+  skip_if_not_installed("callr")
+
+  withr::local_envvar(NOT_CRAN = "true")
+  local_mocked_bindings(is_linux = function() TRUE, has_latex = function() TRUE)
+  local_mocked_bindings(
+    pandoc_available = function(...) TRUE,
+    .package = "rmarkdown"
+  )
+  missing <- NULL
+  local_mocked_bindings(
+    skip_if_not_installed = function(package, ...) {
+      if (package %in% missing) {
+        testthat::skip(paste0("Package ", package, " is not installed"))
+      }
+    },
+    .package = "testthat"
+  )
+
+  for (package in c("showtext", "sysfonts")) {
+    missing <- package
+    expect_match(
+      skip_message(skip_if_no_pdf_snapshot()),
+      paste0(package, " is not installed")
+    )
+  }
+  missing <- NULL
+  expect_true(skip_if_no_pdf_snapshot())
 })
 
 test_that("is_linux() reports the operating system", {
@@ -303,6 +337,139 @@ test_that("visible_fonts() fails without a fallback font", {
   expect_error(visible_fonts(NULL, dir), "system_fonts = TRUE")
 })
 
+test_that("plot_font_files() matches the font files to the four faces", {
+  dir <- withr::local_tempdir()
+  file.create(file.path(
+    dir,
+    c(
+      "Font-Regular.otf",
+      "Font-Bold.otf",
+      "Font-Italic.otf",
+      "Font-BoldItalic.otf",
+      "README.md"
+    )
+  ))
+
+  expect_equal(
+    plot_font_files(dir),
+    list(
+      regular = file.path(dir, "Font-Regular.otf"),
+      bold = file.path(dir, "Font-Bold.otf"),
+      italic = file.path(dir, "Font-Italic.otf"),
+      bolditalic = file.path(dir, "Font-BoldItalic.otf")
+    )
+  )
+})
+
+test_that("plot_font_files() takes oblique as italic and ignores the case", {
+  dir <- withr::local_tempdir()
+  file.create(file.path(
+    dir,
+    c("sans10-regular.otf", "SANS10-OBLIQUE.OTF", "sans10-boldoblique.otf")
+  ))
+
+  files <- plot_font_files(dir)
+
+  expect_equal(basename(files$italic), "SANS10-OBLIQUE.OTF")
+  expect_equal(basename(files$bolditalic), "sans10-boldoblique.otf")
+})
+
+test_that("plot_font_files() leaves out the missing faces", {
+  dir <- withr::local_tempdir()
+  dir.create(file.path(dir, "sub"))
+  file.create(file.path(dir, "sub", c("regular.ttf", "bold.ttf")))
+
+  files <- plot_font_files(dir)
+
+  expect_named(files, c("regular", "bold", "italic", "bolditalic"))
+  expect_equal(files$regular, file.path(dir, "sub", "regular.ttf"))
+  expect_equal(files$bold, file.path(dir, "sub", "bold.ttf"))
+  expect_null(files$italic)
+  expect_null(files$bolditalic)
+})
+
+test_that("plot_font_files() takes the first font file as the regular face", {
+  dir <- withr::local_tempdir()
+  file.create(file.path(dir, c("b-bold.ttf", "a-italic.ttf")))
+
+  files <- plot_font_files(dir)
+
+  expect_equal(files$regular, file.path(dir, "a-italic.ttf"))
+  expect_equal(files$italic, file.path(dir, "a-italic.ttf"))
+  expect_equal(files$bold, file.path(dir, "b-bold.ttf"))
+})
+
+test_that("plot_font_files() is NULL without font files", {
+  dir <- withr::local_tempdir()
+  file.create(file.path(dir, "README.md"))
+
+  expect_null(plot_font_files(dir))
+  expect_null(plot_font_files(file.path(dir, "missing")))
+  expect_null(plot_font_files(NULL))
+})
+
+test_that("local_showtext() registers the fonts as the default family", {
+  skip_if_not_installed("sysfonts")
+  dir <- withr::local_tempdir()
+  file.create(file.path(dir, c("regular.ttf", "bold.ttf")))
+  calls <- list()
+  local_mocked_bindings(
+    font_add = function(...) calls[[length(calls) + 1]] <<- list(...),
+    .package = "sysfonts"
+  )
+
+  local_showtext(dir)
+
+  expect_length(calls, 1)
+  expect_equal(
+    unname(calls[[1]]),
+    list(
+      "",
+      file.path(dir, "regular.ttf"),
+      file.path(dir, "bold.ttf"),
+      NULL,
+      NULL
+    )
+  )
+})
+
+test_that("local_showtext() registers the skeleton fonts with sysfonts", {
+  skip_if_not_installed("sysfonts")
+  fonts <- skeleton_fonts()
+  skip_if(length(font_files(fonts)) == 0, "the skeleton fonts are missing")
+
+  local_showtext(fonts)
+
+  expect_true("" %in% sysfonts::font_families())
+})
+
+test_that("local_showtext() sets `fig.showtext` until the function ends", {
+  skip_if_not_installed("sysfonts")
+  options <- knitr::opts_chunk$get()
+  withr::defer(knitr::opts_chunk$restore(options))
+  knitr::opts_chunk$set(echo = FALSE)
+  expect_null(knitr::opts_chunk$get("fig.showtext"))
+
+  during <- function() {
+    local_showtext(NULL)
+    knitr::opts_chunk$get("fig.showtext")
+  }
+
+  expect_true(during())
+  expect_null(knitr::opts_chunk$get("fig.showtext"))
+  expect_false(knitr::opts_chunk$get("echo"))
+})
+
+test_that("local_showtext() does not register fonts without font files", {
+  skip_if_not_installed("sysfonts")
+  local_mocked_bindings(
+    font_add = function(...) stop("No fonts to register."),
+    .package = "sysfonts"
+  )
+
+  expect_no_error(local_showtext(withr::local_tempdir()))
+})
+
 test_that("write_fonts_conf() lets fontconfig see only the fonts", {
   dir <- withr::local_tempdir()
 
@@ -387,6 +554,8 @@ test_that("the environment record lists the toolchain and the fonts", {
       "rmarkdown",
       "knitr",
       "tinytex",
+      "showtext",
+      "sysfonts",
       "system fonts",
       "fc-match Helvetica",
       "font",
@@ -518,6 +687,7 @@ test_that("expect_pdf_snapshot() rasterizes, compares and tolerates", {
   skip_if_not_installed("pdftools")
   skip_if_not_installed("callr")
   skip_if_not_installed("png")
+  skip_if_not_installed("sysfonts")
   fonts <- skeleton_fonts()
   skip_if(length(font_files(fonts)) == 0, "the skeleton fonts are missing")
 
@@ -587,6 +757,39 @@ test_that("expect_pdf_snapshot() can use the fonts of the system", {
   expect_true("system fonts: visible" %in% record)
 })
 
+test_that("expect_pdf_snapshot() sets `fig.showtext` for the rendering only", {
+  skip_if_not(is_linux(), "PDF snapshots are tested on Linux only")
+  skip_if_not_installed("pdftools")
+  skip_if_not_installed("callr")
+  local_mocked_bindings(skip_if_no_pdf_snapshot = function() invisible(TRUE))
+  seen <- NULL
+  local_mocked_bindings(
+    render = function(input, output_dir, ...) {
+      seen <<- knitr::opts_chunk$get("fig.showtext")
+      write_test_pdf(file.path(
+        output_dir,
+        sub("[.]Rmd$", ".pdf", basename(input))
+      ))
+    },
+    .package = "rmarkdown"
+  )
+
+  dir <- local_snaps(character())
+  results <- run_snapshot_tests(
+    dir,
+    c(
+      'test_that("doc", {',
+      '  expect_pdf_snapshot("doc", "Some text.", dpi = 20, system_fonts = TRUE)',
+      "})"
+    )
+  )
+
+  expect_equal(results$failed, 0)
+  expect_equal(results$error, FALSE)
+  expect_true(seen)
+  expect_null(knitr::opts_chunk$get("fig.showtext"))
+})
+
 test_that("expect_pdf_snapshot() renders, compares and tolerates", {
   skip_if_no_pdf_snapshot()
   skip_if_not_installed("png")
@@ -631,6 +834,44 @@ test_that("expect_pdf_snapshot() renders, compares and tolerates", {
   results <- run_snapshot_tests(dir, test(0.001))
   expect_equal(results$failed, 0)
   expect_false(file.exists(file.path(snaps, "doc-page-01.new.png")))
+})
+
+test_that("the text of plots is embedded with showtext, not referred to", {
+  skip_if_no_pdf_snapshot()
+  fonts <- skeleton_fonts()
+  skip_if(length(font_files(fonts)) == 0, "the skeleton fonts are missing")
+
+  dir <- withr::local_tempdir()
+  input <- file.path(dir, "plot.Rmd")
+  writeLines(
+    c(
+      "---",
+      "output: pdf_document",
+      "---",
+      "",
+      "```{r, echo = FALSE}",
+      "plot(1:3)",
+      "```"
+    ),
+    input
+  )
+  render <- function() {
+    rmarkdown::render(
+      input,
+      output_dir = dir,
+      quiet = TRUE,
+      envir = new.env(parent = globalenv())
+    )
+  }
+  embedded <- function(pdf) all(pdftools::pdf_fonts(pdf)$embedded)
+  render_with_showtext <- function() {
+    local_showtext(fonts)
+    render()
+  }
+
+  # R's pdf() device refers to a standard font without embedding it
+  expect_false(embedded(render()))
+  expect_true(embedded(render_with_showtext()))
 })
 
 test_that("expect_pdf_snapshot() hides the fonts of the system from the font lookup", {
