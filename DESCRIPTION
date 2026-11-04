@@ -52,7 +52,7 @@ Suggests:
     rmarkdown,
     rstudioapi,
     spelling,
-    systemfonts,
+    systemfonts (>= 1.3.0),
     testthat (>= 3.0.0),
     tinytex,
     yaml
