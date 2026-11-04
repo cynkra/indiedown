@@ -15,7 +15,19 @@ run_snapshot_tests <- function(dir, code) {
     stop_on_failure = FALSE,
     stop_on_warning = FALSE
   ))
-  as.data.frame(results)
+  # The messages of the failed expectations of each test
+  failures <- vapply(
+    results,
+    function(test) {
+      failed <- Filter(
+        function(x) inherits(x, "expectation_failure"),
+        test$results
+      )
+      paste(vapply(failed, conditionMessage, character(1)), collapse = "\n")
+    },
+    character(1)
+  )
+  cbind(as.data.frame(results), failures = failures)
 }
 
 local_snaps <- function(files, .local_envir = parent.frame()) {
@@ -31,23 +43,26 @@ write_test_png <- function(pixels, path) {
   path
 }
 
-# A page without text, so that no font is needed to rasterize it
-write_test_pdf <- function(path) {
+# Pages without text, so that no font is needed to rasterize them
+write_test_pdf <- function(path, pages = 1) {
   grDevices::pdf(path, width = 3, height = 3)
-  graphics::plot.new()
-  graphics::rect(0.1, 0.1, 0.9, 0.9, col = "grey")
+  for (i in seq_len(pages)) {
+    graphics::plot.new()
+    graphics::rect(0.1, 0.1, 0.9, 0.9, col = "grey")
+  }
   grDevices::dev.off()
   path
 }
 
-# Stands in for the LaTeX step of the rendering
-local_mocked_render <- function(.env = parent.frame()) {
+# Stands in for the LaTeX step of the rendering,
+# `pages()` gives the number of pages
+local_mocked_render <- function(pages = function() 1, .env = parent.frame()) {
   local_mocked_bindings(
     render = function(input, output_dir, ...) {
-      write_test_pdf(file.path(
-        output_dir,
-        sub("[.]Rmd$", ".pdf", basename(input))
-      ))
+      write_test_pdf(
+        file.path(output_dir, sub("[.]Rmd$", ".pdf", basename(input))),
+        pages()
+      )
     },
     .package = "rmarkdown",
     .env = .env
@@ -755,6 +770,114 @@ test_that("expect_pdf_snapshot() can use the fonts of the system", {
   expect_equal(results$error, FALSE)
   record <- readLines(file.path(dir, "_snaps", "pdf", "doc-environment.txt"))
   expect_true("system fonts: visible" %in% record)
+})
+
+test_that("expect_pdf_snapshot() fails if the document has fewer pages", {
+  skip_if_not(is_linux(), "PDF snapshots are tested on Linux only")
+  skip_if_not_installed("pdftools")
+  skip_if_not_installed("callr")
+  local_mocked_bindings(skip_if_no_pdf_snapshot = function() invisible(TRUE))
+  pages <- 2
+  local_mocked_render(function() pages)
+
+  dir <- local_snaps(character())
+  snaps <- file.path(dir, "_snaps", "pdf")
+  test <- c(
+    'test_that("doc", {',
+    '  expect_pdf_snapshot("doc", "Text", dpi = 20, system_fonts = TRUE)',
+    "})"
+  )
+  all <- c("doc-page-01.png", "doc-page-02.png", "doc-environment.txt")
+
+  results <- run_snapshot_tests(dir, test)
+  expect_equal(results$failed, 0)
+  expect_setequal(dir(snaps), all)
+
+  # The surplus page snapshot is kept, so that the test keeps failing
+  pages <- 1
+  for (i in 1:2) {
+    results <- run_snapshot_tests(dir, test)
+    expect_equal(results$failed, 1)
+    expect_match(
+      results$failures,
+      "page count of `doc` changed: 1 rendered, 2 in the snapshot",
+      fixed = TRUE
+    )
+    expect_setequal(dir(snaps), all)
+  }
+
+  # Deleting the snapshot files accepts the change
+  unlink(file.path(snaps, all))
+  results <- run_snapshot_tests(dir, test)
+  expect_equal(results$failed, 0)
+  expect_setequal(dir(snaps), c("doc-page-01.png", "doc-environment.txt"))
+})
+
+test_that("expect_pdf_snapshot() fails if the document has more pages", {
+  skip_if_not(is_linux(), "PDF snapshots are tested on Linux only")
+  skip_if_not_installed("pdftools")
+  skip_if_not_installed("callr")
+  local_mocked_bindings(skip_if_no_pdf_snapshot = function() invisible(TRUE))
+  pages <- 1
+  local_mocked_render(function() pages)
+
+  dir <- local_snaps(character())
+  snaps <- file.path(dir, "_snaps", "pdf")
+  test <- c(
+    'test_that("doc", {',
+    '  expect_pdf_snapshot("doc", "Text", dpi = 20, system_fonts = TRUE)',
+    "})"
+  )
+  kept <- c("doc-page-01.png", "doc-environment.txt")
+
+  results <- run_snapshot_tests(dir, test)
+  expect_equal(results$failed, 0)
+  expect_setequal(dir(snaps), kept)
+
+  # The additional page is not added to the snapshot
+  pages <- 2
+  for (i in 1:2) {
+    results <- run_snapshot_tests(dir, test)
+    expect_equal(results$failed, 1)
+    expect_match(
+      results$failures,
+      "page count of `doc` changed: 2 rendered, 1 in the snapshot",
+      fixed = TRUE
+    )
+    expect_setequal(dir(snaps), kept)
+  }
+})
+
+test_that("pdf_snapshot_pages() lists the page snapshots of a name", {
+  dir <- local_snaps(c(
+    "doc-page-01.png",
+    "doc-page-02.png",
+    "doc-page-01.new.png",
+    "doc-environment.txt",
+    "doc-x-page-01.png"
+  ))
+  withr::local_options(
+    testthat.snapshotter = list(
+      snap_dir = file.path(dir, "_snaps"),
+      file = "pdf"
+    )
+  )
+  expect_setequal(
+    pdf_snapshot_pages("doc"),
+    c("doc-page-01.png", "doc-page-02.png")
+  )
+})
+
+test_that("pdf_snapshot_pages() fails if the snapshot directory is unknown", {
+  withr::local_options(testthat.snapshotter = NULL)
+  expect_error(pdf_snapshot_pages("doc"), "snapshot directory")
+
+  withr::local_options(testthat.snapshotter = list(snap_dir = "_snaps"))
+  expect_error(pdf_snapshot_pages("doc"), "internals of testthat")
+
+  # Outside of a test run, there is nothing to check
+  withr::local_envvar(TESTTHAT = "false")
+  expect_null(pdf_snapshot_pages("doc"))
 })
 
 test_that("expect_pdf_snapshot() sets `fig.showtext` for the rendering only", {
