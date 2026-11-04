@@ -24,7 +24,7 @@
     <a href="https://cynkra.com" class="external-link logo-cynkra"><img src="https://cynkra.com/assets/img/logo-cynkra-square.svg" alt="cynkra" width="100" height="100"><div class="sr-only">cynkra</div></a>
     <a class="navbar-brand me-2" href="../index.html">indiedown</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1.9061</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1.9062</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -151,16 +151,32 @@ therefore does not depend on the fonts installed on the system.</p>
 <p>A format can prefer a font that it cannot ship, such as a licensed or
 corporate font, with <code>preferredmainfont</code> and
 <code>preferredmainfontoptions</code> in <code>default.yaml</code>. That
-font is used if it is installed, and so are all fonts that its options
-name, such as <code>BoldFont=</code>. Otherwise, the shipped font is
+font is used if it is found, and so are all fonts that its options name,
+such as <code>BoldFont=</code>. It is loaded from its font files, found
+by file name in the folder named by the option
+<code>&lt;package&gt;.font_path</code> and in the folders of the fonts
+installed for the current user and for all users, by PostScript name in
+the folder of the option, by name among the installed fonts, or by
+PostScript name in the folder of the fonts installed for the current
+user on Windows. Name all four faces in
+<code>preferredmainfontoptions</code>, with <code>BoldFont=</code>,
+<code>ItalicFont=</code> and <code>BoldItalicFont=</code>. A face that
+is not named is taken from the files of the same family in the same
+folder, by the weight and slant that <code>fc-list</code> lists or
+systemfonts reads; without either, the font is loaded from its files
+only if all faces are named. If it is not found, the shipped font is
 used, and a message explains how to install fonts on the current
-operating system, once per session. Installed fonts are looked up with
-<code>fc-list</code>, or with the systemfonts package where
-<code>fc-list</code> is not available, such as on macOS.</p>
+operating system. The message is shown at the start and at the end of
+the render, and again in the same R session only if its advice changes.
+Installed fonts are listed with <code>fc-list</code>, or with the
+systemfonts package where <code>fc-list</code> is not available, such as
+on macOS. systemfonts 1.3.0 or later also reads the PostScript names of
+font files: list <code>systemfonts (&gt;= 1.3.0)</code> in the
+<code>Suggests</code> field of the template package.</p>
 <p>A document can name another font in the <code>mainfont</code> field
 of its YAML header, and a user can name one in the option
 <code>&lt;package&gt;.mainfont</code>. The font can be the name of an
-installed font or a font file. If it is not installed, the preferred or
+installed font or a font file. If it is not found, the preferred or
 shipped font is used instead, with a message. The
 <code>mainfontoptions</code> of the document apply to the named font, or
 are appended to those of the preferred or shipped font if no font is

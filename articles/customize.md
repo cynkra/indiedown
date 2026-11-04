@@ -80,20 +80,33 @@ output therefore does not depend on the fonts installed on the system.
 
 A format can prefer a font that it cannot ship, such as a licensed or
 corporate font, with `preferredmainfont` and `preferredmainfontoptions`
-in `default.yaml`. That font is used if it is installed, and so are all
-fonts that its options name, such as `BoldFont=`. Otherwise, the shipped
-font is used, and a message explains how to install fonts on the current
-operating system, once per session. Installed fonts are looked up with
-`fc-list`, or with the systemfonts package where `fc-list` is not
-available, such as on macOS.
+in `default.yaml`. That font is used if it is found, and so are all
+fonts that its options name, such as `BoldFont=`. It is loaded from its
+font files, found by file name in the folder named by the option
+`<package>.font_path` and in the folders of the fonts installed for the
+current user and for all users, by PostScript name in the folder of the
+option, by name among the installed fonts, or by PostScript name in the
+folder of the fonts installed for the current user on Windows. Name all
+four faces in `preferredmainfontoptions`, with `BoldFont=`,
+`ItalicFont=` and `BoldItalicFont=`. A face that is not named is taken
+from the files of the same family in the same folder, by the weight and
+slant that `fc-list` lists or systemfonts reads; without either, the
+font is loaded from its files only if all faces are named. If it is not
+found, the shipped font is used, and a message explains how to install
+fonts on the current operating system. The message is shown at the start
+and at the end of the render, and again in the same R session only if
+its advice changes. Installed fonts are listed with `fc-list`, or with
+the systemfonts package where `fc-list` is not available, such as on
+macOS. systemfonts 1.3.0 or later also reads the PostScript names of
+font files: list `systemfonts (>= 1.3.0)` in the `Suggests` field of the
+template package.
 
 A document can name another font in the `mainfont` field of its YAML
 header, and a user can name one in the option `<package>.mainfont`. The
 font can be the name of an installed font or a font file. If it is not
-installed, the preferred or shipped font is used instead, with a
-message. The `mainfontoptions` of the document apply to the named font,
-or are appended to those of the preferred or shipped font if no font is
-named.
+found, the preferred or shipped font is used instead, with a message.
+The `mainfontoptions` of the document apply to the named font, or are
+appended to those of the preferred or shipped font if no font is named.
 
 ### Including Additional Assets
 

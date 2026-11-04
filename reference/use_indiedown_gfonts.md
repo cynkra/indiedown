@@ -83,15 +83,19 @@ the following happens:
 
 1.  The `pre_processor` of the output format
     (`inst/indiedown/pre_processor.R`) calls `apply_default_yaml()`,
-    which reads `default.yaml` and replaces `<<indiedown_path>>` by the
-    location of `inst/indiedown` in the *installed* template package
-    (using `indiedown_path_tex()` from the template package). The
-    settings are handed to pandoc as variables, except for those that
-    are set in the YAML header of the document itself. The main font is
-    chosen separately by `resolve_fonts()`: `mainfont` and
-    `mainfontoptions` from `default.yaml` are used unless the document
-    or the format names another font that is installed, see "Using a
-    different font" below.
+    which reads `default.yaml`, and then replaces `<<indiedown_path>>`
+    by the location of `inst/indiedown` in the *installed* template
+    package. This happens after the YAML is read, so that the characters
+    of the location do not change how it is read. In the value of
+    `Path=` the location is written so that LaTeX reads it as is, and
+    elsewhere `indiedown_path_tex()` of the template package is used.
+    Options may also be given as one string joined by commas, which is
+    split at the commas outside braces. The settings are handed to
+    pandoc as variables, except for those that are set in the YAML
+    header of the document itself. The main font is chosen separately by
+    `resolve_fonts()`: `mainfont` and `mainfontoptions` from
+    `default.yaml` are used unless the document or the format names
+    another font that is installed, see "Using a different font" below.
 
 2.  The LaTeX template of pandoc turns `mainfont` and `mainfontoptions`
     into a call to the fontspec package, which looks like this (the path
@@ -130,14 +134,19 @@ running `use_indiedown_gfonts()`, re-install the package (e.g., with
   to the name of an installed font or to the path of a font file. The
   `mainfontoptions` of `default.yaml` refer to the downloaded files and
   are not applied to that font; `mainfontoptions` in the YAML header
-  are. If the font is not installed, the template's font is used
-  instead, with a message. The option `<package>.mainfont`, e.g.,
+  are. If the font is not found, the template's font is used instead,
+  with a message. The option `<package>.mainfont`, e.g.,
   `mydown.mainfont`, names a font for all documents of a user.
 
 - **A font that cannot be shipped:** a licensed font, for example, can
   be named in `preferredmainfont` (and its other faces in
-  `preferredmainfontoptions`) in `default.yaml`. It is used where it is
-  installed, and the downloaded font everywhere else.
+  `preferredmainfontoptions`) in `default.yaml`. Name all four faces,
+  with `BoldFont=`, `ItalicFont=` and `BoldItalicFont=`. It is used
+  where it is found, and the downloaded font everywhere else. Its fonts
+  are found by PostScript name or by file name and loaded from their
+  files, so it is enough to install the font for the current user. Users
+  who cannot install fonts can copy the font files to a folder and name
+  it in the option `<package>.font_path`, e.g., `mydown.font_path`.
 
 See
 [`vignette("walkthrough")`](https://indiedown.cynkra.com/articles/walkthrough.md)
@@ -161,7 +170,7 @@ for the other customization points.
 # \donttest{
 path <- file.path(tempdir(), "mydown")
 create_indiedown_package(path, overwrite = TRUE)
-#> ✔ indiedown skeleton set up at /tmp/RtmphCoMw6/mydown
+#> ✔ indiedown skeleton set up at /tmp/Rtmpujl8Jm/mydown
 #> ℹ See `vignette("indiedown")` for how to customize the mydown package
 # Use Lora, instead of default Roboto
 use_indiedown_gfonts(
