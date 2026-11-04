@@ -996,3 +996,38 @@ test_that("the text of plots is embedded with showtext, not referred to", {
   expect_false(embedded(render()))
   expect_true(embedded(render_with_showtext()))
 })
+
+test_that("expect_pdf_snapshot() hides the fonts of the system from the font lookup", {
+  skip_if_not_installed("rmarkdown")
+  local_mocked_bindings(skip_if_no_pdf_snapshot = function() invisible(TRUE))
+  names <- c(
+    "indiedown.system_fonts",
+    "indiedown.font_path",
+    "indiedown.mainfont"
+  )
+  seen <- NULL
+  local_mocked_bindings(
+    render = function(...) {
+      seen <<- lapply(names, getOption)
+      stop("the rendering stops here")
+    },
+    .package = "rmarkdown"
+  )
+  withr::local_options(
+    indiedown.font_path = "fonts",
+    indiedown.mainfont = "Some Sans"
+  )
+
+  expect_error(
+    expect_pdf_snapshot("doc", "Text", fonts = skeleton_fonts()),
+    "the rendering stops here"
+  )
+  expect_identical(seen, list(FALSE, NULL, NULL))
+  expect_identical(lapply(names, getOption), list(NULL, "fonts", "Some Sans"))
+
+  expect_error(
+    expect_pdf_snapshot("doc", "Text", system_fonts = TRUE),
+    "the rendering stops here"
+  )
+  expect_identical(seen, list(NULL, "fonts", "Some Sans"))
+})

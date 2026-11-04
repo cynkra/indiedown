@@ -9,10 +9,14 @@
 #' A document can set the main font in the `mainfont` field of its YAML header,
 #' a user in the option `mypackage.mainfont`, e.g. in `.Rprofile`.
 #' The font can be the name of an installed font or a font file.
-#' Otherwise, or if that font is not installed, the format's preferred font
-#' is used if it is set in `default.yaml` and installed,
+#' Otherwise, or if that font is not found, the format's preferred font
+#' is used if it is set in `default.yaml` and found,
 #' and the font that ships with the package if not.
-#' A message explains how to install a missing font, once per session.
+#' The preferred font is loaded from its font files,
+#' which can also be in a folder named by the option `mypackage.font_path`.
+#' A message explains how to make a missing font available.
+#' It is shown at the start and at the end of the render,
+#' and again in the same R session only if its advice changes.
 #'
 #' @param ... Passed on to [rmarkdown::pdf_document()].
 #' @return R Markdown output format to pass to [rmarkdown::render()].
