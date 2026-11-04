@@ -8,18 +8,25 @@ documentclass: article
 secnumdepth: 2
 fontsize: "11pt"
 
-# Preferred main font, used if it is installed on the system,
+# Preferred main font, used if it is found among the installed fonts
+# or in the folder named by the option `mypackage.font_path`,
 # e.g. a licensed or corporate font that cannot be shipped with the package.
-# All fonts named here, also in the options, must be installed.
-# preferredmainfont: Corporate Sans Medium
+# All fonts named here, also in the options, must be found.
+# Name them by PostScript name or file name to load them from their files.
+# Name all four faces, with `BoldFont=`, `ItalicFont=` and `BoldItalicFont=`:
+# a face that is not named is taken from the files of the same family,
+# which needs fc-list or the systemfonts package to tell the faces apart.
+# preferredmainfont: CorporateSans-Medium
 # preferredmainfontoptions:
-# - BoldFont=Corporate Sans Heavy
+# - BoldFont=CorporateSans-Heavy
+# - ItalicFont=CorporateSans-MediumItalic
+# - BoldItalicFont=CorporateSans-HeavyItalic
 
 # Fallback main font, shipped in inst/indiedown/fonts and loaded by path,
 # so that the output does not depend on the fonts installed on the system.
 # A document can name another font in its `mainfont` field,
 # a user in the option `mypackage.mainfont`;
-# if that font is not installed, the preferred or fallback font is used.
+# if that font is not found, the preferred or fallback font is used.
 mainfont: regular.ttf
 mainfontoptions:
 - Path=<<indiedown_path>>/fonts/
