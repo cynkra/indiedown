@@ -26,6 +26,6 @@ Doubling the full delimiter (\verb{<<<<} and \verb{>>>>}) escapes it.
 }
 \examples{
 x <- "something"
-indiedown_glue(r"(\LaTeX\ code with <<x>> substituted )")
+indiedown_glue("\\\\LaTeX\\\\ code with <<x>> substituted ")
 
 }

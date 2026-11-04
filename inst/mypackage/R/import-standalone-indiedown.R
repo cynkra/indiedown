@@ -138,6 +138,9 @@
 #   instead of saying that it was not found.
 # * The message about a missing font is shown once per session for each text,
 #   so that changed advice is shown again.
+# * `apply_default_yaml()` reads `header-includes` from its `metadata` argument,
+#   the metadata after knitting, instead of from `rmarkdown::metadata`.
+# * The example of `indiedown_glue()` no longer uses a raw string.
 #
 # 2026-11-01:
 # * `apply_default_yaml()` chooses the main font with `resolve_fonts()`:
@@ -298,13 +301,13 @@ apply_default_yaml <- function(metadata) {
   # pandoc ignores 'header-includes' if includes$in_header is specified
   # https://github.com/jgm/pandoc/issues/3139
   # we can still use `header-includes` by passing it as a command line option to pandoc
-  if (!is.null(rmarkdown::metadata$`header-includes`)) {
+  if (!is.null(metadata$`header-includes`)) {
     args <- c(
       args,
       "--variable",
       paste0(
         "header-includes:",
-        paste(rmarkdown::metadata$`header-includes`, collapse = "\n")
+        paste(metadata$`header-includes`, collapse = "\n")
       )
     )
   }
@@ -1433,7 +1436,7 @@ sanitize_tex <- function(path) {
 #' @eval standalone_indiedown_export()
 #' @examples
 #' x <- "something"
-#' indiedown_glue(r"(\LaTeX\ code with <<x>> substituted )")
+#' indiedown_glue("\\LaTeX\\ code with <<x>> substituted ")
 #'
 indiedown_glue <- function(x, .open = "<<", .close = ">>") {
   ans <- glue::glue(x, .envir = sys.frame(-1), .open = .open, .close = .close)

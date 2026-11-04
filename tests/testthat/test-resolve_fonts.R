@@ -477,6 +477,59 @@ test_that("apply_default_yaml() passes the resolved font to pandoc", {
   expect_match(args, "^mainfontoptions:Path=", all = FALSE)
 })
 
+test_that("apply_default_yaml() passes header-includes to pandoc", {
+  skeleton <- local_skeleton()
+
+  args <- skeleton$apply_default_yaml(list())
+  expect_false(any(grepl("^header-includes:", args)))
+
+  # outside rmarkdown::render(), as the metadata argument is all there is
+  args <- skeleton$apply_default_yaml(list(
+    `header-includes` = c("\\usepackage{a}", "\\usepackage{b}")
+  ))
+  expect_identical(
+    utils::tail(args, 2),
+    c("--variable", "header-includes:\\usepackage{a}\n\\usepackage{b}")
+  )
+})
+
+test_that("header-includes are taken from the knitted document", {
+  skip_if_not(rmarkdown::pandoc_available(), "pandoc is not available")
+  skeleton <- local_skeleton()
+
+  # inline R code in the YAML header is evaluated by knitr
+  dir <- withr::local_tempdir()
+  input <- file.path(dir, "doc.Rmd")
+  writeLines(
+    c(
+      "---",
+      "header-includes:",
+      "- '\\newcommand{\\knitted}{`r 1 + 1`}'",
+      "---",
+      "",
+      "Text."
+    ),
+    input
+  )
+  # LaTeX output without running LaTeX
+  format <- rmarkdown::output_format(
+    knitr = NULL,
+    pandoc = NULL,
+    pre_processor = skeleton$pre_processor_basic,
+    base_format = rmarkdown::latex_document()
+  )
+  output <- rmarkdown::render(
+    input,
+    output_format = format,
+    quiet = TRUE,
+    envir = new.env()
+  )
+
+  tex <- readLines(output)
+  expect_true("\\newcommand{\\knitted}{2}" %in% tex)
+  expect_false(any(grepl("`r ", tex, fixed = TRUE)))
+})
+
 preferred <- c(
   defaults,
   list(
