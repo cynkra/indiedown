@@ -12,10 +12,10 @@ fontsize: "11pt"
 # or in the folder named by the option `mypackage.font_path`,
 # e.g. a licensed or corporate font that cannot be shipped with the package.
 # All fonts named here, also in the options, must be found.
-# Name them by PostScript name or file name to load them from their files.
+# Name them by PostScript name, which also names their font files,
+# such as `CorporateSans-Medium.otf`, to load them from their files.
 # Name all four faces, with `BoldFont=`, `ItalicFont=` and `BoldItalicFont=`:
-# a face that is not named is taken from the files of the same family,
-# which needs fc-list or the systemfonts package to tell the faces apart.
+# a font loaded from its files has only the faces that are named.
 # preferredmainfont: CorporateSans-Medium
 # preferredmainfontoptions:
 # - BoldFont=CorporateSans-Heavy
@@ -25,8 +25,7 @@ fontsize: "11pt"
 # Fallback main font, shipped in inst/indiedown/fonts and loaded by path,
 # so that the output does not depend on the fonts installed on the system.
 # A document can name another font in its `mainfont` field,
-# a user in the option `mypackage.mainfont`;
-# if that font is not found, the preferred or fallback font is used.
+# a user in the option `mypackage.mainfont`, which is used as named.
 mainfont: regular.ttf
 mainfontoptions:
 - Path=<<indiedown_path>>/fonts/

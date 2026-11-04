@@ -8,12 +8,13 @@
 #' @section Main font:
 #' A document can set the main font in the `mainfont` field of its YAML header,
 #' a user in the option `mypackage.mainfont`, e.g. in `.Rprofile`.
-#' The font can be the name of an installed font or a font file.
-#' Otherwise, or if that font is not found, the format's preferred font
+#' The font can be the name of an installed font or a font file,
+#' and is used as named.
+#' Otherwise, the format's preferred font
 #' is used if it is set in `default.yaml` and found,
 #' and the font that ships with the package if not.
-#' The preferred font is loaded from its font files,
-#' which can also be in a folder named by the option `mypackage.font_path`.
+#' The preferred font can also be loaded from its font files,
+#' named after its fonts, in a folder named by the option `mypackage.font_path`.
 #' A message explains how to make a missing font available.
 #' It is shown at the start and at the end of the render,
 #' and again in the same R session only if its advice changes.
