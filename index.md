@@ -20,6 +20,26 @@ Individual R Markdown PDF Templates.
 
 indiedown allows you to generate a customized R Markdown PDF template in a few basic steps.
 
+## Goals and non-goals
+
+indiedown aims to:
+
+- turn a corporate design into an installable R package:
+  `create_indiedown_package()` writes a skeleton whose template then shows up in RStudio's template list
+- apply that design on top of the default `.tex` template of Pandoc,
+  which should keep it compliant with future releases of Pandoc and R Markdown
+- keep the customization points few and documented:
+  `default.yaml` for Pandoc options, `preamble.tex` for LaTeX settings, and `pre_processor.R` for dynamic adjustments
+- keep corporate design elements, such as a title page, as R functions that produce LaTeX code
+- download and wire up Google fonts for a template with `use_indiedown_gfonts()`
+
+It is explicitly not trying to:
+
+- replace the default `.tex` template of Pandoc: every modification is applied on top of it
+- be a template itself: `create_indiedown_package()` produces a skeleton, and the design and the resulting package are yours
+- produce output other than PDF: the generated output format passes its arguments on to `rmarkdown::pdf_document()`
+- set up your LaTeX toolchain: `dr_down()` reports which engines your machine can compile with, it does not install anything
+
 Start by installing indiedown:
 
 ``` r
