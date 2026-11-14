@@ -29,6 +29,8 @@
       mydown/inst/indiedown/preamble.tex
       mydown/inst/indiedown/res
       mydown/inst/indiedown/res/logo.png
+      mydown/inst/indiedown/tex
+      mydown/inst/indiedown/tex/page_title.tex
       mydown/inst/rmarkdown
       mydown/inst/rmarkdown/templates
       mydown/inst/rmarkdown/templates/report

@@ -1,6 +1,8 @@
 #' Corporate Design: Title Page
 #'
-#' Example function to generate a title page
+#' Example function to generate a title page. The LaTeX lives in a snippet
+#' under `inst/indiedown/tex/page_title.tex`; this function reads it with
+#' `read_tex()` and interpolates the local variables via [indiedown_glue()].
 #'
 #' @param title Document title
 #' @param subtitle Document subtitle
@@ -19,29 +21,5 @@ cd_page_title <- function(
 ) {
   logo_path <- indiedown_path_tex("res/logo.png")
 
-  indiedown_glue(
-    # R >=4, raw strings allow to write LaTeX without escaping \ etc
-    r"(
-\vspace*{-1cm}
-\begin{center}
-  \makebox[\textwidth]{\includegraphics[width=0.1\paperwidth]{<<logo_path>>}}
-\end{center}
-
-
-\vspace*{2cm}
-
-\noindent \Huge <<title>>
-
-\noindent \huge <<subtitle>>
-
-\vspace*{2cm}
-
-
-\normalsize
-
-\noindent <<date>>
-
-\clearpage
-    )"
-  )
+  indiedown_glue(read_tex("page_title.tex"))
 }
