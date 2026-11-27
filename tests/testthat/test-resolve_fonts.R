@@ -380,6 +380,63 @@ test_that("apply_default_yaml() passes the resolved font to pandoc", {
   expect_false(any(grepl("^mainfontoptions:", args)))
 })
 
+test_that("apply_default_yaml() passes header-includes to pandoc", {
+  skeleton <- local_skeleton()
+
+  args <- skeleton$apply_default_yaml(list())
+  expect_false(any(grepl("^header-includes:", args)))
+
+  # outside rmarkdown::render(), as the metadata argument is all there is
+  args <- skeleton$apply_default_yaml(list(
+    `header-includes` = c("\\usepackage{a}", "\\usepackage{b}")
+  ))
+  expect_identical(
+    utils::tail(args, 2),
+    c("--variable", "header-includes:\\usepackage{a}\n\\usepackage{b}")
+  )
+})
+
+test_that("header-includes are taken from the knitted document", {
+  skip_if_not(rmarkdown::pandoc_available(), "pandoc is not available")
+  skeleton <- local_skeleton()
+
+  # inline R code in the YAML header is evaluated by knitr
+  dir <- withr::local_tempdir()
+  input <- file.path(dir, "doc.Rmd")
+  writeLines(
+    c(
+      "---",
+      "header-includes:",
+      "- '\\newcommand{\\knitted}{`r 1 + 1`}'",
+      "---",
+      "",
+      "Text."
+    ),
+    input
+  )
+  # LaTeX output without running LaTeX.
+  # As in the template's format, the pre-processor replaces rmarkdown's,
+  # which would add `header-includes` itself,
+  # and an `in_header` file makes pandoc ignore `header-includes`
+  # (https://github.com/jgm/pandoc/issues/3139).
+  in_header <- file.path(dir, "in-header.tex")
+  writeLines("% in_header", in_header)
+  format <- rmarkdown::latex_document(
+    includes = rmarkdown::includes(in_header = in_header)
+  )
+  format$pre_processor <- skeleton$pre_processor_basic
+  output <- rmarkdown::render(
+    input,
+    output_format = format,
+    quiet = TRUE,
+    envir = new.env()
+  )
+
+  tex <- readLines(output)
+  expect_equal(sum(tex == "\\newcommand{\\knitted}{2}"), 1)
+  expect_false(any(grepl("`r ", tex, fixed = TRUE)))
+})
+
 test_that("the preferred font is used if it is installed", {
   skeleton <- local_skeleton()
   skeleton$installed_font_names <- function() {
