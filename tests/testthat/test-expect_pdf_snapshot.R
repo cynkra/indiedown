@@ -390,13 +390,78 @@ test_that("plot_font_files() leaves out the missing faces", {
 
 test_that("plot_font_files() takes the first font file as the regular face", {
   dir <- withr::local_tempdir()
-  file.create(file.path(dir, c("b-bold.ttf", "a-italic.ttf")))
+  file.create(file.path(dir, c("font-bold.ttf", "font-italic.ttf")))
 
   files <- plot_font_files(dir)
 
-  expect_equal(files$regular, file.path(dir, "a-italic.ttf"))
-  expect_equal(files$italic, file.path(dir, "a-italic.ttf"))
-  expect_equal(files$bold, file.path(dir, "b-bold.ttf"))
+  expect_equal(files$regular, file.path(dir, "font-bold.ttf"))
+  expect_equal(files$italic, file.path(dir, "font-italic.ttf"))
+  expect_equal(files$bold, file.path(dir, "font-bold.ttf"))
+})
+
+test_that("plot_font_files() picks the regular weight of a family", {
+  dir <- withr::local_tempdir()
+  weights <- c("Black", "Bold", "Light", "Medium", "Regular", "Thin")
+  file.create(file.path(
+    dir,
+    c(
+      paste0("Roboto-", weights, ".ttf"),
+      paste0("Roboto-", sub("Regular", "", weights), "Italic.ttf"),
+      "Roboto-SemiBold.ttf",
+      "Roboto-ExtraBoldItalic.ttf"
+    )
+  ))
+
+  expect_equal(
+    lapply(plot_font_files(dir), basename),
+    list(
+      regular = "Roboto-Regular.ttf",
+      bold = "Roboto-Bold.ttf",
+      italic = "Roboto-Italic.ttf",
+      bolditalic = "Roboto-BoldItalic.ttf"
+    )
+  )
+})
+
+test_that("plot_font_files() prefers other weights to bold for the regular face", {
+  dir <- withr::local_tempdir()
+  file.create(file.path(dir, c("Font-Black.ttf", "Font-Light.ttf")))
+  file.create(file.path(dir, c("Font-Bold.ttf", "Font-LightItalic.ttf")))
+
+  files <- plot_font_files(dir)
+
+  expect_equal(basename(files$regular), "Font-Black.ttf")
+  expect_equal(basename(files$bold), "Font-Bold.ttf")
+  expect_null(files$italic)
+})
+
+test_that("plot_font_files() takes the faces from one family", {
+  dir <- withr::local_tempdir()
+  file.create(file.path(
+    dir,
+    c("Alpha-Bold.ttf", "Alpha-Italic.ttf", "Beta-Regular.ttf", "Beta-Bold.otf")
+  ))
+
+  files <- plot_font_files(dir)
+
+  expect_equal(basename(files$regular), "Beta-Regular.ttf")
+  expect_equal(basename(files$bold), "Beta-Bold.otf")
+  expect_null(files$italic)
+  expect_null(files$bolditalic)
+})
+
+test_that("plot_font_files() matches the file names, not the folders", {
+  dir <- withr::local_tempdir()
+  dir.create(file.path(dir, "Bold Italic"))
+  dir.create(file.path(dir, "other"))
+  file.create(file.path(dir, "Bold Italic", c("Sans.ttf", "Sans-Bold.ttf")))
+  file.create(file.path(dir, "other", "Sans-Italic.ttf"))
+
+  files <- plot_font_files(dir)
+
+  expect_equal(files$regular, file.path(dir, "Bold Italic", "Sans.ttf"))
+  expect_equal(files$bold, file.path(dir, "Bold Italic", "Sans-Bold.ttf"))
+  expect_null(files$italic)
 })
 
 test_that("plot_font_files() is NULL without font files", {
@@ -435,6 +500,7 @@ test_that("local_showtext() registers the fonts as the default family", {
 
 test_that("local_showtext() registers the skeleton fonts with sysfonts", {
   skip_if_not_installed("sysfonts")
+  local_sysfonts()
   fonts <- skeleton_fonts()
   skip_if(length(font_files(fonts)) == 0, "the skeleton fonts are missing")
 
@@ -449,6 +515,7 @@ test_that("local_showtext() sets `fig.showtext` until the function ends", {
   withr::defer(knitr::opts_chunk$restore(options))
   knitr::opts_chunk$set(echo = FALSE)
   expect_null(knitr::opts_chunk$get("fig.showtext"))
+  local_mocked_bindings(font_add = function(...) NULL, .package = "sysfonts")
 
   during <- function() {
     local_showtext(NULL)
@@ -460,14 +527,28 @@ test_that("local_showtext() sets `fig.showtext` until the function ends", {
   expect_false(knitr::opts_chunk$get("echo"))
 })
 
-test_that("local_showtext() does not register fonts without font files", {
+test_that("local_showtext() registers the sysfonts default without font files", {
   skip_if_not_installed("sysfonts")
+  local_sysfonts()
+  calls <- list()
   local_mocked_bindings(
-    font_add = function(...) stop("No fonts to register."),
+    font_add = function(...) calls[[length(calls) + 1]] <<- list(...),
     .package = "sysfonts"
   )
 
-  expect_no_error(local_showtext(withr::local_tempdir()))
+  local_showtext(withr::local_tempdir())
+
+  expect_length(calls, 1)
+  expect_equal(calls[[1]][[1]], "")
+  expect_equal(
+    basename(unlist(calls[[1]][-1])),
+    paste0(
+      "LiberationSans-",
+      c("Regular", "Bold", "Italic", "BoldItalic"),
+      ".ttf"
+    )
+  )
+  expect_true(all(file.exists(unlist(calls[[1]][-1]))))
 })
 
 test_that("write_fonts_conf() lets fontconfig see only the fonts", {
@@ -838,6 +919,7 @@ test_that("expect_pdf_snapshot() renders, compares and tolerates", {
 
 test_that("the text of plots is embedded with showtext, not referred to", {
   skip_if_no_pdf_snapshot()
+  local_sysfonts()
   fonts <- skeleton_fonts()
   skip_if(length(font_files(fonts)) == 0, "the skeleton fonts are missing")
 
