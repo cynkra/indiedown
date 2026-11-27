@@ -199,6 +199,129 @@ test_that("a named font is used as named if the lookup cannot tell", {
   expect_identical(skeleton$resolve_fonts(named, defaults), named)
 })
 
+test_that("with LuaLaTeX, a font that fc-list does not list is looked up with luaotfload", {
+  skeleton <- local_skeleton()
+  skeleton$installed_font_names <- function() "Some Sans"
+  skeleton$luaotfload_finds <- function(fonts) all(fonts == "TeX Serif")
+  named <- list(mainfont = "TeX Serif")
+
+  expect_silent(
+    fonts <- skeleton$resolve_fonts(named, preferred, engine = "lualatex")
+  )
+  expect_identical(fonts, named)
+
+  # not found by luaotfload either
+  expect_message(
+    fonts <- skeleton$resolve_fonts(
+      list(mainfont = "Missing Serif"),
+      defaults,
+      engine = "lualatex"
+    ),
+    'Font "Missing Serif"',
+    fixed = TRUE
+  )
+  expect_identical(fonts, defaults)
+
+  # listed by fc-list, luaotfload is not asked
+  skeleton$luaotfload_finds <- function(fonts) stop("unexpected")
+  expect_identical(
+    skeleton$resolve_fonts(
+      list(mainfont = "Some Sans"),
+      defaults,
+      engine = "lualatex"
+    ),
+    list(mainfont = "Some Sans")
+  )
+
+  # without luaotfload-tool, the named font is used as named
+  skeleton$luaotfload_finds <- function(fonts) NULL
+  expect_identical(
+    skeleton$resolve_fonts(named, defaults, engine = "lualatex"),
+    named
+  )
+
+  # not with XeLaTeX
+  expect_message(
+    fonts <- skeleton$resolve_fonts(named, defaults, engine = "xelatex"),
+    'Font "TeX Serif"',
+    fixed = TRUE
+  )
+  expect_identical(fonts, defaults)
+})
+
+test_that("luaotfload_finds() reads the output of luaotfload-tool", {
+  skeleton <- local_skeleton(lookup = TRUE)
+  skeleton$Sys.which <- function(names) c("luaotfload-tool" = "")
+  expect_null(skeleton$luaotfload_finds("Some Sans"))
+
+  skeleton$Sys.which <- function(names) {
+    c("luaotfload-tool" = "/luaotfload-tool")
+  }
+  skeleton$system2 <- function(command, args, ...) {
+    font <- sub("^--find=.(.*).$", "\\1", args)
+    if (font %in% c("Some Sans", "Some Sans Bold")) {
+      paste0('luaotfload | resolve : Font "', font, '" found!')
+    } else {
+      paste0('luaotfload | resolve : Cannot find "', font, '" in index.')
+    }
+  }
+  expect_true(skeleton$luaotfload_finds(c("Some Sans", "Some Sans Bold")))
+  expect_false(skeleton$luaotfload_finds(c("Some Sans", "Other Sans")))
+})
+
+test_that("LuaLaTeX finds a font of the TeX installation that fc-list does not list", {
+  skip_on_cran()
+  skip_if(!nzchar(Sys.which("lualatex")), "lualatex not available")
+  skip_if(
+    !nzchar(Sys.which("luaotfload-tool")),
+    "luaotfload-tool not available"
+  )
+  skeleton <- local_skeleton(lookup = TRUE)
+  # fontconfig sees no fonts
+  dir <- withr::local_tempdir()
+  conf <- file.path(dir, "fonts.conf")
+  writeLines(
+    c(
+      "<?xml version=\"1.0\"?>",
+      "<!DOCTYPE fontconfig SYSTEM \"fonts.dtd\">",
+      "<fontconfig>",
+      paste0("  <dir>", dir, "</dir>"),
+      paste0("  <cachedir>", file.path(dir, "cache"), "</cachedir>"),
+      "</fontconfig>"
+    ),
+    conf
+  )
+  withr::local_envvar(FONTCONFIG_FILE = conf)
+  named <- list(mainfont = "Latin Modern Roman")
+
+  expect_silent(
+    fonts <- skeleton$resolve_fonts(named, defaults, engine = "lualatex")
+  )
+  expect_identical(fonts, named)
+
+  # with XeLaTeX, fc-list decides
+  expect_message(
+    fonts <- skeleton$resolve_fonts(named, defaults, engine = "xelatex"),
+    'Font "Latin Modern Roman"',
+    fixed = TRUE
+  )
+  expect_identical(fonts, defaults)
+})
+
+test_that("the output format passes its LaTeX engine to the font lookup", {
+  skeleton <- local_skeleton()
+  skeleton$apply_default_yaml <- function(metadata) {
+    skeleton$font_lookup$engine
+  }
+
+  format <- skeleton$indiedown_pdf_document_with_asset(
+    latex_engine = "lualatex"
+  )
+  args <- format$pre_processor(list(), "in.md", "static", list(), NULL, ".")
+  expect_identical(args[[1]], "lualatex")
+  expect_null(skeleton$font_lookup$engine)
+})
+
 test_that("a named font file is not found if named with its folder", {
   skeleton <- local_skeleton()
   skeleton$installed_font_names <- function() character()

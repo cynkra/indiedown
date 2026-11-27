@@ -30,6 +30,9 @@ local_skeleton <- function(lookup = FALSE, env = parent.frame()) {
     skeleton$installed_font_names <- function() {
       stop("unexpected system font lookup")
     }
+    skeleton$luaotfload_finds <- function(fonts) {
+      stop("unexpected luaotfload lookup")
+    }
   }
   skeleton
 }

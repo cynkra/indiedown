@@ -50,6 +50,9 @@
 #   or if it is not found as font files and `fc-list` is not available.
 #   A font file named with a folder counts as missing,
 #   because fontspec takes its folder only from `Path=`.
+#   With LuaLaTeX, a font that `fc-list` does not list is looked up with `luaotfload-tool`,
+#   which also finds the fonts of the TeX installation;
+#   without `luaotfload-tool`, a named font is used as named.
 #   The lookup no longer uses the systemfonts package or kpsewhich,
 #   searches the font folders of Linux and macOS, reads the names of fonts
 #   from their files, or takes faces that the options do not name from the family.
@@ -127,7 +130,13 @@ indiedown_pdf_document_with_asset <- function(includes = NULL, ...) {
     pre_processor <- pre_processor_basic
   }
 
-  ans$pre_processor <- pre_processor
+  # the font lookup depends on the engine
+  engine <- ans$pandoc$latex_engine
+  ans$pre_processor <- function(...) {
+    font_lookup$engine <- engine
+    on.exit(font_lookup$engine <- NULL)
+    pre_processor(...)
+  }
   repeat_font_message(ans)
 }
 
@@ -255,13 +264,16 @@ apply_default_yaml <- function(metadata) {
 # The `mainfontoptions` of the document are used with a named font
 # and appended to those of the preferred or fallback font otherwise.
 #
+# `engine` is the LaTeX engine of the format, set while its pre-processor runs.
+#
 # Returns a list with the pandoc variables `mainfont` and `mainfontoptions`,
 # omitting unset ones.
 resolve_fonts <- function(
   metadata,
   defaults,
   mainfont = get_indiedown_option("mainfont"),
-  font_path = get_indiedown_option("font_path")
+  font_path = get_indiedown_option("font_path"),
+  engine = font_lookup$engine
 ) {
   dirs <- c(font_path, font_dirs())
   options <- unlist(metadata[["mainfontoptions"]])
@@ -284,7 +296,7 @@ resolve_fonts <- function(
   if (!is.null(font)) {
     named <- list(mainfont = font, mainfontoptions = options)
     if (!is.null(fonts$mainfont)) {
-      named <- find_font(named, dirs, unknown = named)
+      named <- find_font(named, dirs, unknown = named, engine = engine)
     }
     if (!is.null(named)) {
       return(Filter(Negate(is.null), named))
@@ -296,7 +308,7 @@ resolve_fonts <- function(
   }
 
   if (!is.null(preferred$mainfont)) {
-    found <- find_font(preferred, dirs)
+    found <- find_font(preferred, dirs, engine = engine)
     if (!is.null(found)) {
       fonts <- found
     } else if (is.null(missing)) {
@@ -329,13 +341,15 @@ resolve_fonts <- function(
 # like the fallback font, with only the faces that its options name:
 # name all four faces, with `BoldFont=`, `ItalicFont=` and `BoldItalicFont=`.
 # Otherwise, it is loaded by name if fc-list lists all its fonts,
-# see `installed_font_names()`.
-# Returns `unknown` where the lookup cannot tell: if fc-list is not available,
+# see `installed_font_names()`,
+# or, if `engine` is LuaLaTeX, if luaotfload finds them, see `luaotfload_finds()`.
+# Returns `unknown` where the lookup cannot tell:
+# if fc-list or, for LuaLaTeX, luaotfload-tool is not available,
 # and where fontspec looks up the fonts itself, with a `Path=` option
 # or for a font file, which fc-list does not list.
 # A font file named with a folder is missing,
 # because fontspec fails on it and takes the folder only from `Path=`.
-find_font <- function(font, dirs, unknown = NULL) {
+find_font <- function(font, dirs, unknown = NULL, engine = NULL) {
   faces <- font_faces(font$mainfont, font$mainfontoptions)
   if (any(grepl("^\\s*Path\\s*=", font$mainfontoptions))) {
     return(unknown)
@@ -352,10 +366,17 @@ find_font <- function(font, dirs, unknown = NULL) {
     return(font_from_files(font, files))
   }
   names <- installed_font_names()
-  if (is.null(names)) {
-    return(unknown)
+  if (!is.null(names) && all(tolower(faces) %in% tolower(names))) {
+    return(font)
   }
-  if (all(tolower(faces) %in% tolower(names))) font
+  if (identical(engine, "lualatex")) {
+    found <- luaotfload_finds(faces)
+    if (is.null(found)) {
+      return(unknown)
+    }
+    return(if (found) font)
+  }
+  if (is.null(names)) unknown
 }
 
 # TRUE for a font named by its file, which fontspec tells by the extension
@@ -397,6 +418,9 @@ indiedown_option_name <- function(
 
 # The texts of the messages about fonts shown in this session
 font_messages <- new.env(parent = emptyenv())
+
+# The LaTeX engine of the format whose pre-processor runs, see `resolve_fonts()`
+font_lookup <- new.env(parent = emptyenv())
 
 # The font and the fonts that its fontspec options name for other faces,
 # such as `BoldFont=`, where `*` stands for the font, as in fontspec
@@ -484,6 +508,33 @@ installed_font_names <- function() {
     stderr = FALSE
   ))
   trimws(unlist(strsplit(out, ",", fixed = TRUE)))
+}
+
+# TRUE if luaotfload, which loads the fonts for LuaLaTeX,
+# finds all `fonts` by name, FALSE if not,
+# or NULL if luaotfload-tool is not available.
+# Unlike fc-list, it also finds the fonts of the TeX installation.
+# luaotfload-tool always exits with status 0 and reports a found font
+# as `Font "<name>" found!`.
+# Like LuaLaTeX, it updates its database for a font that it does not find,
+# and builds the database on the first run.
+luaotfload_finds <- function(fonts) {
+  tool <- Sys.which("luaotfload-tool")
+  if (!nzchar(tool)) {
+    return(NULL)
+  }
+  for (font in fonts) {
+    out <- suppressWarnings(system2(
+      tool,
+      paste0("--find=", shQuote(font)),
+      stdout = TRUE,
+      stderr = FALSE
+    ))
+    if (!any(grepl('" found!', out, fixed = TRUE))) {
+      return(FALSE)
+    }
+  }
+  TRUE
 }
 
 # How to make the missing `font` available: the preferred font,
