@@ -33,6 +33,22 @@
 # ## Changelog
 #
 # 2026-11-27:
+# * `resolve_fonts()` runs `fc-list` at most once.
+#   The message about a missing named font
+#   names all folders of the option `<package>.font_path` if it holds several,
+#   instead of failing,
+#   and on macOS without `fc-list`, asks to install fontconfig.
+#   A named font file is not looked up in the folder of the option
+#   `<package>.font_path`: it must be in the folder of the document
+#   or in the TeX installation, or have its folder in `Path=`.
+# * A named font that is not a font file, with a face that is a font file,
+#   is used as named only if its other faces are found by name,
+#   because fontspec loads them by name.
+#   A named font file, or a named font whose options set `Extension=`,
+#   is used as named: fontspec loads all its faces as files,
+#   unless the font itself is named with a folder.
+#   A face that is a font file with a folder no longer counts as missing:
+#   fontspec loads it relative to the folder where LaTeX runs.
 # * The font lookup is simpler.
 #   The preferred font is looked up as font files named after its fonts,
 #   such as `<PostScript name>.otf` or `.ttf`, in the folder of the option
@@ -41,10 +57,11 @@
 #   Otherwise, it is used by name if `fc-list` lists all its fonts.
 #   A font named in the document or in the option `<package>.mainfont`
 #   is looked up in the same way; it is used as named if its options set `Path=`,
-#   if it or a face that they name is a font file,
+#   if it is a font file, if a face that they name is a font file
+#   and its other faces are found by name,
 #   or if it is not found as font files and `fc-list` is not available.
 #   A font file named with a folder counts as missing,
-#   because fontspec takes its folder only from `Path=`.
+#   because fontspec fails on it: give its folder as `Path=` instead.
 #   With LuaLaTeX, a font that `fc-list` does not list is looked up with `luaotfload-tool`,
 #   which also finds the fonts of the TeX installation;
 #   without `luaotfload-tool`, a named font is used as named.
@@ -367,6 +384,10 @@ check_tex_path <- function(path, what, fix) {
 # and appended to those of the preferred or fallback font otherwise.
 #
 # `engine` is the LaTeX engine of the format, set while its pre-processor runs.
+# A named font file is passed on as named, for fontspec to find:
+# give only its file name, and put it in the folder of the document
+# or in the TeX installation, or give its folder as `Path=`.
+# The folder of the option `<package>.font_path` is not searched for it.
 #
 # Returns a list with the pandoc variables `mainfont` and `mainfontoptions`,
 # omitting unset ones.
@@ -378,6 +399,8 @@ resolve_fonts <- function(
   engine = font_lookup$engine
 ) {
   dirs <- c(font_path, font_dirs())
+  # fc-list runs at most once, and only if the lookup needs it
+  delayedAssign("installed", installed_font_names())
   options <- unlist(metadata[["mainfontoptions"]])
   fonts <- list(
     mainfont = defaults[["mainfont"]],
@@ -399,25 +422,45 @@ resolve_fonts <- function(
   if (!is.null(font)) {
     named <- list(mainfont = font, mainfontoptions = options)
     if (!is.null(fonts$mainfont)) {
-      named <- find_font(named, dirs, unknown = named, engine = engine)
+      named <- find_font(
+        named,
+        dirs,
+        unknown = named,
+        engine = engine,
+        installed = installed
+      )
     }
     if (!is.null(named)) {
       return(Filter(Negate(is.null), named))
     }
     missing <- paste0("Font \"", font, "\" from ", origin)
-    hint <- font_install_hint(font, font_path, named = TRUE)
+    hint <- font_install_hint(
+      font,
+      font_path,
+      named = TRUE,
+      fc_list = !is.null(installed)
+    )
     # the options were meant for the missing font
     options <- NULL
   }
 
   if (!is.null(preferred$mainfont)) {
-    found <- find_font(preferred, dirs, engine = engine)
+    found <- find_font(preferred, dirs, engine = engine, installed = installed)
     if (!is.null(found)) {
       fonts <- found
     } else if (is.null(missing)) {
       missing <- paste0("Preferred font \"", preferred$mainfont, "\"")
-      faces <- missing_faces(preferred, dirs, engine = engine)
-      hint <- font_install_hint(preferred$mainfont, font_path)
+      faces <- missing_faces(
+        preferred,
+        dirs,
+        engine = engine,
+        installed = installed
+      )
+      hint <- font_install_hint(
+        preferred$mainfont,
+        font_path,
+        fc_list = !is.null(installed)
+      )
     }
   }
   if (!is.null(missing)) {
@@ -447,42 +490,75 @@ resolve_fonts <- function(
 # like the fallback font, with only the faces that its options name:
 # name all four faces, with `BoldFont=`, `ItalicFont=` and `BoldItalicFont=`.
 # Otherwise, it is loaded by name if fc-list lists all its fonts,
-# see `installed_font_names()`,
+# see `installed_font_names()`, whose result `installed` holds,
 # or, if `engine` is LuaLaTeX, if luaotfload finds them, see `luaotfload_finds()`.
 # Returns `unknown` where the lookup cannot tell:
-# if fc-list or, for LuaLaTeX, luaotfload-tool is not available,
+# if it is not found as font files and fc-list or,
+# for LuaLaTeX, luaotfload-tool is not available,
 # and where fontspec looks up the fonts itself, with a `Path=` option
 # or for a font file, which fc-list does not list.
-# A font file named with a folder is missing,
-# because fontspec fails on it and takes the folder only from `Path=`.
-find_font <- function(font, dirs, unknown = NULL, engine = NULL) {
+# If the font is a font file or its options set `Extension=`,
+# fontspec loads all faces as files, so the lookup cannot tell.
+# Otherwise, fontspec loads the faces named as font files as files,
+# also with a folder, and the others by name, which are still looked up.
+# A font file with a folder as the font itself is missing, also with `Extension=`,
+# because fontspec fails on it: give its folder as `Path=` instead.
+find_font <- function(
+  font,
+  dirs,
+  unknown = NULL,
+  engine = NULL,
+  installed = installed_font_names()
+) {
   faces <- font_faces(font$mainfont, font$mainfontoptions)
-  if (any(grepl("^\\s*Path\\s*=", font$mainfontoptions))) {
+  options <- font$mainfontoptions
+  if (any(grepl("^\\s*Path\\s*=", options))) {
+    return(unknown)
+  }
+  if (any(grepl("^\\s*Extension\\s*=", options))) {
+    # a font file in effect: fontspec fails on a folder in its name
+    if (basename(faces[[1]]) != faces[[1]]) {
+      return(NULL)
+    }
     return(unknown)
   }
   is_file <- is_font_file(faces)
-  if (any(is_file & basename(faces) != faces)) {
-    return(NULL)
+  if (is_file[[1]]) {
+    if (basename(faces[[1]]) != faces[[1]]) {
+      return(NULL)
+    }
+    return(unknown)
   }
   if (any(is_file)) {
+    # the faces named as font files are loaded as files, the others by name
+    if (isFALSE(found_by_name(faces[!is_file], installed, engine))) {
+      return(NULL)
+    }
     return(unknown)
   }
   files <- find_font_files(faces, dirs)
   if (!is.null(files)) {
     return(font_from_files(font, files))
   }
-  names <- installed_font_names()
-  if (!is.null(names) && all(tolower(faces) %in% tolower(names))) {
-    return(font)
+  found <- found_by_name(faces, installed, engine)
+  if (is.null(found)) {
+    unknown
+  } else if (found) {
+    font
+  }
+}
+
+# TRUE if all `faces` are found by name, among the installed fonts `installed`
+# or, if `engine` is LuaLaTeX, by luaotfload, FALSE if not,
+# or NULL if the lookup cannot tell, see `find_font()`
+found_by_name <- function(faces, installed, engine) {
+  if (!is.null(installed) && all(tolower(faces) %in% tolower(installed))) {
+    return(TRUE)
   }
   if (identical(engine, "lualatex")) {
-    found <- luaotfload_finds(faces)
-    if (is.null(found)) {
-      return(unknown)
-    }
-    return(if (found) font)
+    return(luaotfload_finds(faces))
   }
-  if (is.null(names)) unknown
+  if (!is.null(installed)) FALSE
 }
 
 # A line that explains why `font`, with several faces, was not found,
@@ -497,14 +573,15 @@ missing_faces <- function(
   font,
   dirs,
   engine = NULL,
-  sysname = Sys.info()[["sysname"]]
+  sysname = Sys.info()[["sysname"]],
+  installed = installed_font_names()
 ) {
   faces <- font_faces(font$mainfont, font$mainfontoptions)
   if (length(faces) < 2) {
     return(NULL)
   }
   files <- unlist(lapply(dirs, list.files, "[.](otf|ttf)$", ignore.case = TRUE))
-  found <- c(sub("[.][^.]*$", "", files), installed_font_names())
+  found <- c(sub("[.][^.]*$", "", files), installed)
   missing <- faces[!tolower(faces) %in% tolower(found)]
   if (identical(engine, "lualatex")) {
     finds <- function(face) isTRUE(luaotfload_finds(face))
@@ -712,11 +789,14 @@ luaotfload_finds <- function(fonts) {
 # On Windows, a named font installed for the current user is found
 # only if its font files are named after it,
 # so the message asks to install it for all users instead.
+# Without fc-list (`fc_list = FALSE`), installed fonts are not found,
+# so on macOS, where fc-list comes with fontconfig, the message asks for it.
 font_install_hint <- function(
   font,
   font_path = NULL,
   sysname = Sys.info()[["sysname"]],
-  named = FALSE
+  named = FALSE,
+  fc_list = TRUE
 ) {
   if (is_font_file(font)) {
     return(paste(
@@ -728,9 +808,10 @@ font_install_hint <- function(
   files <- paste0("its font files, named like \"", font, ".otf\" or \".ttf\"")
   if (!is.null(font_path)) {
     return(paste0(
-      "check that the folder \"",
-      font_path,
-      "\" from the option `",
+      "check that ",
+      if (length(font_path) == 1) "the folder " else "one of the folders ",
+      paste0("\"", font_path, "\"", collapse = ", "),
+      " from the option `",
       option,
       "` holds ",
       files
@@ -747,7 +828,19 @@ font_install_hint <- function(
           "(Settings > Personalization > Fonts, or right-click > Install)"
         )
       },
-      Darwin = "open its font files and click \"Install\" in Font Book",
+      Darwin = paste0(
+        if (!fc_list) {
+          paste0(
+            "install fontconfig, e.g. with `brew install fontconfig`, ",
+            "for `fc-list` to find installed fonts,\n",
+            "make sure that `fc-list` is on R's `PATH` ",
+            "(R started from RStudio or R.app may lack `/opt/homebrew/bin`\n",
+            "or `/usr/local/bin`),\n",
+            "and "
+          )
+        },
+        "open its font files and click \"Install\" in Font Book"
+      ),
       "copy its font files to ~/.local/share/fonts"
     ),
     ",\nor set `options(",

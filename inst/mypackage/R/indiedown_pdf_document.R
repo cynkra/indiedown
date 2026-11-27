@@ -16,6 +16,11 @@
 #' It is used as named if the lookup cannot tell,
 #' e.g. without `fc-list` (with LuaLaTeX: without `luaotfload-tool`),
 #' for a font file, or with a `Path=` option.
+#' Give a font file by its name only, and put it in the folder of the document
+#' or in the TeX installation, or give its folder as `Path=` in `mainfontoptions`:
+#' it is not looked up in the folder of the option `mypackage.font_path`.
+#' With a font file, or with `Extension=`, fontspec loads the faces that `mainfontoptions` name,
+#' such as `BoldFont=*-Bold`, as font files with the same extension.
 #' Otherwise, the format's preferred font
 #' is used if it is set in `default.yaml` and found,
 #' and the font that ships with the package if not.
