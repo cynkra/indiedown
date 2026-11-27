@@ -65,6 +65,10 @@
 #   When updating this file, add them to `Suggests:` of the template package:
 #   R CMD check warns about an undeclared sysfonts otherwise,
 #   and the PDF snapshot tests are skipped where they are not installed.
+# * A folder of font files or of the package with `"` or `:` in its path,
+#   except for the `:` of a Windows drive letter, also fails with an error:
+#   fontspec does not find fonts in a folder with `"`,
+#   nor XeLaTeX in a folder with `:`.
 # * `apply_default_yaml()` reads `header-includes` from its `metadata` argument,
 #   the metadata after knitting, instead of from `rmarkdown::metadata`:
 #   inline R code in `header-includes` is evaluated
@@ -80,7 +84,8 @@
 #   (on Windows, for all users).
 #   With LuaLaTeX, a face that `luaotfload-tool` finds is not missing.
 # * The folders of font files are not escaped for fontspec:
-#   a folder with `,` `=` `%` `#` `{` `}` `[` or `]` in its path is not supported,
+#   a folder with `,` `=` `%` `#` `{` `}` `[` `]` `"` or `:` in its path,
+#   except for the `:` of a Windows drive letter, is not supported,
 #   and loading a font from it fails with an error.
 #   `apply_default_yaml()` fails with the same error for the fallback font
 #   if the path of the package contains one of these characters.
@@ -307,14 +312,17 @@ check_yaml_path <- function(path) {
 }
 
 # Fails if `path`, used unescaped in the fontspec option `Path=`,
-# contains one of `,` `=` `%` `#` `{` `}` `[` or `]`,
-# which break the font options, which pandoc joins with commas, or LaTeX.
+# contains one of `,` `=` `%` `#` `{` `}` `[` `]` `"` or `:`,
+# which break the font options, which pandoc joins with commas, or LaTeX:
+# fontspec does not find fonts in a folder with `"`,
+# nor XeLaTeX in a folder with `:`, except for the `:` of a Windows drive letter.
 # `what` names the path and `fix` starts the advice in the error message.
 check_tex_path <- function(path, what, fix) {
-  bad <- c(",", "=", "%", "#", "{", "}", "[", "]")
-  bad <- bad[vapply(bad, grepl, TRUE, path, fixed = TRUE)]
+  bad <- c(",", "=", "%", "#", "{", "}", "[", "]", "\"", ":")
+  rest <- sub("^[A-Za-z]:(?=[/\\\\])", "", path, perl = TRUE)
+  bad <- bad[vapply(bad, grepl, TRUE, rest, fixed = TRUE)]
   if (length(bad) > 0) {
-    bad <- paste0("\"", bad, "\"")
+    bad <- paste0("`", bad, "`")
     if (length(bad) > 1) {
       bad <- paste(
         paste(bad[-length(bad)], collapse = " "),
@@ -332,7 +340,7 @@ check_tex_path <- function(path, what, fix) {
         bad,
         ", which LaTeX does not accept in the path of a font.\n",
         fix,
-        " without `,` `=` `%` `#` `{` `}` `[` or `]`."
+        " without `,` `=` `%` `#` `{` `}` `[` `]` `\"` or `:`."
       ),
       call = NULL
     )
