@@ -70,10 +70,6 @@
 #   When updating this file, add them to `Suggests:` of the template package:
 #   R CMD check warns about an undeclared sysfonts otherwise,
 #   and the PDF snapshot tests are skipped where they are not installed.
-# * A folder of font files or of the package with `"` or `:` in its path,
-#   except for the `:` of a Windows drive letter, also fails with an error:
-#   fontspec does not find fonts in a folder with `"`,
-#   nor XeLaTeX in a folder with `:`.
 # * `apply_default_yaml()` reads `header-includes` from its `metadata` argument,
 #   the metadata after knitting, instead of from `rmarkdown::metadata`:
 #   inline R code in `header-includes` is evaluated
@@ -320,7 +316,8 @@ check_yaml_path <- function(path) {
 # contains one of `,` `=` `%` `#` `{` `}` `[` `]` `"` or `:`,
 # which break the font options, which pandoc joins with commas, or LaTeX:
 # fontspec does not find fonts in a folder with `"`,
-# nor XeLaTeX in a folder with `:`, except for the `:` of a Windows drive letter.
+# nor XeLaTeX in a folder with `:`, which it reads as the start of a font index
+# (`[file:N]`), except for the `:` of a Windows drive letter on Windows.
 # `what` names the path and `fix` starts the advice in the error message.
 check_tex_path <- function(path, what, fix) {
   bad <- c(",", "=", "%", "#", "{", "}", "[", "]", "\"", ":")
