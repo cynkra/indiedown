@@ -917,13 +917,26 @@ test_that("the message names the missing faces of the preferred font", {
 
 test_that("a package path that breaks the YAML fails with an error", {
   skeleton <- local_skeleton()
-  skeleton$indiedown_path_tex <- function(...) "/lib #1/R: x"
+  real_path <- skeleton$indiedown_path
+  bad <- file.path(withr::local_tempdir(), "lib #1", "R: x")
+  dir.create(bad, recursive = TRUE)
+  stopifnot(file.copy(
+    list.files(real_path(), full.names = TRUE),
+    bad,
+    recursive = TRUE
+  ))
+  bad <- normalizePath(bad, "/")
+  skeleton$indiedown_path <- function(...) file.path(bad, ...)
 
   expect_error(
     skeleton$apply_default_yaml(list()),
-    'The package path "/lib #1/R: x" contains " #" and ": "',
+    paste0('The package path "', bad, '" contains " #" and ": "'),
     fixed = TRUE
   )
+
+  # no error if `default.yaml` does not use the package path
+  writeLines("fontsize: 11pt", file.path(bad, "default.yaml"))
+  expect_no_error(skeleton$apply_default_yaml(list()))
   expect_identical(skeleton$check_yaml_path("/lib#1/R:x"), "/lib#1/R:x")
 })
 

@@ -74,11 +74,16 @@
 #   the metadata after knitting, instead of from `rmarkdown::metadata`:
 #   inline R code in `header-includes` is evaluated
 #   instead of reaching LaTeX verbatim.
+# * `expect_pdf_snapshot()` fails if the number of pages differs
+#   from the number of page snapshots,
+#   instead of deleting the snapshots of surplus pages
+#   or silently adding snapshots of new pages.
 # * The message about a missing preferred font with several faces
 #   names the faces that are missing, with the names of their font files,
 #   if some but not all are missing, and if none is missing, says that
 #   all faces must be font files in one folder or all be installed
 #   (on Windows, for all users).
+#   With LuaLaTeX, a face that `luaotfload-tool` finds is not missing.
 # * The folders of font files are not escaped for fontspec:
 #   a folder with `,` `=` `%` `#` `{` `}` `[` or `]` in its path is not supported,
 #   and loading a font from it fails with an error.
@@ -233,7 +238,9 @@ apply_default_yaml <- function(metadata) {
   # replace <<indiedown_path>> by package path, not escaped for YAML
   # (see check_yaml_path()) or fontspec (see check_tex_path() below)
   path <- indiedown_path_tex()
-  check_yaml_path(path)
+  if (any(grepl("<<indiedown_path>>", defaults_txt, fixed = TRUE))) {
+    check_yaml_path(indiedown_path())
+  }
   defaults_txt <- gsub(
     "<<indiedown_path>>",
     path,
@@ -915,12 +922,24 @@ default <- function(x, default = "") {
 # To refresh the snapshots and the record,
 # delete the snapshot files of `name` and run the tests again.
 #
+# If the document has more or fewer pages than there are page snapshots,
+# the test fails, and only the pages that have a snapshot are compared.
+# The page snapshots are looked up in the snapshot directory of the test file
+# that testthat uses while it runs the tests,
+# and an error is thrown if that directory cannot be determined.
+# A test run interactively, without testthat's snapshot reporter,
+# does not check the page count, like `expect_snapshot_file()`.
+# To accept a new page count, delete the snapshot files of `name`.
+# After a change of the page count, a `.new.png` file of a page that is
+# no longer compared may be left over, and a page that is new
+# gets no `.new.png` file: delete the snapshot files and run the tests again.
+#
 # Pixel-exact comparisons are only stable on a fixed toolchain,
 # so `skip_if_no_pdf_snapshot()` skips on systems other than Linux.
 # A positive `tolerance` accepts small differences.
 #
 # testthat deletes the snapshot files that a complete test run does not use.
-# When it skips or when rendering fails,
+# When it skips, when rendering fails or when the page count changed,
 # `expect_pdf_snapshot()` declares the existing snapshot files of `name`
 # with `testthat::announce_snapshot_file()`,
 # so that a test run on a system without LaTeX keeps them.
@@ -1042,9 +1061,13 @@ expect_pdf_snapshot <- function(
     file.path(dir, record)
   )
 
+  # A change of the page count fails, see "Snapshot files" above
+  snaps <- pdf_snapshot_pages(name)
+  same_count <- length(snaps) %in% c(0, length(pages))
+
   # Injecting the file name gives a readable label in failure messages
   compare <- compare_png(tolerance)
-  for (page in pages) {
+  for (page in pages[same_count | pages %in% snaps]) {
     rlang::inject(testthat::expect_snapshot_file(
       file.path(dir, !!page),
       compare = compare
@@ -1055,7 +1078,22 @@ expect_pdf_snapshot <- function(
     compare = compare_true
   ))
 
-  taken <- TRUE
+  if (!same_count) {
+    testthat::fail(sprintf(
+      paste(
+        "The page count of `%s` changed: %d rendered, page snapshots: %d.",
+        "To accept the change, delete the snapshot files of `%s`",
+        "and run the tests again."
+      ),
+      name,
+      length(pages),
+      length(snaps),
+      name
+    ))
+  }
+
+  # After a failure, the existing snapshot files are kept
+  taken <- same_count
   invisible()
 }
 
@@ -1233,6 +1271,37 @@ plot_font_files <- function(dir) {
     italic = face(TRUE, 400),
     bolditalic = face(TRUE, 700)
   )
+}
+
+# The file names of the page snapshots of `name`
+# in the snapshot directory of the current test file,
+# or `NULL` outside of a test run or without a snapshot reporter,
+# for example for a test run interactively.
+# testthat exports no function for that directory:
+# it is read from testthat's internal snapshot reporter,
+# and an error says so if that is not possible,
+# rather than silently skipping the check of the page count.
+pdf_snapshot_pages <- function(name) {
+  snapshotter <- getOption("testthat.snapshotter")
+  if (!testthat::is_testing() || is.null(snapshotter)) {
+    return(NULL)
+  }
+  if (
+    !rlang::is_string(snapshotter$snap_dir) ||
+      !rlang::is_string(snapshotter$file)
+  ) {
+    rlang::abort(c(
+      "Can't find the snapshot directory of the current test file.",
+      i = paste(
+        "The page count of a PDF snapshot is checked",
+        "with internals of testthat, which may have changed."
+      )
+    ))
+  }
+  files <- dir(file.path(snapshotter$snap_dir, snapshotter$file))
+  prefix <- paste0(name, "-")
+  rest <- substring(files, nchar(prefix) + 1)
+  files[startsWith(files, prefix) & grepl("^page-[0-9]+[.]png$", rest)]
 }
 
 announce_pdf_snapshot <- function(name) {
