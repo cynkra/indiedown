@@ -1085,11 +1085,14 @@ test_that("pdf_snapshot_pages() lists the page snapshots of a name", {
 })
 
 test_that("pdf_snapshot_pages() fails if the snapshot directory is unknown", {
-  withr::local_options(testthat.snapshotter = NULL)
-  expect_error(pdf_snapshot_pages("doc"), "snapshot directory")
-
   withr::local_options(testthat.snapshotter = list(snap_dir = "_snaps"))
+  expect_error(pdf_snapshot_pages("doc"), "snapshot directory")
   expect_error(pdf_snapshot_pages("doc"), "internals of testthat")
+
+  # Without a snapshot reporter, as in a test run interactively,
+  # there is nothing to check
+  withr::local_options(testthat.snapshotter = NULL)
+  expect_null(pdf_snapshot_pages("doc"))
 
   # Outside of a test run, there is nothing to check
   withr::local_envvar(TESTTHAT = "false")

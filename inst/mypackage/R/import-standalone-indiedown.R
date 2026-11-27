@@ -1544,7 +1544,12 @@ default <- function(x, default = "") {
 # The page snapshots are looked up in the snapshot directory of the test file
 # that testthat uses while it runs the tests,
 # and an error is thrown if that directory cannot be determined.
+# A test run interactively, without testthat's snapshot reporter,
+# does not check the page count, like `expect_snapshot_file()`.
 # To accept a new page count, delete the snapshot files of `name`.
+# After a change of the page count, a `.new.png` file of a page that is
+# no longer compared may be left over, and a page that is new
+# gets no `.new.png` file: delete the snapshot files and run the tests again.
 #
 # Pixel-exact comparisons are only stable on a fixed toolchain,
 # so `skip_if_no_pdf_snapshot()` skips on systems other than Linux.
@@ -1887,16 +1892,17 @@ plot_font_files <- function(dir) {
 
 # The file names of the page snapshots of `name`
 # in the snapshot directory of the current test file,
-# or `NULL` outside of a test run.
+# or `NULL` outside of a test run or without a snapshot reporter,
+# for example for a test run interactively.
 # testthat exports no function for that directory:
 # it is read from testthat's internal snapshot reporter,
 # and an error says so if that is not possible,
 # rather than silently skipping the check of the page count.
 pdf_snapshot_pages <- function(name) {
-  if (!testthat::is_testing()) {
+  snapshotter <- getOption("testthat.snapshotter")
+  if (!testthat::is_testing() || is.null(snapshotter)) {
     return(NULL)
   }
-  snapshotter <- getOption("testthat.snapshotter")
   if (
     !rlang::is_string(snapshotter$snap_dir) ||
       !rlang::is_string(snapshotter$file)
