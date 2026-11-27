@@ -42,6 +42,11 @@
 #   A named font file is not looked up in the folder of the option
 #   `<package>.font_path`: it must be in the folder of the document
 #   or in the TeX installation, or have its folder in `Path=`.
+# * A named font that is not a font file, with a face that is a font file,
+#   is used as named only if its other faces are found by name,
+#   because fontspec loads them by name.
+#   A named font file is used as named, as before:
+#   fontspec loads all its faces as files, with the extension of the font.
 # * The font lookup is simpler.
 #   The preferred font is looked up as font files named after its fonts,
 #   such as `<PostScript name>.otf` or `.ttf`, in the folder of the option
@@ -50,8 +55,7 @@
 #   Otherwise, it is used by name if `fc-list` lists all its fonts.
 #   A font named in the document or in the option `<package>.mainfont`
 #   is looked up in the same way; it is used as named if its options set `Path=`,
-#   if it or a face that they name is a font file
-#   and its other faces are not missing,
+#   if it or a face that they name is a font file,
 #   or if it is not found as font files and `fc-list` is not available.
 #   A font file named with a folder counts as missing,
 #   because fontspec takes its folder only from `Path=`.
@@ -493,7 +497,10 @@ resolve_fonts <- function(
 # for LuaLaTeX, luaotfload-tool is not available,
 # and where fontspec looks up the fonts itself, with a `Path=` option
 # or for a font file, which fc-list does not list.
-# The other faces next to a font file are still looked up by name.
+# If the font is a name, fontspec loads the faces named as font files
+# as files and the others by name, so these are still looked up by name.
+# If the font is a font file, fontspec loads all faces as files,
+# with the extension of the font, so the lookup cannot tell.
 # A font file named with a folder is missing,
 # because fontspec fails on it and takes the folder only from `Path=`.
 find_font <- function(
@@ -512,9 +519,14 @@ find_font <- function(
     return(NULL)
   }
   if (any(is_file)) {
-    # fontspec looks up the font files itself, but not the other faces
+    # fontspec looks up the font files itself;
+    # with a font file as the main font, it loads the other faces as files too
     rest <- faces[!is_file]
-    if (length(rest) > 0 && isFALSE(found_by_name(rest, installed, engine))) {
+    if (
+      !is_file[[1]] &&
+        length(rest) > 0 &&
+        isFALSE(found_by_name(rest, installed, engine))
+    ) {
       return(NULL)
     }
     return(unknown)
@@ -813,9 +825,12 @@ font_install_hint <- function(
       },
       Darwin = paste0(
         if (!fc_list) {
-          paste(
-            "install fontconfig, e.g. with `brew install fontconfig`,",
-            "for `fc-list` to find installed fonts,\nand "
+          paste0(
+            "install fontconfig, e.g. with `brew install fontconfig`, ",
+            "for `fc-list` to find installed fonts,\n",
+            "make sure that `fc-list` is on R's `PATH` ",
+            "(R started from RStudio or R.app may lack `/opt/homebrew/bin`),\n",
+            "and "
           )
         },
         "open its font files and click \"Install\" in Font Book"

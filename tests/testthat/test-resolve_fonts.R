@@ -1167,6 +1167,17 @@ test_that("the faces next to a font file are looked up by name", {
   )
 })
 
+test_that("the faces of a font file are not looked up by name", {
+  # fontspec loads them as files, with the extension of the font
+  skeleton <- local_skeleton()
+  for (bold in c("BoldFont=*-Bold", "BoldFont=Some-Regular-Bold")) {
+    named <- list(mainfont = "Some-Regular.ttf", mainfontoptions = bold)
+    expect_silent(
+      expect_identical(skeleton$resolve_fonts(named, defaults), named)
+    )
+  }
+})
+
 test_that("on Windows, the message asks to install a named font for all users", {
   skeleton <- local_skeleton()
   skeleton$installed_font_names <- function() character()
@@ -1199,6 +1210,8 @@ test_that("on macOS without fc-list, the message asks for fontconfig", {
     paste0(
       "To use it, install fontconfig, e.g. with `brew install fontconfig`, ",
       "for `fc-list` to find installed fonts,\n",
+      "make sure that `fc-list` is on R's `PATH` ",
+      "(R started from RStudio or R.app may lack `/opt/homebrew/bin`),\n",
       'and open its font files and click "Install" in Font Book'
     ),
     fixed = TRUE

@@ -31,6 +31,8 @@ for a font file, or with a \verb{Path=} option.
 Give a font file by its name only, and put it in the folder of the document
 or in the TeX installation, or give its folder as \verb{Path=} in \code{mainfontoptions}:
 it is not looked up in the folder of the option \code{mypackage.font_path}.
+With a font file, fontspec loads the faces that \code{mainfontoptions} name,
+such as \verb{BoldFont=*-Bold}, as font files with the same extension.
 Otherwise, the format's preferred font
 is used if it is set in \code{default.yaml} and found,
 and the font that ships with the package if not.
