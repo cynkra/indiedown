@@ -50,7 +50,8 @@
 #   is used as named only if its other faces are found by name,
 #   because fontspec loads them by name.
 #   A named font file, or a named font whose options set `Extension=`,
-#   is used as named: fontspec loads all its faces as files.
+#   is used as named: fontspec loads all its faces as files,
+#   unless the font itself is named with a folder.
 #   A face that is a font file with a folder no longer counts as missing:
 #   fontspec loads it relative to the folder where LaTeX runs.
 # * The font lookup is simpler.
@@ -505,7 +506,7 @@ resolve_fonts <- function(
 # fontspec loads all faces as files, so the lookup cannot tell.
 # Otherwise, fontspec loads the faces named as font files as files,
 # also with a folder, and the others by name, which are still looked up.
-# A font file with a folder as the font itself is missing,
+# A font file with a folder as the font itself is missing, also with `Extension=`,
 # because fontspec fails on it: give its folder as `Path=` instead.
 find_font <- function(
   font,
@@ -515,7 +516,15 @@ find_font <- function(
   installed = installed_font_names()
 ) {
   faces <- font_faces(font$mainfont, font$mainfontoptions)
-  if (any(grepl("^\\s*(Path|Extension)\\s*=", font$mainfontoptions))) {
+  options <- font$mainfontoptions
+  if (any(grepl("^\\s*Path\\s*=", options))) {
+    return(unknown)
+  }
+  if (any(grepl("^\\s*Extension\\s*=", options))) {
+    # a font file in effect: fontspec fails on a folder in its name
+    if (basename(faces[[1]]) != faces[[1]]) {
+      return(NULL)
+    }
     return(unknown)
   }
   is_file <- is_font_file(faces)

@@ -1142,6 +1142,14 @@ test_that("with `Extension=`, the faces are not looked up", {
   expect_silent(
     expect_identical(skeleton$resolve_fonts(named, defaults), named)
   )
+
+  # but the font itself with a folder is missing, as for a font file
+  named$mainfont <- "fonts/Some-Regular"
+  expect_message(
+    fonts <- skeleton$resolve_fonts(named, defaults),
+    "was not found"
+  )
+  expect_false(identical(fonts$mainfont, named$mainfont))
 })
 
 test_that("the faces next to a font file are looked up by name", {
