@@ -64,6 +64,10 @@
 #   When updating this file, add them to `Suggests:` of the template package:
 #   R CMD check warns about an undeclared sysfonts otherwise,
 #   and the PDF snapshot tests are skipped where they are not installed.
+# * `apply_default_yaml()` reads `header-includes` from its `metadata` argument,
+#   the metadata after knitting, instead of from `rmarkdown::metadata`:
+#   inline R code in `header-includes` is evaluated
+#   instead of reaching LaTeX verbatim.
 # * `expect_pdf_snapshot()` fails if the number of pages differs
 #   from the number of page snapshots,
 #   instead of deleting the snapshots of surplus pages
@@ -316,13 +320,13 @@ apply_default_yaml <- function(metadata) {
   # pandoc ignores 'header-includes' if includes$in_header is specified
   # https://github.com/jgm/pandoc/issues/3139
   # we can still use `header-includes` by passing it as a command line option to pandoc
-  if (!is.null(rmarkdown::metadata$`header-includes`)) {
+  if (!is.null(metadata$`header-includes`)) {
     args <- c(
       args,
       "--variable",
       paste0(
         "header-includes:",
-        paste(rmarkdown::metadata$`header-includes`, collapse = "\n")
+        paste(metadata$`header-includes`, collapse = "\n")
       )
     )
   }
