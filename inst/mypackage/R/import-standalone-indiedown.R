@@ -64,6 +64,8 @@
 #   When updating this file, add them to `Suggests:` of the template package:
 #   R CMD check warns about an undeclared sysfonts otherwise,
 #   and the PDF snapshot tests are skipped where they are not installed.
+# * `apply_default_yaml()` reads `header-includes` from its `metadata` argument,
+#   the metadata after knitting, instead of from `rmarkdown::metadata`.
 #
 # 2026-11-03:
 # * `get_indiedown_option()` reads the option `<package>.<name>`
@@ -152,9 +154,6 @@
 #   instead of saying that it was not found.
 # * The message about a missing font is shown once per session for each text,
 #   so that changed advice is shown again.
-# * `apply_default_yaml()` reads `header-includes` from its `metadata` argument,
-#   the metadata after knitting, instead of from `rmarkdown::metadata`.
-# * The example of `indiedown_glue()` no longer uses a raw string.
 #
 # 2026-11-01:
 # * `apply_default_yaml()` chooses the main font with `resolve_fonts()`:
@@ -1450,7 +1449,7 @@ sanitize_tex <- function(path) {
 #' @eval standalone_indiedown_export()
 #' @examples
 #' x <- "something"
-#' indiedown_glue("\\LaTeX\\ code with <<x>> substituted ")
+#' indiedown_glue(r"(\LaTeX\ code with <<x>> substituted )")
 #'
 indiedown_glue <- function(x, .open = "<<", .close = ">>") {
   ans <- glue::glue(x, .envir = sys.frame(-1), .open = .open, .close = .close)

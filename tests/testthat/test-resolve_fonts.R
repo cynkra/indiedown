@@ -511,13 +511,17 @@ test_that("header-includes are taken from the knitted document", {
     ),
     input
   )
-  # LaTeX output without running LaTeX
-  format <- rmarkdown::output_format(
-    knitr = NULL,
-    pandoc = NULL,
-    pre_processor = skeleton$pre_processor_basic,
-    base_format = rmarkdown::latex_document()
+  # LaTeX output without running LaTeX.
+  # As in the template's format, the pre-processor replaces rmarkdown's,
+  # which would add `header-includes` itself,
+  # and an `in_header` file makes pandoc ignore `header-includes`
+  # (https://github.com/jgm/pandoc/issues/3139).
+  in_header <- file.path(dir, "in-header.tex")
+  writeLines("% in_header", in_header)
+  format <- rmarkdown::latex_document(
+    includes = rmarkdown::includes(in_header = in_header)
   )
+  format$pre_processor <- skeleton$pre_processor_basic
   output <- rmarkdown::render(
     input,
     output_format = format,
@@ -526,7 +530,7 @@ test_that("header-includes are taken from the knitted document", {
   )
 
   tex <- readLines(output)
-  expect_true("\\newcommand{\\knitted}{2}" %in% tex)
+  expect_equal(sum(tex == "\\newcommand{\\knitted}{2}"), 1)
   expect_false(any(grepl("`r ", tex, fixed = TRUE)))
 })
 
