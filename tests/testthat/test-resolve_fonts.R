@@ -918,7 +918,9 @@ test_that("the message names the missing faces of the preferred font", {
 test_that("a package path that breaks the YAML fails with an error", {
   skeleton <- local_skeleton()
   real_path <- skeleton$indiedown_path
-  bad <- file.path(withr::local_tempdir(), "lib #1", "R: x")
+  # `: ` breaks the YAML too, but is not allowed in folder names on Windows;
+  # the `~` checks that the message shows the path unescaped for LaTeX
+  bad <- file.path(withr::local_tempdir(), "lib~ #1")
   dir.create(bad, recursive = TRUE)
   stopifnot(file.copy(
     list.files(real_path(), full.names = TRUE),
@@ -930,7 +932,7 @@ test_that("a package path that breaks the YAML fails with an error", {
 
   expect_error(
     skeleton$apply_default_yaml(list()),
-    paste0('The package path "', bad, '" contains " #" and ": "'),
+    paste0('The package path "', bad, '" contains " #"'),
     fixed = TRUE
   )
 
