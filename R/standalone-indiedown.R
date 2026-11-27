@@ -513,6 +513,8 @@ installed_font_names <- function() {
 # as `Font "<name>" found!`.
 # Like LuaLaTeX, it updates its database for a font that it does not find,
 # and builds the database on the first run.
+# `--no-reload` would skip the update,
+# but then miss a font installed since the last update that LuaLaTeX finds.
 luaotfload_finds <- function(fonts) {
   tool <- Sys.which("luaotfload-tool")
   if (!nzchar(tool)) {

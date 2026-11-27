@@ -119,6 +119,8 @@
 #'   It is used where it is found,
 #'   and the downloaded font everywhere else.
 #'   Its fonts are found by name with `fc-list`,
+#'   with LuaLaTeX also with `luaotfload-tool`,
+#'   which finds the fonts of the TeX installation too,
 #'   or as font files named after them, such as `CorporateSans-Medium.otf`,
 #'   in the folder of the fonts installed for the current user on Windows,
 #'   which LaTeX does not see,

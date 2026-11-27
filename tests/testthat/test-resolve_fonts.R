@@ -300,6 +300,7 @@ test_that("LuaLaTeX finds a font of the TeX installation that fc-list does not l
   expect_identical(fonts, named)
 
   # with XeLaTeX, fc-list decides
+  skip_if(!nzchar(Sys.which("fc-list")), "fc-list not available")
   expect_message(
     fonts <- skeleton$resolve_fonts(named, defaults, engine = "xelatex"),
     'Font "Latin Modern Roman"',
