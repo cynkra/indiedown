@@ -1,7 +1,7 @@
 # ---
 # repo: cynkra/indiedown
 # file: standalone-indiedown.R
-# last-updated: 2026-11-03
+# last-updated: 2026-11-27
 # license: https://github.com/cynkra/indiedown/blob/main/LICENSE.md
 # imports: [glue, knitr (>= 1.12), rlang (>= 1.0.0), rmarkdown, utils, withr, yaml]
 # ---
@@ -45,6 +45,23 @@
 # A template package can exclude the file with a `.covrignore` file.
 #
 # ## Changelog
+#
+# 2026-11-27:
+# * `expect_pdf_snapshot()` draws the text of plots with showtext
+#   in the fonts that the template bundles,
+#   so that the snapshots do not depend on the fonts of the system.
+#   The font files are matched to the faces by the style in their file names,
+#   the faces are taken from one family,
+#   and without bundled fonts the default font of sysfonts is used.
+#   Each call registers its fonts anew and undoes the registration when it returns.
+#   Regular documents are not affected: no template sets a graphics device.
+# * The snapshot helpers need the packages showtext and sysfonts.
+#   When updating this file, add them to `Suggests:` of the template package:
+#   R CMD check warns about an undeclared sysfonts otherwise,
+#   and the PDF snapshot tests are skipped where they are not installed.
+# * `expect_pdf_snapshot()` fails if the number of pages differs
+#   from the number of page snapshots,
+#   instead of deleting the snapshots of surplus pages.
 #
 # 2026-11-03:
 # * `get_indiedown_option()` reads the option `<package>.<name>`
@@ -133,16 +150,8 @@
 #   instead of saying that it was not found.
 # * The message about a missing font is shown once per session for each text,
 #   so that changed advice is shown again.
-# * `expect_pdf_snapshot()` fails if the number of pages differs
-#   from the number of page snapshots,
-#   instead of deleting the snapshots of surplus pages.
 #
 # 2026-11-01:
-# * `expect_pdf_snapshot()` draws the text of plots with showtext
-#   in the fonts that the template bundles,
-#   so that the snapshots do not depend on the fonts of the system.
-#   This needs the packages showtext and sysfonts in `Suggests`.
-#   Regular documents are not affected: no template sets a graphics device.
 # * `apply_default_yaml()` chooses the main font with `resolve_fonts()`:
 #   a font named in the document or in the option `<package>.mainfont`,
 #   then `preferredmainfont` from `default.yaml`, if installed,
@@ -1555,12 +1564,20 @@ default <- function(x, default = "") {
 # with `sysfonts::font_add()` as the font family `""`,
 # the family that base graphics and ggplot2 use by default,
 # for example with `base_family = ""`.
-# The font files are matched to the regular, bold, italic,
-# and bold italic face by the words `bold`, `italic`, and `oblique`
-# in their names.
+# The font files are matched to the faces by the style at the end of their
+# file names, such as `Regular`, `Bold`, `It`, `Light Italic` or `BoldOblique`,
+# after a `-`, `_` or space, glued to the family in CamelCase,
+# or as the whole name, such as `bolditalic.ttf`.
+# The rest of the name is the family, such as `Font` in `Font-BoldItalic.ttf`.
+# The regular face is the upright file whose weight is closest to regular,
+# preferring static fonts to variable fonts, such as `Font[wght].ttf`.
+# The bold, italic and bold italic faces are taken from the same family
+# in the same folder.
+# A face that the family lacks is drawn with the regular face.
+# Without font files, Liberation Sans, the default font of sysfonts, is used.
 # Plot text that names another family, such as `sans`,
 # is drawn with the default font of the sysfonts package.
-# The registration lasts for the R session, it is not undone.
+# The registration is undone when `expect_pdf_snapshot()` returns.
 # The template itself sets no graphics device and no plot font:
 # the fonts of plots in regular documents are up to their authors.
 #
@@ -1756,15 +1773,27 @@ has_latex <- function() {
 # The option is a default of knitr's chunk options, a chunk can override it.
 local_showtext <- function(fonts, .local_envir = parent.frame()) {
   files <- plot_font_files(fonts)
-  if (!is.null(files)) {
-    sysfonts::font_add(
-      "",
-      files$regular,
-      files$bold,
-      files$italic,
-      files$bolditalic
-    )
+  if (is.null(files)) {
+    # Liberation Sans, the default font of sysfonts
+    faces <- c("Regular", "Bold", "Italic", "BoldItalic")
+    files <- as.list(file.path(
+      system.file("fonts", package = "sysfonts"),
+      paste0("LiberationSans-", faces, ".ttf")
+    ))
+    names(files) <- c("regular", "bold", "italic", "bolditalic")
   }
+
+  # sysfonts cannot replace or remove a family:
+  # `font_add()` appends another family `""`, and showtext uses the first one.
+  # The families live in sysfonts' environment, where showtext reads them,
+  # so they are restored when the calling function ends,
+  # and an earlier family `""` is dropped before registering the new one.
+  env <- get(".pkg.env", envir = asNamespace("sysfonts"))
+  old <- mget(c(".font.list", ".font.list.all"), envir = env)
+  withr::defer(list2env(old, envir = env), envir = .local_envir)
+  env$.font.list <- old$.font.list[names(old$.font.list) != ""]
+  do.call(sysfonts::font_add, c(family = "", files))
+
   options <- knitr::opts_chunk$get()
   withr::defer(knitr::opts_chunk$restore(options), envir = .local_envir)
   knitr::opts_chunk$set(fig.showtext = TRUE)
@@ -1772,25 +1801,82 @@ local_showtext <- function(fonts, .local_envir = parent.frame()) {
 }
 
 # The paths of the font files of the four faces in a directory,
-# or `NULL` if it has no font files.
+# or `NULL` if it has no font files, see "Fonts" above.
 # A missing face is `NULL`, which sysfonts replaces by the regular face.
 plot_font_files <- function(dir) {
   files <- font_files(dir)
   if (length(files) == 0) {
     return(NULL)
   }
-  names <- tolower(files)
-  bold <- grepl("bold", names)
-  italic <- grepl("italic|oblique", names)
-  face <- function(is_face, default = NULL) {
-    if (any(is_face)) file.path(dir, files[is_face][[1]]) else default
+
+  # Variable fonts: `Font[wght].ttf` or `Font-VariableFont_wght.ttf`
+  name <- sub("[.][^.]*$", "", basename(files))
+  suffix <- "([[].*[]]|[-_]variablefont.*)$"
+  variable <- grepl(suffix, name, ignore.case = TRUE)
+  name <- sub(suffix, "", name, ignore.case = TRUE)
+
+  # The style is a weight and a slant at the end of the name,
+  # after a `-`, `_` or space, or glued to the family in CamelCase,
+  # or the whole name
+  weights <- c(
+    thin = 100,
+    hairline = 100,
+    extralight = 200,
+    ultralight = 200,
+    light = 300,
+    book = 400,
+    regular = 400,
+    normal = 400,
+    roman = 400,
+    medium = 500,
+    semibold = 600,
+    demibold = 600,
+    bold = 700,
+    extrabold = 800,
+    ultrabold = 800,
+    black = 900,
+    heavy = 900
+  )
+  slants <- "italic|oblique|it"
+  pattern <- paste0(
+    "^(.*?)(?:[-_ ]+|(?<=[a-z0-9])(?=[A-Z])|^)",
+    "((?i)(?:",
+    paste(names(weights), collapse = "|"),
+    ")?(?:[-_ ]?(?:",
+    slants,
+    "))?)$"
+  )
+  parts <- regmatches(name, regexec(pattern, name, perl = TRUE))
+  styled <- lengths(parts) == 3 & vapply(parts, function(x) x[3] != "", NA)
+  family <- ifelse(styled, vapply(parts, `[`, "", 2), name)
+  style <- ifelse(
+    styled,
+    gsub("[-_ ]", "", tolower(vapply(parts, `[`, "", 3))),
+    ""
+  )
+  slant <- paste0("(", slants, ")$")
+  italic <- grepl(slant, style)
+  weight <- unname(weights[sub(slant, "", style)])
+  weight[is.na(weight)] <- 400
+  family <- file.path(dirname(files), tolower(family))
+
+  # Upright before italic, the weight closest to regular,
+  # a named style before none, static before variable
+  ranked <- order(italic, abs(weight - 400), !styled, variable)
+  regular <- ranked[[1]]
+  face <- function(is_italic, is_weight) {
+    i <- ranked[
+      family[ranked] == family[[regular]] &
+        italic[ranked] == is_italic &
+        weight[ranked] == is_weight
+    ]
+    if (length(i) > 0) file.path(dir, files[[i[[1]]]])
   }
-  regular <- face(!bold & !italic, file.path(dir, files[[1]]))
   list(
-    regular = regular,
-    bold = face(bold & !italic),
-    italic = face(italic & !bold),
-    bolditalic = face(bold & italic)
+    regular = file.path(dir, files[[regular]]),
+    bold = face(FALSE, 700),
+    italic = face(TRUE, 400),
+    bolditalic = face(TRUE, 700)
   )
 }
 
