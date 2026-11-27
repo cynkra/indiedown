@@ -1,5 +1,13 @@
 # Changelog
 
+## indiedown 0.1.1.9063
+
+### Features
+
+- Load the preferred font from its font files, also when installed for
+  the current user
+  ([\#143](https://github.com/cynkra/indiedown/issues/143)).
+
 ## indiedown 0.1.1.9062
 
 ### Features
