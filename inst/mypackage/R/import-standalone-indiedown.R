@@ -1545,8 +1545,6 @@ package_version_or_na <- function(package) {
   }
 }
 
-# The lines of the output of a command, or NA if it fails
-
 # The family that `grDevices::pdf()` names for its sans font, which poppler
 # replaces by the font that fontconfig offers for it (see "Fonts").
 # Looked up with getExportedValue(), so that template packages need not
@@ -1555,6 +1553,7 @@ pdf_sans_family <- function() {
   getExportedValue("grDevices", "pdfFonts")("sans")$sans$family
 }
 
+# The lines of the output of a command, or NA if it fails
 run_command <- function(command, args, stderr = FALSE) {
   if (!nzchar(Sys.which(command))) {
     return(NA_character_)
