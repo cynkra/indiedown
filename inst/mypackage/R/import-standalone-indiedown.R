@@ -6,7 +6,7 @@
 # ---
 # repo: cynkra/indiedown
 # file: standalone-indiedown.R
-# last-updated: 2026-11-03
+# last-updated: 2026-11-27
 # license: https://github.com/cynkra/indiedown/blob/main/LICENSE.md
 # imports: [glue, knitr (>= 1.12), rlang (>= 1.0.0), rmarkdown, utils, withr, yaml]
 # ---
@@ -41,8 +41,8 @@
 # The snapshot helpers `expect_pdf_snapshot()` and `skip_if_no_pdf_snapshot()`
 # at the end of the file are for the tests of a template package.
 # They are internal, call them from the tests without a prefix.
-# They need the packages testthat, pdftools, callr, and tinytex,
-# and png for the `tolerance` argument.
+# They need the packages testthat, pdftools, callr, tinytex, showtext,
+# and sysfonts, and png for the `tolerance` argument.
 # These are not in `imports:` above, because they are only used in tests:
 # list them in the `Suggests:` field of the template package.
 # The snapshot helpers are not excluded from coverage in this file,
@@ -50,6 +50,20 @@
 # A template package can exclude the file with a `.covrignore` file.
 #
 # ## Changelog
+#
+# 2026-11-27:
+# * `expect_pdf_snapshot()` draws the text of plots with showtext
+#   in the fonts that the template bundles,
+#   so that the snapshots do not depend on the fonts of the system.
+#   The font files are matched to the faces by the style in their file names,
+#   the faces are taken from one family,
+#   and without bundled fonts the default font of sysfonts is used.
+#   Each call registers its fonts anew and undoes the registration when it returns.
+#   Regular documents are not affected: no template sets a graphics device.
+# * The snapshot helpers need the packages showtext and sysfonts.
+#   When updating this file, add them to `Suggests:` of the template package:
+#   R CMD check warns about an undeclared sysfonts otherwise,
+#   and the PDF snapshot tests are skipped where they are not installed.
 #
 # 2026-11-03:
 # * `get_indiedown_option()` reads the option `<package>.<name>`
@@ -1486,7 +1500,7 @@ default <- function(x, default = "") {
 # `skip_if_no_pdf_snapshot()` skips the current test
 # where PDF snapshots cannot be taken:
 # on CRAN, on systems other than Linux,
-# and without rmarkdown, pdftools, callr, pandoc, or LaTeX.
+# and without rmarkdown, pdftools, callr, showtext, sysfonts, pandoc, or LaTeX.
 # `expect_pdf_snapshot()` calls it before rendering.
 #
 # Arguments:
@@ -1537,14 +1551,41 @@ default <- function(x, default = "") {
 #
 # ## Fonts
 #
-# R's `grDevices::pdf()` device does not embed the fonts of a plot,
-# it refers to Helvetica by name.
-# poppler substitutes the font that fontconfig offers for Helvetica,
-# so the rasterized plot text depends on the fonts installed on the system.
+# R's `grDevices::pdf()` device, the default device of the knitr chunks,
+# does not embed the fonts of a plot, it refers to a standard font by name.
+# poppler substitutes the font that fontconfig offers for that name,
+# so the rasterized plot text would depend on the fonts of the system.
+# `expect_pdf_snapshot()` therefore sets the chunk option `fig.showtext = TRUE`
+# while it renders the document, and only then,
+# so that the showtext package draws the text of plots as outlines.
+# It registers the font files that the template bundles in `fonts`
+# with `sysfonts::font_add()` as the font family `""`,
+# the family that base graphics and ggplot2 use by default,
+# for example with `base_family = ""`.
+# The font files are matched to the faces by the style at the end of their
+# file names, such as `Regular`, `Bold`, `It`, `Light Italic` or `BoldOblique`,
+# after a `-`, `_` or space, glued to the family in CamelCase,
+# or as the whole name, such as `bolditalic.ttf`.
+# The rest of the name is the family, such as `Font` in `Font-BoldItalic.ttf`.
+# The regular face is the upright file whose weight is closest to regular,
+# preferring static fonts to variable fonts, such as `Font[wght].ttf`.
+# The bold, italic and bold italic faces are taken from the same family
+# in the same folder.
+# A face that the family lacks is drawn with the regular face.
+# Without font files, Liberation Sans, the default font of sysfonts, is used.
+# Plot text that names another family, such as `sans`,
+# is drawn with the default font of the sysfonts package.
+# The registration is undone when `expect_pdf_snapshot()` returns.
+# The template itself sets no graphics device and no plot font:
+# the fonts of plots in regular documents are up to their authors.
+#
+# The text of the document is set by LaTeX,
+# which finds the main font through fontconfig.
 # Unless `system_fonts = TRUE`,
-# `expect_pdf_snapshot()` therefore lets fontconfig see
+# `expect_pdf_snapshot()` lets fontconfig see
 # only the fonts that the template bundles in `fonts`
-# while the document is rendered and rasterized.
+# while the document is rendered and rasterized,
+# so that a font installed on the system does not replace the bundled one.
 # If the template bundles no fonts,
 # Latin Modern Sans from the LaTeX installation is the fixed fallback.
 # The pages are rasterized in a separate R process,
@@ -1610,6 +1651,7 @@ expect_pdf_snapshot <- function(
 
   input <- file.path(dir, paste0(name, ".Rmd"))
   writeLines(rmd, input)
+  local_showtext(fonts)
   pdf <- rmarkdown::render(
     input,
     output_dir = dir,
@@ -1649,6 +1691,8 @@ skip_if_no_pdf_snapshot <- function() {
   testthat::skip_if_not_installed("rmarkdown")
   testthat::skip_if_not_installed("pdftools")
   testthat::skip_if_not_installed("callr")
+  testthat::skip_if_not_installed("showtext")
+  testthat::skip_if_not_installed("sysfonts")
   testthat::skip_if_not(
     rmarkdown::pandoc_available(),
     "pandoc is not available"
@@ -1700,6 +1744,119 @@ is_linux <- function() {
 has_latex <- function() {
   (rlang::is_installed("tinytex") && tinytex::is_tinytex()) ||
     any(nzchar(Sys.which(c("pdflatex", "xelatex", "lualatex"))))
+}
+
+# Draws the text of plots with showtext, see "Fonts" above:
+# registers the font files in `fonts` as the default font family,
+# and sets the chunk option `fig.showtext` until the calling function ends.
+# The option is a default of knitr's chunk options, a chunk can override it.
+local_showtext <- function(fonts, .local_envir = parent.frame()) {
+  files <- plot_font_files(fonts)
+  if (is.null(files)) {
+    # Liberation Sans, the default font of sysfonts
+    faces <- c("Regular", "Bold", "Italic", "BoldItalic")
+    files <- as.list(file.path(
+      system.file("fonts", package = "sysfonts"),
+      paste0("LiberationSans-", faces, ".ttf")
+    ))
+    names(files) <- c("regular", "bold", "italic", "bolditalic")
+  }
+
+  # sysfonts cannot replace or remove a family:
+  # `font_add()` appends another family `""`, and showtext uses the first one.
+  # The families live in sysfonts' environment, where showtext reads them,
+  # so they are restored when the calling function ends,
+  # and an earlier family `""` is dropped before registering the new one.
+  env <- get(".pkg.env", envir = asNamespace("sysfonts"))
+  old <- mget(c(".font.list", ".font.list.all"), envir = env)
+  withr::defer(list2env(old, envir = env), envir = .local_envir)
+  env$.font.list <- old$.font.list[names(old$.font.list) != ""]
+  do.call(sysfonts::font_add, c(family = "", files))
+
+  options <- knitr::opts_chunk$get()
+  withr::defer(knitr::opts_chunk$restore(options), envir = .local_envir)
+  knitr::opts_chunk$set(fig.showtext = TRUE)
+  invisible()
+}
+
+# The paths of the font files of the four faces in a directory,
+# or `NULL` if it has no font files, see "Fonts" above.
+# A missing face is `NULL`, which sysfonts replaces by the regular face.
+plot_font_files <- function(dir) {
+  files <- font_files(dir)
+  if (length(files) == 0) {
+    return(NULL)
+  }
+
+  # Variable fonts: `Font[wght].ttf` or `Font-VariableFont_wght.ttf`
+  name <- sub("[.][^.]*$", "", basename(files))
+  suffix <- "([[].*[]]|[-_]variablefont.*)$"
+  variable <- grepl(suffix, name, ignore.case = TRUE)
+  name <- sub(suffix, "", name, ignore.case = TRUE)
+
+  # The style is a weight and a slant at the end of the name,
+  # after a `-`, `_` or space, or glued to the family in CamelCase,
+  # or the whole name
+  weights <- c(
+    thin = 100,
+    hairline = 100,
+    extralight = 200,
+    ultralight = 200,
+    light = 300,
+    book = 400,
+    regular = 400,
+    normal = 400,
+    roman = 400,
+    medium = 500,
+    semibold = 600,
+    demibold = 600,
+    bold = 700,
+    extrabold = 800,
+    ultrabold = 800,
+    black = 900,
+    heavy = 900
+  )
+  slants <- "italic|oblique|it"
+  pattern <- paste0(
+    "^(.*?)(?:[-_ ]+|(?<=[a-z0-9])(?=[A-Z])|^)",
+    "((?i)(?:",
+    paste(names(weights), collapse = "|"),
+    ")?(?:[-_ ]?(?:",
+    slants,
+    "))?)$"
+  )
+  parts <- regmatches(name, regexec(pattern, name, perl = TRUE))
+  styled <- lengths(parts) == 3 & vapply(parts, function(x) x[3] != "", NA)
+  family <- ifelse(styled, vapply(parts, `[`, "", 2), name)
+  style <- ifelse(
+    styled,
+    gsub("[-_ ]", "", tolower(vapply(parts, `[`, "", 3))),
+    ""
+  )
+  slant <- paste0("(", slants, ")$")
+  italic <- grepl(slant, style)
+  weight <- unname(weights[sub(slant, "", style)])
+  weight[is.na(weight)] <- 400
+  family <- file.path(dirname(files), tolower(family))
+
+  # Upright before italic, the weight closest to regular,
+  # a named style before none, static before variable
+  ranked <- order(italic, abs(weight - 400), !styled, variable)
+  regular <- ranked[[1]]
+  face <- function(is_italic, is_weight) {
+    i <- ranked[
+      family[ranked] == family[[regular]] &
+        italic[ranked] == is_italic &
+        weight[ranked] == is_weight
+    ]
+    if (length(i) > 0) file.path(dir, files[[i[[1]]]])
+  }
+  list(
+    regular = file.path(dir, files[[regular]]),
+    bold = face(FALSE, 700),
+    italic = face(TRUE, 400),
+    bolditalic = face(TRUE, 700)
+  )
 }
 
 announce_pdf_snapshot <- function(name) {
@@ -1847,7 +2004,14 @@ pdf_snapshot_environment <- function(pdf, fonts = NULL, system_fonts = FALSE) {
   } else {
     NA_character_
   }
-  packages <- c("pdftools", "rmarkdown", "knitr", "tinytex")
+  packages <- c(
+    "pdftools",
+    "rmarkdown",
+    "knitr",
+    "tinytex",
+    "showtext",
+    "sysfonts"
+  )
   files <- font_files(fonts)
 
   c(

@@ -12,6 +12,8 @@ pdftools: 3.9.1
 rmarkdown: 2.32
 knitr: 1.52
 tinytex: 0.61
+showtext: 0.9.8
+sysfonts: 0.8.9
 system fonts: hidden
 fc-match Helvetica: regular.ttf: "Roboto" "Regular"
 font: bold.ttf 54e172a19cc9bd1eb67586a6002aa909
