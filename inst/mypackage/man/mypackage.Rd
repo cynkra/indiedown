@@ -20,8 +20,11 @@ R Markdown output format to pass to \code{\link[rmarkdown:render]{rmarkdown::ren
 
 A document can set the main font in the \code{mainfont} field of its YAML header,
 a user in the option \code{mypackage.mainfont}, e.g. in \code{.Rprofile}.
-The font can be the name of an installed font or a font file,
-and is used as named.
+The font can be the name of an installed font or a font file.
+It is looked up like the preferred font,
+and replaced by the format's fonts, with a message, if it is not found.
+It is used as named if the lookup cannot tell,
+e.g. without \code{fc-list}, for a font file, or with a \verb{Path=} option.
 Otherwise, the format's preferred font
 is used if it is set in \code{default.yaml} and found,
 and the font that ships with the package if not.

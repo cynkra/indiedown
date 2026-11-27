@@ -8,8 +8,11 @@
 #' @section Main font:
 #' A document can set the main font in the `mainfont` field of its YAML header,
 #' a user in the option `mypackage.mainfont`, e.g. in `.Rprofile`.
-#' The font can be the name of an installed font or a font file,
-#' and is used as named.
+#' The font can be the name of an installed font or a font file.
+#' It is looked up like the preferred font,
+#' and replaced by the format's fonts, with a message, if it is not found.
+#' It is used as named if the lookup cannot tell,
+#' e.g. without `fc-list`, for a font file, or with a `Path=` option.
 #' Otherwise, the format's preferred font
 #' is used if it is set in `default.yaml` and found,
 #' and the font that ships with the package if not.

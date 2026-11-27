@@ -25,7 +25,8 @@ fontsize: "11pt"
 # Fallback main font, shipped in inst/indiedown/fonts and loaded by path,
 # so that the output does not depend on the fonts installed on the system.
 # A document can name another font in its `mainfont` field,
-# a user in the option `mypackage.mainfont`, which is used as named.
+# a user in the option `mypackage.mainfont`,
+# which is looked up like the preferred font and replaced by this one if missing.
 mainfont: regular.ttf
 mainfontoptions:
 - Path=<<indiedown_path>>/fonts/

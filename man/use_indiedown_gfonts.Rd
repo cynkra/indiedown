@@ -138,7 +138,8 @@ to the name of an installed font or to the path of a font file.
 The \code{mainfontoptions} of \code{default.yaml} refer to the downloaded files
 and are not applied to that font;
 \code{mainfontoptions} in the YAML header are.
-The font is used as named.
+The font is looked up like a preferred font, see below,
+and replaced, with a message, if it is not found.
 The option \verb{<package>.mainfont}, e.g., \code{mydown.mainfont},
 names a font for all documents of a user.
 \item \strong{A font that cannot be shipped:}

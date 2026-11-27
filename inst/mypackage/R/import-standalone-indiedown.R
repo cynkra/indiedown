@@ -6,7 +6,7 @@
 # ---
 # repo: cynkra/indiedown
 # file: standalone-indiedown.R
-# last-updated: 2026-11-04
+# last-updated: 2026-11-08
 # license: https://github.com/cynkra/indiedown/blob/main/LICENSE.md
 # imports: [glue, knitr (>= 1.12), rlang (>= 1.0.0), rmarkdown, utils, withr, yaml]
 # ---
@@ -37,7 +37,7 @@
 #
 # ## Changelog
 #
-# 2026-11-04:
+# 2026-11-08:
 # * The font lookup is simpler.
 #   The preferred font is looked up as font files named after its fonts,
 #   such as `<PostScript name>.otf` or `.ttf`, in the folder of the option
@@ -45,8 +45,12 @@
 #   and loaded from them by path, with the faces that its options name.
 #   Otherwise, it is used by name if `fc-list` lists all its fonts.
 #   A font named in the document or in the option `<package>.mainfont`
-#   is used as named, without a lookup.
-#   The lookup no longer uses the systemfonts package,
+#   is looked up in the same way; it is used as named if its options set `Path=`,
+#   if it or a face that they name is a font file,
+#   or if it is not found as font files and `fc-list` is not available.
+#   A font file named with a folder counts as missing,
+#   because fontspec takes its folder only from `Path=`.
+#   The lookup no longer uses the systemfonts package or kpsewhich,
 #   searches the font folders of Linux and macOS, reads the names of fonts
 #   from their files, or takes faces that the options do not name from the family.
 #   `<<indiedown_path>>` in `default.yaml` is replaced before the YAML is read again,
@@ -233,7 +237,8 @@ apply_default_yaml <- function(metadata) {
 # The main font is the first of:
 #
 # 1. the font named in the `mainfont` field of the document,
-#    or else in the option `<package>.mainfont`, used as named:
+#    or else in the option `<package>.mainfont`, if it is found,
+#    with the `mainfontoptions` of the document:
 #    the name of an installed font or a font file;
 # 2. the preferred font of the format, `preferredmainfont` in default.yaml,
 #    with `preferredmainfontoptions`, if it is found:
@@ -241,16 +246,9 @@ apply_default_yaml <- function(metadata) {
 # 3. the fallback font, `mainfont` in default.yaml, with `mainfontoptions`:
 #    typically font files shipped in inst/indiedown/fonts and loaded by path.
 #
-# The preferred font counts as found only if all fonts that it names,
-# in `preferredmainfont` and in options such as `BoldFont=`, are found.
-# They are looked up as font files named after them, see `find_font_files()`,
-# in the folder of the option `<package>.font_path`, for users who cannot
-# install fonts, and in the folder of `font_dirs()`.
-# If found there, the font is loaded from these files by path,
-# like the fallback font, with only the faces that its options name:
-# name all four faces, with `BoldFont=`, `ItalicFont=` and `BoldItalicFont=`.
-# Otherwise, it is loaded by name if fc-list lists all its fonts,
-# see `installed_font_names()`.
+# The named and the preferred font are looked up with `find_font()`.
+# A named font is used as named if there is no fallback font,
+# or if the lookup cannot tell whether it is installed.
 # For a missing font, a message explains how to make it available,
 # once per session for each text of the message;
 # the output format repeats it at the end of the render.
@@ -265,19 +263,8 @@ resolve_fonts <- function(
   mainfont = get_indiedown_option("mainfont"),
   font_path = get_indiedown_option("font_path")
 ) {
+  dirs <- c(font_path, font_dirs())
   options <- unlist(metadata[["mainfontoptions"]])
-
-  font <- metadata[["mainfont"]]
-  if (is.null(font)) {
-    font <- mainfont
-  }
-  if (!is.null(font)) {
-    return(Filter(
-      Negate(is.null),
-      list(mainfont = font, mainfontoptions = options)
-    ))
-  }
-
   fonts <- list(
     mainfont = defaults[["mainfont"]],
     mainfontoptions = unlist(defaults[["mainfontoptions"]])
@@ -286,28 +273,94 @@ resolve_fonts <- function(
     mainfont = defaults[["preferredmainfont"]],
     mainfontoptions = unlist(defaults[["preferredmainfontoptions"]])
   )
-  if (!is.null(preferred$mainfont)) {
-    faces <- font_faces(preferred$mainfont, preferred$mainfontoptions)
-    files <- find_font_files(faces, c(font_path, font_dirs()))
-    if (!is.null(files)) {
-      fonts <- font_from_files(preferred, files)
-    } else if (all(tolower(faces) %in% tolower(installed_font_names()))) {
-      fonts <- preferred
-    } else {
-      show_font_message(paste0(
-        "Preferred font \"",
-        preferred$mainfont,
-        "\" was not found, using \"",
-        fonts$mainfont,
-        "\" instead.\nTo use it, ",
-        font_install_hint(preferred$mainfont, font_path),
-        ".\n"
-      ))
+
+  font <- metadata[["mainfont"]]
+  origin <- "the `mainfont` field of the document"
+  if (is.null(font)) {
+    font <- mainfont
+    origin <- paste0("the option `", indiedown_option_name("mainfont"), "`")
+  }
+  missing <- NULL
+  if (!is.null(font)) {
+    named <- list(mainfont = font, mainfontoptions = options)
+    if (!is.null(fonts$mainfont)) {
+      named <- find_font(named, dirs, unknown = named)
     }
+    if (!is.null(named)) {
+      return(Filter(Negate(is.null), named))
+    }
+    missing <- paste0("Font \"", font, "\" from ", origin)
+    hint <- font_install_hint(font, font_path, named = TRUE)
+    # the options were meant for the missing font
+    options <- NULL
+  }
+
+  if (!is.null(preferred$mainfont)) {
+    found <- find_font(preferred, dirs)
+    if (!is.null(found)) {
+      fonts <- found
+    } else if (is.null(missing)) {
+      missing <- paste0("Preferred font \"", preferred$mainfont, "\"")
+      hint <- font_install_hint(preferred$mainfont, font_path)
+    }
+  }
+  if (!is.null(missing)) {
+    show_font_message(paste0(
+      missing,
+      " was not found, using \"",
+      fonts$mainfont,
+      "\" instead.\nTo use it, ",
+      hint,
+      ".\n"
+    ))
   }
 
   fonts$mainfontoptions <- c(fonts$mainfontoptions, options)
   Filter(Negate(is.null), fonts)
+}
+
+# `font`, a list with the pandoc variables `mainfont` and `mainfontoptions`,
+# if all fonts that it names, in `mainfont` and in options such as `BoldFont=`,
+# are found, or else NULL.
+# They are looked up as font files named after them, see `find_font_files()`,
+# in the folders `dirs`: the folder of the option `<package>.font_path`,
+# for users who cannot install fonts, and the folder of `font_dirs()`.
+# If found there, the font is loaded from these files by path,
+# like the fallback font, with only the faces that its options name:
+# name all four faces, with `BoldFont=`, `ItalicFont=` and `BoldItalicFont=`.
+# Otherwise, it is loaded by name if fc-list lists all its fonts,
+# see `installed_font_names()`.
+# Returns `unknown` where the lookup cannot tell: if fc-list is not available,
+# and where fontspec looks up the fonts itself, with a `Path=` option
+# or for a font file, which fc-list does not list.
+# A font file named with a folder is missing,
+# because fontspec fails on it and takes the folder only from `Path=`.
+find_font <- function(font, dirs, unknown = NULL) {
+  faces <- font_faces(font$mainfont, font$mainfontoptions)
+  if (any(grepl("^\\s*Path\\s*=", font$mainfontoptions))) {
+    return(unknown)
+  }
+  is_file <- is_font_file(faces)
+  if (any(is_file & basename(faces) != faces)) {
+    return(NULL)
+  }
+  if (any(is_file)) {
+    return(unknown)
+  }
+  files <- find_font_files(faces, dirs)
+  if (!is.null(files)) {
+    return(font_from_files(font, files))
+  }
+  names <- installed_font_names()
+  if (is.null(names)) {
+    return(unknown)
+  }
+  if (all(tolower(faces) %in% tolower(names))) font
+}
+
+# TRUE for a font named by its file, which fontspec tells by the extension
+is_font_file <- function(font) {
+  grepl("[.](otf|ttf|otc|ttc)$", font, ignore.case = TRUE)
 }
 
 # Shows the message about a missing font, once per session for each `text`
@@ -433,12 +486,23 @@ installed_font_names <- function() {
   trimws(unlist(strsplit(out, ",", fixed = TRUE)))
 }
 
-# How to make the missing preferred `font` available
+# How to make the missing `font` available: the preferred font,
+# or if `named`, the font named in the document or in the option.
+# On Windows, a named font installed for the current user is found
+# only if its font files are named after it,
+# so the message asks to install it for all users instead.
 font_install_hint <- function(
   font,
   font_path = NULL,
-  sysname = Sys.info()[["sysname"]]
+  sysname = Sys.info()[["sysname"]],
+  named = FALSE
 ) {
+  if (is_font_file(font)) {
+    return(paste(
+      "check the path, and give only the file name, with its folder",
+      "as `Path=` in `mainfontoptions`, relative to the folder of the document"
+    ))
+  }
   option <- indiedown_option_name("font_path")
   files <- paste0("its font files, named like \"", font, ".otf\" or \".ttf\"")
   if (!is.null(font_path)) {
@@ -454,10 +518,14 @@ font_install_hint <- function(
   paste0(
     switch(
       sysname,
-      Windows = paste(
-        "install its font files for the current user",
-        "(Settings > Personalization > Fonts, or right-click > Install)"
-      ),
+      Windows = if (named) {
+        "install its font files for all users (right-click > Install for all users)"
+      } else {
+        paste(
+          "install its font files for the current user",
+          "(Settings > Personalization > Fonts, or right-click > Install)"
+        )
+      },
       Darwin = "open its font files and click \"Install\" in Font Book",
       "copy its font files to ~/.local/share/fonts"
     ),
