@@ -717,14 +717,17 @@ test_that("write_fonts_conf() lets fontconfig see only the fonts", {
 })
 
 test_that("fontconfig offers only the fonts of the configuration", {
-  skip_if(is.na(run_command("fc-match", "Helvetica")[1]), "fc-match is missing")
+  skip_if(
+    is.na(run_command("fc-match", "sans-serif")[1]),
+    "fc-match is missing"
+  )
   fonts <- skeleton_fonts()
   skip_if(length(font_files(fonts)) == 0, "the skeleton fonts are missing")
 
   dir <- withr::local_tempdir()
   withr::local_envvar(FONTCONFIG_FILE = write_fonts_conf(fonts, dir))
 
-  file <- run_command("fc-match", c("-f", "%{file}", "Helvetica"))
+  file <- run_command("fc-match", c("-f", "%{file}", "sans-serif"))
   expect_true(basename(file) %in% font_files(fonts))
 })
 
@@ -788,7 +791,7 @@ test_that("the environment record lists the toolchain and the fonts", {
       "showtext",
       "sysfonts",
       "system fonts",
-      "fc-match Helvetica",
+      "fc-match sans-serif",
       "font",
       "font"
     )
@@ -1167,7 +1170,11 @@ test_that("expect_pdf_snapshot() renders, compares and tolerates", {
   expect_setequal(dir(snaps), c("doc-page-01.png", "doc-environment.txt"))
   record <- readLines(file.path(snaps, "doc-environment.txt"))
   expect_true("system fonts: hidden" %in% record)
-  expect_match(record, "^fc-match Helvetica: lmsans10-regular.otf", all = FALSE)
+  expect_match(
+    record,
+    "^fc-match sans-serif: lmsans10-regular.otf",
+    all = FALSE
+  )
 
   # Change one pixel of the snapshot
   page <- file.path(snaps, "doc-page-01.png")

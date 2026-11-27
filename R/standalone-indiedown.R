@@ -60,6 +60,8 @@
 #   the faces are taken from one family,
 #   and without bundled fonts the default font of sysfonts is used.
 #   Each call registers its fonts anew and undoes the registration when it returns.
+#   The record of the toolchain names the font that fontconfig offers
+#   for the generic family `sans-serif`.
 #   Regular documents are not affected: no template sets a graphics device.
 # * The snapshot helpers need the packages showtext and sysfonts.
 #   When updating this file, add them to `Suggests:` of the template package:
@@ -914,7 +916,7 @@ default <- function(x, default = "") {
 # and `report-environment.txt`, a record of the toolchain.
 # The record lists the versions of the operating system, R, pandoc, LaTeX,
 # poppler, fontconfig, FreeType, and the R packages involved,
-# the font that fontconfig offers for Helvetica,
+# the font that fontconfig offers for the generic family `sans-serif`,
 # and a hash of each font file that the template bundles,
 # or of the fallback fonts.
 # The record never fails a test:
@@ -1472,7 +1474,7 @@ pdf_snapshot_environment <- function(pdf, fonts = NULL, system_fonts = FALSE) {
     paste0("freetype: ", loaded_library("libfreetype")),
     paste0(packages, ": ", vapply(packages, package_version_or_na, "")),
     paste0("system fonts: ", if (system_fonts) "visible" else "hidden"),
-    paste0("fc-match Helvetica: ", run_command("fc-match", "Helvetica")[1]),
+    paste0("fc-match sans-serif: ", run_command("fc-match", "sans-serif")[1]),
     if (length(files) > 0) {
       paste0("font: ", files, " ", rlang::hash_file(file.path(fonts, files)))
     }
