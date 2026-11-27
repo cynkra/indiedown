@@ -1,5 +1,12 @@
 # Changelog
 
+## indiedown 0.1.1.9064
+
+### Continuous integration
+
+- Sync the workflows with cynkra/cynkratemplate
+  ([\#150](https://github.com/cynkra/indiedown/issues/150)).
+
 ## indiedown 0.1.1.9063
 
 ### Features
