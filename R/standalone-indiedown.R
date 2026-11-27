@@ -34,8 +34,7 @@
 #
 # 2026-11-27:
 # * `resolve_fonts()` runs `fc-list` at most once.
-#   The message about a missing named font asks to check the path
-#   also if a face option names a font file with a folder,
+#   The message about a missing named font
 #   names all folders of the option `<package>.font_path` if it holds several,
 #   instead of failing,
 #   and on macOS without `fc-list`, asks to install fontconfig.
@@ -45,8 +44,10 @@
 # * A named font that is not a font file, with a face that is a font file,
 #   is used as named only if its other faces are found by name,
 #   because fontspec loads them by name.
-#   A named font file is used as named, as before:
-#   fontspec loads all its faces as files, with the extension of the font.
+#   A named font file, or a named font whose options set `Extension=`,
+#   is used as named: fontspec loads all its faces as files.
+#   A face that is a font file with a folder no longer counts as missing:
+#   fontspec loads it relative to the folder where LaTeX runs.
 # * The font lookup is simpler.
 #   The preferred font is looked up as font files named after its fonts,
 #   such as `<PostScript name>.otf` or `.ttf`, in the folder of the option
@@ -55,10 +56,11 @@
 #   Otherwise, it is used by name if `fc-list` lists all its fonts.
 #   A font named in the document or in the option `<package>.mainfont`
 #   is looked up in the same way; it is used as named if its options set `Path=`,
-#   if it or a face that they name is a font file,
+#   if it is a font file, if a face that they name is a font file
+#   and its other faces are found by name,
 #   or if it is not found as font files and `fc-list` is not available.
 #   A font file named with a folder counts as missing,
-#   because fontspec takes its folder only from `Path=`.
+#   because fontspec fails on it: give its folder as `Path=` instead.
 #   With LuaLaTeX, a font that `fc-list` does not list is looked up with `luaotfload-tool`,
 #   which also finds the fonts of the TeX installation;
 #   without `luaotfload-tool`, a named font is used as named.
@@ -431,11 +433,8 @@ resolve_fonts <- function(
       return(Filter(Negate(is.null), named))
     }
     missing <- paste0("Font \"", font, "\" from ", origin)
-    # a font file named with a folder, also in the options for another face
-    files <- font_faces(font, options)
-    files <- files[is_font_file(files) & basename(files) != files]
     hint <- font_install_hint(
-      c(files, font)[[1]],
+      font,
       font_path,
       named = TRUE,
       fc_list = !is.null(installed)
@@ -497,12 +496,12 @@ resolve_fonts <- function(
 # for LuaLaTeX, luaotfload-tool is not available,
 # and where fontspec looks up the fonts itself, with a `Path=` option
 # or for a font file, which fc-list does not list.
-# If the font is a name, fontspec loads the faces named as font files
-# as files and the others by name, so these are still looked up by name.
-# If the font is a font file, fontspec loads all faces as files,
-# with the extension of the font, so the lookup cannot tell.
-# A font file named with a folder is missing,
-# because fontspec fails on it and takes the folder only from `Path=`.
+# If the font is a font file or its options set `Extension=`,
+# fontspec loads all faces as files, so the lookup cannot tell.
+# Otherwise, fontspec loads the faces named as font files as files,
+# also with a folder, and the others by name, which are still looked up.
+# A font file with a folder as the font itself is missing,
+# because fontspec fails on it: give its folder as `Path=` instead.
 find_font <- function(
   font,
   dirs,
@@ -511,22 +510,19 @@ find_font <- function(
   installed = installed_font_names()
 ) {
   faces <- font_faces(font$mainfont, font$mainfontoptions)
-  if (any(grepl("^\\s*Path\\s*=", font$mainfontoptions))) {
+  if (any(grepl("^\\s*(Path|Extension)\\s*=", font$mainfontoptions))) {
     return(unknown)
   }
   is_file <- is_font_file(faces)
-  if (any(is_file & basename(faces) != faces)) {
-    return(NULL)
+  if (is_file[[1]]) {
+    if (basename(faces[[1]]) != faces[[1]]) {
+      return(NULL)
+    }
+    return(unknown)
   }
   if (any(is_file)) {
-    # fontspec looks up the font files itself;
-    # with a font file as the main font, it loads the other faces as files too
-    rest <- faces[!is_file]
-    if (
-      !is_file[[1]] &&
-        length(rest) > 0 &&
-        isFALSE(found_by_name(rest, installed, engine))
-    ) {
+    # the faces named as font files are loaded as files, the others by name
+    if (isFALSE(found_by_name(faces[!is_file], installed, engine))) {
       return(NULL)
     }
     return(unknown)
@@ -829,7 +825,8 @@ font_install_hint <- function(
             "install fontconfig, e.g. with `brew install fontconfig`, ",
             "for `fc-list` to find installed fonts,\n",
             "make sure that `fc-list` is on R's `PATH` ",
-            "(R started from RStudio or R.app may lack `/opt/homebrew/bin`),\n",
+            "(R started from RStudio or R.app may lack `/opt/homebrew/bin`\n",
+            "or `/usr/local/bin`),\n",
             "and "
           )
         },

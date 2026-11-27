@@ -96,7 +96,7 @@ The font can be the name of an installed font or a font file.
 It is looked up like the preferred font and, if it is not found, replaced by the preferred or shipped font, with a message.
 It is used as named if the lookup cannot tell, such as without `fc-list` (with LuaLaTeX: without `luaotfload-tool`), for a font file, or with a `Path=` option.
 Give a font file by its name only, and put it in the folder of the document or in the TeX installation, or give its folder as `Path=` in `mainfontoptions`: it is not looked up in the folder of the option `<package>.font_path`.
-With a font file, fontspec loads the faces that `mainfontoptions` name, such as `BoldFont=*-Bold`, as font files with the same extension.
+With a font file, or with `Extension=` in `mainfontoptions`, fontspec loads the faces that `mainfontoptions` name, such as `BoldFont=*-Bold`, as font files with the same extension.
 The `mainfontoptions` of the document apply to the named font and are dropped if it is not found.
 If no font is named, they are appended to those of the preferred or shipped font.
 

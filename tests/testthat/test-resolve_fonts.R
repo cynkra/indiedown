@@ -348,12 +348,10 @@ test_that("a named font file is not found if named with its folder", {
     ),
     fixed = TRUE
   )
-  # also for another face
+  # but not for another face, which fontspec loads relative to the LaTeX run
   named <- list(mainfont = "some.otf", mainfontoptions = "BoldFont=C:/b.otf")
-  expect_message(
-    expect_identical(skeleton$resolve_fonts(named, defaults), defaults),
-    'Font "some.otf"',
-    fixed = TRUE
+  expect_silent(
+    expect_identical(skeleton$resolve_fonts(named, defaults), named)
   )
 
   # the folder as `Path=`
@@ -1115,22 +1113,34 @@ test_that("the message names all folders of the option", {
   expect_identical(fonts, defaults)
 })
 
-test_that("a face named as a font file with a folder asks to check the path", {
+test_that("a face named as a font file with a folder is not missing", {
+  # fontspec loads it relative to the folder where LaTeX runs
   skeleton <- local_skeleton()
-  skeleton$installed_font_names <- function() "Some Sans"
   named <- list(
-    mainfont = "Some Sans",
-    mainfontoptions = "BoldFont=fonts/Some-Bold.otf"
+    mainfont = "Some-Regular.ttf",
+    mainfontoptions = "BoldFont=fonts/Some-Bold.ttf"
+  )
+  expect_silent(
+    expect_identical(skeleton$resolve_fonts(named, defaults), named)
   )
 
-  expect_message(
-    expect_identical(skeleton$resolve_fonts(named, defaults), defaults),
-    paste0(
-      'Font "Some Sans" from the `mainfont` field of the document ',
-      'was not found, using "regular.ttf" instead.\n',
-      "To use it, check the path"
-    ),
-    fixed = TRUE
+  # next to a family, which is still looked up by name
+  skeleton$installed_font_names <- function() "Some Sans"
+  named$mainfont <- "Some Sans"
+  expect_silent(
+    expect_identical(skeleton$resolve_fonts(named, defaults), named)
+  )
+})
+
+test_that("with `Extension=`, the faces are not looked up", {
+  # fontspec loads them as files, with that extension
+  skeleton <- local_skeleton()
+  named <- list(
+    mainfont = "Some-Regular",
+    mainfontoptions = c("Extension=.ttf", "BoldFont=*-Bold")
+  )
+  expect_silent(
+    expect_identical(skeleton$resolve_fonts(named, defaults), named)
   )
 })
 
@@ -1211,7 +1221,8 @@ test_that("on macOS without fc-list, the message asks for fontconfig", {
       "To use it, install fontconfig, e.g. with `brew install fontconfig`, ",
       "for `fc-list` to find installed fonts,\n",
       "make sure that `fc-list` is on R's `PATH` ",
-      "(R started from RStudio or R.app may lack `/opt/homebrew/bin`),\n",
+      "(R started from RStudio or R.app may lack `/opt/homebrew/bin`\n",
+      "or `/usr/local/bin`),\n",
       'and open its font files and click "Install" in Font Book'
     ),
     fixed = TRUE
