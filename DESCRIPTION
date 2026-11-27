@@ -48,7 +48,8 @@ Suggests:
     tinytex,
     yaml
 VignetteBuilder:
-    knitr
+    knitr,
+    rmarkdown
 Config/Needs/website: cynkra/cynkratemplate
 Config/roxygen2/version: 8.1.1.9000
 Config/testthat/edition: 3
