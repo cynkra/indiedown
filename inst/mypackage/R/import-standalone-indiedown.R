@@ -65,6 +65,8 @@
 #   the faces are taken from one family,
 #   and without bundled fonts the default font of sysfonts is used.
 #   Each call registers its fonts anew and undoes the registration when it returns.
+#   The record of the toolchain labels the font that fontconfig offers
+#   for the sans family of `grDevices::pdf()` as `fc-match pdf() sans`.
 #   Regular documents are not affected: no template sets a graphics device.
 # * The snapshot helpers need the packages showtext and sysfonts.
 #   When updating this file, add them to `Suggests:` of the template package:
@@ -919,7 +921,8 @@ default <- function(x, default = "") {
 # and `report-environment.txt`, a record of the toolchain.
 # The record lists the versions of the operating system, R, pandoc, LaTeX,
 # poppler, fontconfig, FreeType, and the R packages involved,
-# the font that fontconfig offers for Helvetica,
+# the font that fontconfig offers for the sans family of `grDevices::pdf()`,
+# which poppler substitutes for plot text that is not embedded (see "Fonts"),
 # and a hash of each font file that the template bundles,
 # or of the fallback fonts.
 # The record never fails a test:
@@ -1477,7 +1480,10 @@ pdf_snapshot_environment <- function(pdf, fonts = NULL, system_fonts = FALSE) {
     paste0("freetype: ", loaded_library("libfreetype")),
     paste0(packages, ": ", vapply(packages, package_version_or_na, "")),
     paste0("system fonts: ", if (system_fonts) "visible" else "hidden"),
-    paste0("fc-match Helvetica: ", run_command("fc-match", "Helvetica")[1]),
+    paste0(
+      "fc-match pdf() sans: ",
+      run_command("fc-match", pdf_sans_family())[1]
+    ),
     if (length(files) > 0) {
       paste0("font: ", files, " ", rlang::hash_file(file.path(fonts, files)))
     }
@@ -1537,6 +1543,14 @@ package_version_or_na <- function(package) {
   } else {
     NA_character_
   }
+}
+
+# The family that `grDevices::pdf()` names for its sans font, which poppler
+# replaces by the font that fontconfig offers for it (see "Fonts").
+# Looked up with getExportedValue(), so that template packages need not
+# import grDevices.
+pdf_sans_family <- function() {
+  getExportedValue("grDevices", "pdfFonts")("sans")$sans$family
 }
 
 # The lines of the output of a command, or NA if it fails

@@ -15,7 +15,7 @@ tinytex: 0.61
 showtext: 0.9.8
 sysfonts: 0.8.9
 system fonts: hidden
-fc-match Helvetica: regular.ttf: "Roboto" "Regular"
+fc-match pdf() sans: regular.ttf: "Roboto" "Regular"
 font: bold.ttf 54e172a19cc9bd1eb67586a6002aa909
 font: bolditalic.ttf 6646a9380bcdaf80971f1393d5d983c4
 font: italic.ttf 3779a70be963e8c15cf0e1d983890df2
