@@ -1,5 +1,12 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9064
+
+## Continuous integration
+
+- Sync the workflows with cynkra/cynkratemplate (#150).
+
+
 # indiedown 0.1.1.9063
 
 ## Features
