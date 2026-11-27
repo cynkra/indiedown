@@ -2,7 +2,7 @@ Type: Package
 Package: indiedown
 Title: Individual R Markdown Templates
 Version: 0.1.1.9064
-Authors@R:c(
+Authors@R: c(
     person("Christoph", "Sax", , "christoph.sax@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-7192-7044")),
     person("Kirill", "Müller", role = "aut",
