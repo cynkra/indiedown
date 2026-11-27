@@ -1,5 +1,34 @@
 <!-- NEWS.md is maintained by https://fledge.cynkra.com, contributors should not edit this file -->
 
+# indiedown 0.1.1.9065
+
+## Bug fixes
+
+- Also reject `"` and `:` in the paths of font folders (#156).
+
+- Fail `expect_pdf_snapshot()` when the page count changes (#145).
+
+- Read `header-includes` from the knitted metadata in `apply_default_yaml()` (#144).
+
+## Features
+
+- Draw the text of plots with showtext in `expect_pdf_snapshot()` (#141).
+
+## Chore
+
+- Declare every vignette builder in DESCRIPTION (#154).
+
+- Tidy DESCRIPTION with usethis::use_tidy_description() (#153).
+
+## Continuous integration
+
+- Sync the workflows with cynkra/cynkratemplate (#152).
+
+## Refactoring
+
+- Simplify the font lookup (#146).
+
+
 # indiedown 0.1.1.9064
 
 ## Continuous integration
