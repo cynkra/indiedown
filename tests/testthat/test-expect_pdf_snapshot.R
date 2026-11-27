@@ -718,7 +718,7 @@ test_that("write_fonts_conf() lets fontconfig see only the fonts", {
 
 test_that("fontconfig offers only the fonts of the configuration", {
   skip_if(
-    is.na(run_command("fc-match", "sans-serif")[1]),
+    is.na(run_command("fc-match", pdf_sans_family())[1]),
     "fc-match is missing"
   )
   fonts <- skeleton_fonts()
@@ -727,7 +727,7 @@ test_that("fontconfig offers only the fonts of the configuration", {
   dir <- withr::local_tempdir()
   withr::local_envvar(FONTCONFIG_FILE = write_fonts_conf(fonts, dir))
 
-  file <- run_command("fc-match", c("-f", "%{file}", "sans-serif"))
+  file <- run_command("fc-match", c("-f", "%{file}", pdf_sans_family()))
   expect_true(basename(file) %in% font_files(fonts))
 })
 
@@ -791,7 +791,7 @@ test_that("the environment record lists the toolchain and the fonts", {
       "showtext",
       "sysfonts",
       "system fonts",
-      "fc-match sans-serif",
+      "fc-match pdf() sans",
       "font",
       "font"
     )
@@ -1172,7 +1172,7 @@ test_that("expect_pdf_snapshot() renders, compares and tolerates", {
   expect_true("system fonts: hidden" %in% record)
   expect_match(
     record,
-    "^fc-match sans-serif: lmsans10-regular.otf",
+    "^fc-match pdf\\(\\) sans: lmsans10-regular.otf",
     all = FALSE
   )
 
