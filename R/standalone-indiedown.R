@@ -60,7 +60,9 @@
 #   R CMD check warns about an undeclared sysfonts otherwise,
 #   and the PDF snapshot tests are skipped where they are not installed.
 # * `apply_default_yaml()` reads `header-includes` from its `metadata` argument,
-#   the metadata after knitting, instead of from `rmarkdown::metadata`.
+#   the metadata after knitting, instead of from `rmarkdown::metadata`:
+#   inline R code in `header-includes` is evaluated
+#   instead of reaching LaTeX verbatim.
 #
 # 2026-11-03:
 # * `get_indiedown_option()` reads the option `<package>.<name>`
