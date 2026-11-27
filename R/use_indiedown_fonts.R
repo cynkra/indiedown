@@ -103,7 +103,8 @@
 #'   to the file names.
 #' - **A single document:**
 #'   set `mainfont` in the YAML header of the `.Rmd`
-#'   to the name of an installed font or to the path of a font file.
+#'   to the name of an installed font or to the name of a font file, e.g., `a.ttf`,
+#'   and give its folder as `Path=` in `mainfontoptions`.
 #'   The `mainfontoptions` of `default.yaml` refer to the downloaded files
 #'   and are not applied to that font;
 #'   `mainfontoptions` in the YAML header are.

@@ -134,7 +134,8 @@ or adapt \code{mainfont} and the \code{BoldFont}, \code{ItalicFont} and
 to the file names.
 \item \strong{A single document:}
 set \code{mainfont} in the YAML header of the \code{.Rmd}
-to the name of an installed font or to the path of a font file.
+to the name of an installed font or to the name of a font file, e.g., \code{a.ttf},
+and give its folder as \verb{Path=} in \code{mainfontoptions}.
 The \code{mainfontoptions} of \code{default.yaml} refer to the downloaded files
 and are not applied to that font;
 \code{mainfontoptions} in the YAML header are.
