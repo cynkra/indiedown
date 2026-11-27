@@ -85,7 +85,8 @@
 #   (on Windows, for all users).
 #   With LuaLaTeX, a face that `luaotfload-tool` finds is not missing.
 # * The folders of font files are not escaped for fontspec:
-#   a folder with `,` `=` `%` `#` `{` `}` `[` or `]` in its path is not supported,
+#   a folder with `,` `=` `%` `#` `{` `}` `[` `]` `"` or `:` in its path,
+#   except for the `:` of a Windows drive letter, is not supported,
 #   and loading a font from it fails with an error.
 #   `apply_default_yaml()` fails with the same error for the fallback font
 #   if the path of the package contains one of these characters.
@@ -312,14 +313,18 @@ check_yaml_path <- function(path) {
 }
 
 # Fails if `path`, used unescaped in the fontspec option `Path=`,
-# contains one of `,` `=` `%` `#` `{` `}` `[` or `]`,
-# which break the font options, which pandoc joins with commas, or LaTeX.
+# contains one of `,` `=` `%` `#` `{` `}` `[` `]` `"` or `:`,
+# which break the font options, which pandoc joins with commas, or LaTeX:
+# fontspec does not find fonts in a folder with `"`,
+# nor XeLaTeX in a folder with `:`, which it reads as the start of a font index
+# (`[file:N]`), except for the `:` of a Windows drive letter on Windows.
 # `what` names the path and `fix` starts the advice in the error message.
 check_tex_path <- function(path, what, fix) {
-  bad <- c(",", "=", "%", "#", "{", "}", "[", "]")
-  bad <- bad[vapply(bad, grepl, TRUE, path, fixed = TRUE)]
+  bad <- c(",", "=", "%", "#", "{", "}", "[", "]", "\"", ":")
+  rest <- sub("^[A-Za-z]:(?=[/\\\\])", "", path, perl = TRUE)
+  bad <- bad[vapply(bad, grepl, TRUE, rest, fixed = TRUE)]
   if (length(bad) > 0) {
-    bad <- paste0("\"", bad, "\"")
+    bad <- paste0("`", bad, "`")
     if (length(bad) > 1) {
       bad <- paste(
         paste(bad[-length(bad)], collapse = " "),
@@ -337,7 +342,7 @@ check_tex_path <- function(path, what, fix) {
         bad,
         ", which LaTeX does not accept in the path of a font.\n",
         fix,
-        " without `,` `=` `%` `#` `{` `}` `[` or `]`."
+        " without `,` `=` `%` `#` `{` `}` `[` `]` `\"` or `:`."
       ),
       call = NULL
     )

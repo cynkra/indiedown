@@ -959,7 +959,10 @@ test_that("check_tex_path() rejects the characters that break LaTeX", {
     "/a{b",
     "/a}b",
     "/a[b",
-    "/a]b"
+    "/a]b",
+    "/a\"b",
+    "/a:b",
+    "C:/a:b"
   )) {
     expect_error(
       skeleton$check_tex_path(path, "x", "y"),
@@ -969,9 +972,9 @@ test_that("check_tex_path() rejects the characters that break LaTeX", {
   expect_error(
     skeleton$check_tex_path("/a,b{c}", "font folder", "Fix it in a folder"),
     paste0(
-      'The font folder "/a,b{c}" contains "," "{" and "}", ',
+      'The font folder "/a,b{c}" contains `,` `{` and `}`, ',
       "which LaTeX does not accept in the path of a font.\n",
-      "Fix it in a folder without `,` `=` `%` `#` `{` `}` `[` or `]`."
+      "Fix it in a folder without `,` `=` `%` `#` `{` `}` `[` `]` `\"` or `:`."
     ),
     fixed = TRUE
   )
@@ -979,6 +982,10 @@ test_that("check_tex_path() rejects the characters that break LaTeX", {
     skeleton$check_tex_path("/a b/~c (d)", "x", "y"),
     "/a b/~c (d)"
   )
+  # the `:` of a Windows drive letter
+  expect_identical(skeleton$check_tex_path("C:/a/b", "x", "y"), "C:/a/b")
+  expect_identical(skeleton$check_tex_path("d:\\a", "x", "y"), "d:\\a")
+  expect_error(skeleton$check_tex_path("C:a", "x", "y"), "contains `:`")
 })
 
 test_that("a font folder that breaks LaTeX fails with an error", {
@@ -998,7 +1005,7 @@ test_that("a font folder that breaks LaTeX fails with an error", {
     paste0(
       'The font folder "',
       dir,
-      '" contains "," "{" and "}", ',
+      '" contains `,` `{` and `}`, ',
       "which LaTeX does not accept in the path of a font.\n",
       "Copy the font files to another folder, ",
       "set the option `indiedown.font_path` to it,\n",
@@ -1041,7 +1048,7 @@ test_that("a package path that breaks LaTeX fails for the fallback font", {
     paste0(
       'The package folder "',
       bad,
-      '" contains "%" "[" and "]", ',
+      '" contains `%` `[` and `]`, ',
       "which LaTeX does not accept in the path of a font.\n",
       "Install the package in a folder without"
     ),
