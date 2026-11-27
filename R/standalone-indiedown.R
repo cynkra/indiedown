@@ -61,7 +61,8 @@
 #   and the PDF snapshot tests are skipped where they are not installed.
 # * `expect_pdf_snapshot()` fails if the number of pages differs
 #   from the number of page snapshots,
-#   instead of deleting the snapshots of surplus pages.
+#   instead of deleting the snapshots of surplus pages
+#   or silently adding snapshots of new pages.
 #
 # 2026-11-03:
 # * `get_indiedown_option()` reads the option `<package>.<name>`
@@ -1551,7 +1552,7 @@ default <- function(x, default = "") {
 # A positive `tolerance` accepts small differences.
 #
 # testthat deletes the snapshot files that a complete test run does not use.
-# When it skips or when rendering fails,
+# When it skips, when rendering fails or when the page count changed,
 # `expect_pdf_snapshot()` declares the existing snapshot files of `name`
 # with `testthat::announce_snapshot_file()`,
 # so that a test run on a system without LaTeX keeps them.
@@ -1693,7 +1694,7 @@ expect_pdf_snapshot <- function(
   if (!same_count) {
     testthat::fail(sprintf(
       paste(
-        "The page count of `%s` changed: %d rendered, %d in the snapshot.",
+        "The page count of `%s` changed: %d rendered, page snapshots: %d.",
         "To accept the change, delete the snapshot files of `%s`",
         "and run the tests again."
       ),

@@ -1016,7 +1016,7 @@ test_that("expect_pdf_snapshot() fails if the document has fewer pages", {
     expect_equal(results$failed, 1)
     expect_match(
       results$failures,
-      "page count of `doc` changed: 1 rendered, 2 in the snapshot",
+      "page count of `doc` changed: 1 rendered, page snapshots: 2",
       fixed = TRUE
     )
     expect_setequal(dir(snaps), all)
@@ -1057,7 +1057,7 @@ test_that("expect_pdf_snapshot() fails if the document has more pages", {
     expect_equal(results$failed, 1)
     expect_match(
       results$failures,
-      "page count of `doc` changed: 2 rendered, 1 in the snapshot",
+      "page count of `doc` changed: 2 rendered, page snapshots: 1",
       fixed = TRUE
     )
     expect_setequal(dir(snaps), kept)
@@ -1095,6 +1095,9 @@ test_that("pdf_snapshot_pages() fails if the snapshot directory is unknown", {
   expect_null(pdf_snapshot_pages("doc"))
 
   # Outside of a test run, there is nothing to check
+  withr::local_options(
+    testthat.snapshotter = list(snap_dir = "_snaps", file = "pdf")
+  )
   withr::local_envvar(TESTTHAT = "false")
   expect_null(pdf_snapshot_pages("doc"))
 })
