@@ -1559,9 +1559,10 @@ default <- function(x, default = "") {
 # with `sysfonts::font_add()` as the font family `""`,
 # the family that base graphics and ggplot2 use by default,
 # for example with `base_family = ""`.
-# The font files are matched to the faces by the style in their file names,
-# the part after the last `-` or `_`, such as `Regular`, `Bold`, `It`,
-# `LightItalic` or `BoldOblique`, or a whole name such as `bolditalic.ttf`.
+# The font files are matched to the faces by the style at the end of their
+# file names, such as `Regular`, `Bold`, `It`, `Light Italic` or `BoldOblique`,
+# after a `-`, `_` or space, glued to the family in CamelCase,
+# or as the whole name, such as `bolditalic.ttf`.
 # The rest of the name is the family, such as `Font` in `Font-BoldItalic.ttf`.
 # The regular face is the upright file whose weight is closest to regular,
 # preferring static fonts to variable fonts, such as `Font[wght].ttf`.
@@ -1790,8 +1791,9 @@ plot_font_files <- function(dir) {
   variable <- grepl(suffix, name, ignore.case = TRUE)
   name <- sub(suffix, "", name, ignore.case = TRUE)
 
-  # The style is the part after the last `-` or `_`, or the whole name,
-  # if it consists of a weight and a slant only
+  # The style is a weight and a slant at the end of the name,
+  # after a `-`, `_` or space, or glued to the family in CamelCase,
+  # or the whole name
   weights <- c(
     thin = 100,
     hairline = 100,
@@ -1811,26 +1813,32 @@ plot_font_files <- function(dir) {
     black = 900,
     heavy = 900
   )
+  slants <- "italic|oblique|it"
   pattern <- paste0(
-    "^(",
+    "^(.*?)(?:[-_ ]+|(?<=[a-z0-9])(?=[A-Z])|^)",
+    "((?i)(?:",
     paste(names(weights), collapse = "|"),
-    ")?(italic|oblique|it)?$"
+    ")?(?:[-_ ]?(?:",
+    slants,
+    "))?)$"
   )
-  style <- tolower(sub("^.*[-_]", "", name))
-  styled <- grepl(pattern, style)
-  family <- ifelse(
+  parts <- regmatches(name, regexec(pattern, name, perl = TRUE))
+  styled <- lengths(parts) == 3 & vapply(parts, function(x) x[3] != "", NA)
+  family <- ifelse(styled, vapply(parts, `[`, "", 2), name)
+  style <- ifelse(
     styled,
-    ifelse(grepl("[-_]", name), sub("[-_][^-_]*$", "", name), ""),
-    name
+    gsub("[-_ ]", "", tolower(vapply(parts, `[`, "", 3))),
+    ""
   )
-  style[!styled] <- ""
-  weight <- unname(weights[sub(pattern, "\\1", style)])
+  slant <- paste0("(", slants, ")$")
+  italic <- grepl(slant, style)
+  weight <- unname(weights[sub(slant, "", style)])
   weight[is.na(weight)] <- 400
-  italic <- sub(pattern, "\\2", style) != ""
   family <- file.path(dirname(files), tolower(family))
 
-  # Upright before italic, the weight closest to regular, static before variable
-  ranked <- order(italic, abs(weight - 400), variable)
+  # Upright before italic, the weight closest to regular,
+  # a named style before none, static before variable
+  ranked <- order(italic, abs(weight - 400), !styled, variable)
   regular <- ranked[[1]]
   face <- function(is_italic, is_weight) {
     i <- ranked[

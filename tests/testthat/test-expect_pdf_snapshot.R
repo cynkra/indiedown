@@ -456,6 +456,33 @@ test_that("plot_font_files() matches the style after the family name only", {
   }
 })
 
+test_that("plot_font_files() reads styles after spaces and in CamelCase", {
+  faces <- c("regular", "bold", "italic", "bolditalic")
+  for (styles in list(
+    c("Font Regular", "Font Bold", "Font Italic", "Font Bold Italic"),
+    c("Font-Regular", "Font-Bold", "Font-Italic", "Font-Bold-Italic"),
+    c("Font", "FontBold", "FontItalic", "FontBoldItalic")
+  )) {
+    dir <- withr::local_tempdir()
+    file.create(file.path(dir, paste0(styles, ".ttf")))
+
+    expect_equal(
+      lapply(plot_font_files(dir), basename),
+      as.list(rlang::set_names(paste0(styles, ".ttf"), faces))
+    )
+  }
+})
+
+test_that("plot_font_files() prefers a named style to an unknown one", {
+  dir <- withr::local_tempdir()
+  file.create(file.path(
+    dir,
+    c("Font-Condensed.ttf", "Font-ExtraBlack.ttf", "Font-Regular.ttf")
+  ))
+
+  expect_equal(basename(plot_font_files(dir)$regular), "Font-Regular.ttf")
+})
+
 test_that("plot_font_files() takes `It` as italic", {
   dir <- withr::local_tempdir()
   file.create(file.path(
@@ -597,7 +624,9 @@ test_that("local_showtext() draws plots with the fonts of the latest call", {
   serif <- liberation("Serif")
   mono <- liberation("Mono")
   draw <- function(fonts) {
-    local_showtext(fonts)
+    for (dir in fonts) {
+      local_showtext(dir)
+    }
     file <- withr::local_tempfile(fileext = ".png")
     grDevices::png(file, width = 400, height = 400)
     graphics::par(mar = c(0, 0, 0, 0))
@@ -608,11 +637,12 @@ test_that("local_showtext() draws plots with the fonts of the latest call", {
     readBin(file, "raw", file.size(file))
   }
 
-  first_mono <- draw(mono)
-  first_serif <- draw(serif)
+  only_mono <- draw(mono)
+  only_serif <- draw(serif)
 
-  expect_false(identical(first_mono, first_serif))
-  expect_identical(draw(mono), first_mono)
+  expect_false(identical(only_mono, only_serif))
+  expect_identical(draw(c(mono, serif)), only_serif)
+  expect_identical(draw(mono), only_mono)
 })
 
 test_that("local_showtext() sets `fig.showtext` until the function ends", {
