@@ -55,9 +55,10 @@
 # * `expect_pdf_snapshot()` draws the text of plots with showtext
 #   in the fonts that the template bundles,
 #   so that the snapshots do not depend on the fonts of the system.
-#   The font files are matched to the faces by their file names,
+#   The font files are matched to the faces by the style in their file names,
 #   the faces are taken from one family,
-#   and without bundled fonts the fonts of the sysfonts package are used.
+#   and without bundled fonts the default font of sysfonts is used.
+#   Each call registers its fonts anew and undoes the registration when it returns.
 #   Regular documents are not affected: no template sets a graphics device.
 # * The snapshot helpers need the packages showtext and sysfonts.
 #   When updating this file, add them to `Suggests:` of the template package:
@@ -1558,22 +1559,19 @@ default <- function(x, default = "") {
 # with `sysfonts::font_add()` as the font family `""`,
 # the family that base graphics and ggplot2 use by default,
 # for example with `base_family = ""`.
-# The font files are matched to the regular, bold, italic,
-# and bold italic face by the words `bold`, `italic`, and `oblique`
-# in their file names, without the folder.
-# The regular face is a file without these words
-# and without other weights, such as `light`, `medium` or `black`,
-# if there is one.
-# The other faces are taken from the same family as the regular face:
-# the files in the same folder whose names are the same without the words
-# for weights and slants, such as `Font-Regular.ttf` and `Font-BoldItalic.ttf`.
+# The font files are matched to the faces by the style in their file names,
+# the part after the last `-` or `_`, such as `Regular`, `Bold`, `It`,
+# `LightItalic` or `BoldOblique`, or a whole name such as `bolditalic.ttf`.
+# The rest of the name is the family, such as `Font` in `Font-BoldItalic.ttf`.
+# The regular face is the upright file whose weight is closest to regular,
+# preferring static fonts to variable fonts, such as `Font[wght].ttf`.
+# The bold, italic and bold italic faces are taken from the same family
+# in the same folder.
 # A face that the family lacks is drawn with the regular face.
-# Without font files, the family `""` gets Liberation Sans,
-# the default font of the sysfonts package,
-# so that the plots do not depend on an earlier registration.
+# Without font files, Liberation Sans, the default font of sysfonts, is used.
 # Plot text that names another family, such as `sans`,
 # is drawn with the default font of the sysfonts package.
-# The registration lasts for the R session, it is not undone.
+# The registration is undone when `expect_pdf_snapshot()` returns.
 # The template itself sets no graphics device and no plot font:
 # the fonts of plots in regular documents are up to their authors.
 #
@@ -1759,7 +1757,18 @@ local_showtext <- function(fonts, .local_envir = parent.frame()) {
     ))
     names(files) <- c("regular", "bold", "italic", "bolditalic")
   }
+
+  # sysfonts cannot replace or remove a family:
+  # `font_add()` appends another family `""`, and showtext uses the first one.
+  # The families live in sysfonts' environment, where showtext reads them,
+  # so they are restored when the calling function ends,
+  # and an earlier family `""` is dropped before registering the new one.
+  env <- get(".pkg.env", envir = asNamespace("sysfonts"))
+  old <- mget(c(".font.list", ".font.list.all"), envir = env)
+  withr::defer(list2env(old, envir = env), envir = .local_envir)
+  env$.font.list <- old$.font.list[names(old$.font.list) != ""]
   do.call(sysfonts::font_add, c(family = "", files))
+
   options <- knitr::opts_chunk$get()
   withr::defer(knitr::opts_chunk$restore(options), envir = .local_envir)
   knitr::opts_chunk$set(fig.showtext = TRUE)
@@ -1774,31 +1783,68 @@ plot_font_files <- function(dir) {
   if (length(files) == 0) {
     return(NULL)
   }
-  names <- tolower(sub("[.][^.]*$", "", basename(files)))
-  weights <- "thin|hairline|light|medium|semi|demi|extra|ultra|black|heavy"
-  italic <- grepl("italic|oblique", names)
-  has_bold <- grepl("bold", names)
-  other <- grepl(weights, names)
-  bold <- has_bold & !other
-  plain <- !has_bold & !other
 
-  # The family: the folder and the name without the words for weights and slants
-  styles <- "regular|book|normal|roman|plain|italic|oblique|bold"
-  stem <- gsub(paste0(styles, "|", weights), "", names)
-  family <- file.path(dirname(files), sub("[-_ ]+$", "", stem))
+  # Variable fonts: `Font[wght].ttf` or `Font-VariableFont_wght.ttf`
+  name <- sub("[.][^.]*$", "", basename(files))
+  suffix <- "([[].*[]]|[-_]variablefont.*)$"
+  variable <- grepl(suffix, name, ignore.case = TRUE)
+  name <- sub(suffix, "", name, ignore.case = TRUE)
 
-  upright <- !italic & !has_bold
-  regular <- c(which(plain & !italic), which(upright), seq_along(files))[[1]]
-  ours <- family == family[[regular]]
-  face <- function(is_face) {
-    is_face <- is_face & ours
-    if (any(is_face)) file.path(dir, files[is_face][[1]])
+  # The style is the part after the last `-` or `_`, or the whole name,
+  # if it consists of a weight and a slant only
+  weights <- c(
+    thin = 100,
+    hairline = 100,
+    extralight = 200,
+    ultralight = 200,
+    light = 300,
+    book = 400,
+    regular = 400,
+    normal = 400,
+    roman = 400,
+    medium = 500,
+    semibold = 600,
+    demibold = 600,
+    bold = 700,
+    extrabold = 800,
+    ultrabold = 800,
+    black = 900,
+    heavy = 900
+  )
+  pattern <- paste0(
+    "^(",
+    paste(names(weights), collapse = "|"),
+    ")?(italic|oblique|it)?$"
+  )
+  style <- tolower(sub("^.*[-_]", "", name))
+  styled <- grepl(pattern, style)
+  family <- ifelse(
+    styled,
+    ifelse(grepl("[-_]", name), sub("[-_][^-_]*$", "", name), ""),
+    name
+  )
+  style[!styled] <- ""
+  weight <- unname(weights[sub(pattern, "\\1", style)])
+  weight[is.na(weight)] <- 400
+  italic <- sub(pattern, "\\2", style) != ""
+  family <- file.path(dirname(files), tolower(family))
+
+  # Upright before italic, the weight closest to regular, static before variable
+  ranked <- order(italic, abs(weight - 400), variable)
+  regular <- ranked[[1]]
+  face <- function(is_italic, is_weight) {
+    i <- ranked[
+      family[ranked] == family[[regular]] &
+        italic[ranked] == is_italic &
+        weight[ranked] == is_weight
+    ]
+    if (length(i) > 0) file.path(dir, files[[i[[1]]]])
   }
   list(
     regular = file.path(dir, files[[regular]]),
-    bold = face(bold & !italic),
-    italic = face(plain & italic),
-    bolditalic = face(bold & italic)
+    bold = face(FALSE, 700),
+    italic = face(TRUE, 400),
+    bolditalic = face(TRUE, 700)
   )
 }
 

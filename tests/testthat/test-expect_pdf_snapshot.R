@@ -423,16 +423,81 @@ test_that("plot_font_files() picks the regular weight of a family", {
   )
 })
 
-test_that("plot_font_files() prefers other weights to bold for the regular face", {
+test_that("plot_font_files() takes the weight closest to regular", {
   dir <- withr::local_tempdir()
   file.create(file.path(dir, c("Font-Black.ttf", "Font-Light.ttf")))
   file.create(file.path(dir, c("Font-Bold.ttf", "Font-LightItalic.ttf")))
 
   files <- plot_font_files(dir)
 
-  expect_equal(basename(files$regular), "Font-Black.ttf")
+  expect_equal(basename(files$regular), "Font-Light.ttf")
   expect_equal(basename(files$bold), "Font-Bold.ttf")
   expect_null(files$italic)
+})
+
+test_that("plot_font_files() matches the style after the family name only", {
+  for (family in c(
+    "BarlowSemiCondensed",
+    "FiraSansExtraCondensed",
+    "Ultra",
+    "Blackletter_Pro"
+  )) {
+    dir <- withr::local_tempdir()
+    styles <- c("Regular", "Bold", "Italic", "BoldItalic")
+    file.create(file.path(dir, paste0(family, "-", styles, ".ttf")))
+
+    expect_equal(
+      lapply(plot_font_files(dir), basename),
+      as.list(rlang::set_names(
+        paste0(family, "-", styles, ".ttf"),
+        c("regular", "bold", "italic", "bolditalic")
+      ))
+    )
+  }
+})
+
+test_that("plot_font_files() takes `It` as italic", {
+  dir <- withr::local_tempdir()
+  file.create(file.path(
+    dir,
+    paste0("SourceSans3-", c("Regular", "It", "Bold", "BoldIt"), ".otf")
+  ))
+
+  files <- plot_font_files(dir)
+
+  expect_equal(basename(files$regular), "SourceSans3-Regular.otf")
+  expect_equal(basename(files$italic), "SourceSans3-It.otf")
+  expect_equal(basename(files$bolditalic), "SourceSans3-BoldIt.otf")
+})
+
+test_that("plot_font_files() reads variable fonts and prefers static ones", {
+  dir <- withr::local_tempdir()
+  file.create(file.path(
+    dir,
+    c("Roboto[wdth,wght].ttf", "Roboto-Italic[wdth,wght].ttf")
+  ))
+
+  files <- plot_font_files(dir)
+
+  expect_equal(basename(files$regular), "Roboto[wdth,wght].ttf")
+  expect_equal(basename(files$italic), "Roboto-Italic[wdth,wght].ttf")
+
+  dir <- withr::local_tempdir()
+  dir.create(file.path(dir, "static"))
+  file.create(file.path(
+    dir,
+    c(
+      "Font[wght].ttf",
+      "Font-VariableFont_wght.ttf",
+      "static/Font-Regular.ttf",
+      "static/Font-Bold.ttf"
+    )
+  ))
+
+  files <- plot_font_files(dir)
+
+  expect_equal(files$regular, file.path(dir, "static/Font-Regular.ttf"))
+  expect_equal(files$bold, file.path(dir, "static/Font-Bold.ttf"))
 })
 
 test_that("plot_font_files() takes the faces from one family", {
@@ -500,13 +565,54 @@ test_that("local_showtext() registers the fonts as the default family", {
 
 test_that("local_showtext() registers the skeleton fonts with sysfonts", {
   skip_if_not_installed("sysfonts")
-  local_sysfonts()
   fonts <- skeleton_fonts()
   skip_if(length(font_files(fonts)) == 0, "the skeleton fonts are missing")
+  before <- sysfonts::font_families()
 
-  local_showtext(fonts)
+  during <- function() {
+    local_showtext(fonts)
+    local_showtext(fonts)
+    sysfonts::font_families()
+  }
 
-  expect_true("" %in% sysfonts::font_families())
+  expect_equal(sum(during() == ""), 1)
+  expect_identical(sysfonts::font_families(), before)
+})
+
+test_that("local_showtext() draws plots with the fonts of the latest call", {
+  skip_if_not_installed("showtext")
+  skip_if_not_installed("sysfonts")
+  liberation <- function(family) {
+    dir <- withr::local_tempdir(.local_envir = parent.frame(2))
+    file.copy(
+      system.file(
+        "fonts",
+        paste0("Liberation", family, "-Regular.ttf"),
+        package = "sysfonts"
+      ),
+      dir
+    )
+    dir
+  }
+  serif <- liberation("Serif")
+  mono <- liberation("Mono")
+  draw <- function(fonts) {
+    local_showtext(fonts)
+    file <- withr::local_tempfile(fileext = ".png")
+    grDevices::png(file, width = 400, height = 400)
+    graphics::par(mar = c(0, 0, 0, 0))
+    showtext::showtext_begin()
+    graphics::plot.new()
+    graphics::text(0.5, 0.5, "Plot text", cex = 2)
+    grDevices::dev.off()
+    readBin(file, "raw", file.size(file))
+  }
+
+  first_mono <- draw(mono)
+  first_serif <- draw(serif)
+
+  expect_false(identical(first_mono, first_serif))
+  expect_identical(draw(mono), first_mono)
 })
 
 test_that("local_showtext() sets `fig.showtext` until the function ends", {
@@ -529,7 +635,6 @@ test_that("local_showtext() sets `fig.showtext` until the function ends", {
 
 test_that("local_showtext() registers the sysfonts default without font files", {
   skip_if_not_installed("sysfonts")
-  local_sysfonts()
   calls <- list()
   local_mocked_bindings(
     font_add = function(...) calls[[length(calls) + 1]] <<- list(...),
@@ -842,6 +947,8 @@ test_that("expect_pdf_snapshot() sets `fig.showtext` for the rendering only", {
   skip_if_not(is_linux(), "PDF snapshots are tested on Linux only")
   skip_if_not_installed("pdftools")
   skip_if_not_installed("callr")
+  skip_if_not_installed("sysfonts")
+  fonts <- sysfonts::font_families()
   local_mocked_bindings(skip_if_no_pdf_snapshot = function() invisible(TRUE))
   seen <- NULL
   local_mocked_bindings(
@@ -869,6 +976,7 @@ test_that("expect_pdf_snapshot() sets `fig.showtext` for the rendering only", {
   expect_equal(results$error, FALSE)
   expect_true(seen)
   expect_null(knitr::opts_chunk$get("fig.showtext"))
+  expect_identical(sysfonts::font_families(), fonts)
 })
 
 test_that("expect_pdf_snapshot() renders, compares and tolerates", {
@@ -919,7 +1027,6 @@ test_that("expect_pdf_snapshot() renders, compares and tolerates", {
 
 test_that("the text of plots is embedded with showtext, not referred to", {
   skip_if_no_pdf_snapshot()
-  local_sysfonts()
   fonts <- skeleton_fonts()
   skip_if(length(font_files(fonts)) == 0, "the skeleton fonts are missing")
 
