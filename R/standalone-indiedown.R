@@ -69,6 +69,19 @@
 #   the metadata after knitting, instead of from `rmarkdown::metadata`:
 #   inline R code in `header-includes` is evaluated
 #   instead of reaching LaTeX verbatim.
+# * The message about a missing preferred font with several faces
+#   names the faces that are missing, with the names of their font files,
+#   if some but not all are missing, and if none is missing, says that
+#   all faces must be font files in one folder or all be installed
+#   (on Windows, for all users).
+# * The folders of font files are not escaped for fontspec:
+#   a folder with `,` `=` `%` `#` `{` `}` `[` or `]` in its path is not supported,
+#   and loading a font from it fails with an error.
+#   `apply_default_yaml()` fails with the same error for the fallback font
+#   if the path of the package contains one of these characters.
+# * `apply_default_yaml()` fails with an error if the path of the package
+#   for `<<indiedown_path>>` in `default.yaml` contains ` #` or `: `,
+#   which break the YAML.
 #
 # 2026-11-03:
 # * `get_indiedown_option()` reads the option `<package>.<name>`
@@ -212,10 +225,13 @@ apply_default_yaml <- function(metadata) {
     encoding = "UTF-8"
   )
 
-  # replace <<indiedown_path>> by package path
+  # replace <<indiedown_path>> by package path, not escaped for YAML
+  # (see check_yaml_path()) or fontspec (see check_tex_path() below)
+  path <- indiedown_path_tex()
+  check_yaml_path(path)
   defaults_txt <- gsub(
     "<<indiedown_path>>",
-    indiedown_path_tex(),
+    path,
     defaults_txt,
     fixed = TRUE
   )
@@ -224,6 +240,14 @@ apply_default_yaml <- function(metadata) {
 
   # the main font is resolved separately, also if set in the document
   fonts <- resolve_fonts(metadata, defaults)
+  # the fallback font is loaded by path from the package
+  if (any(grepl(path, fonts$mainfontoptions, fixed = TRUE))) {
+    check_tex_path(
+      indiedown_path(),
+      "package folder",
+      "Install the package in a folder"
+    )
+  }
   defaults[c(
     "mainfont",
     "mainfontoptions",
@@ -252,6 +276,61 @@ apply_default_yaml <- function(metadata) {
   }
 
   args
+}
+
+# Fails if `path`, inserted unquoted into `default.yaml`,
+# contains ` #` or `: `, which YAML reads as a comment or a mapping
+check_yaml_path <- function(path) {
+  bad <- c(" #", ": ")
+  bad <- bad[vapply(bad, grepl, TRUE, path, fixed = TRUE)]
+  if (length(bad) > 0) {
+    rlang::abort(
+      paste0(
+        "The package path \"",
+        path,
+        "\" contains ",
+        paste0("\"", bad, "\"", collapse = " and "),
+        ", which breaks `default.yaml`.\n",
+        "Install the package in a folder without ` #` or `: `."
+      ),
+      call = NULL
+    )
+  }
+  invisible(path)
+}
+
+# Fails if `path`, used unescaped in the fontspec option `Path=`,
+# contains one of `,` `=` `%` `#` `{` `}` `[` or `]`,
+# which break the font options, which pandoc joins with commas, or LaTeX.
+# `what` names the path and `fix` starts the advice in the error message.
+check_tex_path <- function(path, what, fix) {
+  bad <- c(",", "=", "%", "#", "{", "}", "[", "]")
+  bad <- bad[vapply(bad, grepl, TRUE, path, fixed = TRUE)]
+  if (length(bad) > 0) {
+    bad <- paste0("\"", bad, "\"")
+    if (length(bad) > 1) {
+      bad <- paste(
+        paste(bad[-length(bad)], collapse = " "),
+        "and",
+        bad[[length(bad)]]
+      )
+    }
+    rlang::abort(
+      paste0(
+        "The ",
+        what,
+        " \"",
+        path,
+        "\" contains ",
+        bad,
+        ", which LaTeX does not accept in the path of a font.\n",
+        fix,
+        " without `,` `=` `%` `#` `{` `}` `[` or `]`."
+      ),
+      call = NULL
+    )
+  }
+  invisible(path)
 }
 
 # The main font is the first of:
@@ -304,6 +383,7 @@ resolve_fonts <- function(
     origin <- paste0("the option `", indiedown_option_name("mainfont"), "`")
   }
   missing <- NULL
+  faces <- NULL
   if (!is.null(font)) {
     named <- list(mainfont = font, mainfontoptions = options)
     if (!is.null(fonts$mainfont)) {
@@ -324,6 +404,7 @@ resolve_fonts <- function(
       fonts <- found
     } else if (is.null(missing)) {
       missing <- paste0("Preferred font \"", preferred$mainfont, "\"")
+      faces <- missing_faces(preferred, dirs, engine = engine)
       hint <- font_install_hint(preferred$mainfont, font_path)
     }
   }
@@ -332,7 +413,9 @@ resolve_fonts <- function(
       missing,
       " was not found, using \"",
       fonts$mainfont,
-      "\" instead.\nTo use it, ",
+      "\" instead.\n",
+      faces,
+      "To use it, ",
       hint,
       ".\n"
     ))
@@ -388,6 +471,57 @@ find_font <- function(font, dirs, unknown = NULL, engine = NULL) {
     return(if (found) font)
   }
   if (is.null(names)) unknown
+}
+
+# A line that explains why `font`, with several faces, was not found,
+# or NULL: the faces that are neither font files in the folders `dirs`,
+# as in `find_font_files()`, nor listed by fc-list,
+# nor, if `engine` is LuaLaTeX, found by luaotfload,
+# with their file names, if some but not all of them are missing;
+# if none is missing, that the faces must be found in the same place,
+# because `find_font()` needs all of them in one folder or all found by name.
+# On Windows, fc-list does not list the fonts installed for the current user.
+missing_faces <- function(
+  font,
+  dirs,
+  engine = NULL,
+  sysname = Sys.info()[["sysname"]]
+) {
+  faces <- font_faces(font$mainfont, font$mainfontoptions)
+  if (length(faces) < 2) {
+    return(NULL)
+  }
+  files <- unlist(lapply(dirs, list.files, "[.](otf|ttf)$", ignore.case = TRUE))
+  found <- c(sub("[.][^.]*$", "", files), installed_font_names())
+  missing <- faces[!tolower(faces) %in% tolower(found)]
+  if (identical(engine, "lualatex")) {
+    finds <- function(face) isTRUE(luaotfload_finds(face))
+    missing <- Filter(Negate(finds), missing)
+  }
+  if (length(missing) == length(faces)) {
+    return(NULL)
+  }
+  if (length(missing) == 0) {
+    return(paste0(
+      "All its faces must be font files in one folder, or all be installed",
+      if (sysname == "Windows") " for all users",
+      ".\n"
+    ))
+  }
+  paste0(
+    "Missing: ",
+    paste0(
+      "\"",
+      missing,
+      "\", as \"",
+      missing,
+      ".otf\" or \"",
+      missing,
+      ".ttf\"",
+      collapse = "; "
+    ),
+    ".\n"
+  )
 }
 
 # TRUE for a font named by its file, which fontspec tells by the extension
@@ -475,9 +609,20 @@ font_from_files <- function(font, files) {
   keys <- sub(pattern, "\\1", options[is_face])
   options[is_face] <- paste0(keys, basename(files[faces]))
   dir <- normalizePath(dirname(files[[1]]), "/")
+  # not escaped for fontspec, see `check_tex_path()`
+  check_tex_path(
+    dir,
+    "font folder",
+    paste0(
+      "Copy the font files to another folder, set the option `",
+      indiedown_option_name("font_path"),
+      "` to it,\nand choose a folder"
+    )
+  )
+  dir <- sanitize_tex(dir)
   list(
     mainfont = basename(files[[font$mainfont]]),
-    mainfontoptions = c(paste0("Path=", sanitize_tex(dir), "/"), options)
+    mainfontoptions = c(paste0("Path=", dir, "/"), options)
   )
 }
 

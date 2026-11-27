@@ -847,3 +847,200 @@ test_that("get_indiedown_option() reads the option of the package", {
     "indiedown.font_path"
   )
 })
+
+test_that("the message names the missing faces of the preferred font", {
+  skeleton <- local_skeleton()
+  skeleton$installed_font_names <- function() character()
+  # Roboto-Bold is missing
+  dir <- copy_fonts(withr::local_tempdir(), "regular.ttf", "Roboto-Regular.ttf")
+
+  expect_message(
+    fonts <- skeleton$resolve_fonts(list(), roboto, font_path = dir),
+    paste0(
+      'using "regular.ttf" instead.\n',
+      'Missing: "Roboto-Bold", as "Roboto-Bold.otf" or "Roboto-Bold.ttf".\n',
+      "To use it, check"
+    ),
+    fixed = TRUE
+  )
+  expect_identical(fonts, defaults)
+
+  # Roboto-Bold listed by fc-list, Roboto-Regular only as a file:
+  # the faces are split
+  skeleton$installed_font_names <- function() "Roboto-Bold"
+  messages <- capture_messages(
+    skeleton$resolve_fonts(list(), roboto, font_path = dir)
+  )
+  expect_no_match(messages, "Missing:", fixed = TRUE)
+  expect_match(
+    messages,
+    "All its faces must be font files in one folder, or all be installed.\n",
+    fixed = TRUE
+  )
+
+  # on Windows, fc-list does not list the fonts of the current user
+  font <- list(
+    mainfont = "Roboto-Regular",
+    mainfontoptions = "BoldFont=Roboto-Bold"
+  )
+  expect_identical(
+    skeleton$missing_faces(font, dir, sysname = "Windows"),
+    paste0(
+      "All its faces must be font files in one folder, ",
+      "or all be installed for all users.\n"
+    )
+  )
+
+  # with LuaLaTeX, a face that luaotfload finds is not missing
+  skeleton$installed_font_names <- function() character()
+  skeleton$luaotfload_finds <- function(fonts) fonts == "Roboto-Bold"
+  expect_match(
+    skeleton$missing_faces(font, dir, engine = "lualatex"),
+    "All its faces must be",
+    fixed = TRUE
+  )
+  expect_match(
+    skeleton$missing_faces(font, dir),
+    'Missing: "Roboto-Bold"',
+    fixed = TRUE
+  )
+
+  # not if all faces are missing, the message then names the font files
+  expect_null(skeleton$missing_faces(
+    list(mainfont = "A", mainfontoptions = "BoldFont=B"),
+    dir
+  ))
+
+  # not for a font with a single face
+  expect_null(skeleton$missing_faces(list(mainfont = "Some Sans"), dir))
+})
+
+test_that("a package path that breaks the YAML fails with an error", {
+  skeleton <- local_skeleton()
+  skeleton$indiedown_path_tex <- function(...) "/lib #1/R: x"
+
+  expect_error(
+    skeleton$apply_default_yaml(list()),
+    'The package path "/lib #1/R: x" contains " #" and ": "',
+    fixed = TRUE
+  )
+  expect_identical(skeleton$check_yaml_path("/lib#1/R:x"), "/lib#1/R:x")
+})
+
+test_that("check_tex_path() rejects the characters that break LaTeX", {
+  skeleton <- local_skeleton()
+
+  for (path in c(
+    "/a,b",
+    "/a=b",
+    "/a%b",
+    "/a#b",
+    "/a{b",
+    "/a}b",
+    "/a[b",
+    "/a]b"
+  )) {
+    expect_error(
+      skeleton$check_tex_path(path, "x", "y"),
+      "LaTeX does not accept"
+    )
+  }
+  expect_error(
+    skeleton$check_tex_path("/a,b{c}", "font folder", "Fix it in a folder"),
+    paste0(
+      'The font folder "/a,b{c}" contains "," "{" and "}", ',
+      "which LaTeX does not accept in the path of a font.\n",
+      "Fix it in a folder without `,` `=` `%` `#` `{` `}` `[` or `]`."
+    ),
+    fixed = TRUE
+  )
+  expect_identical(
+    skeleton$check_tex_path("/a b/~c (d)", "x", "y"),
+    "/a b/~c (d)"
+  )
+})
+
+test_that("a font folder that breaks LaTeX fails with an error", {
+  skeleton <- local_skeleton()
+  dir <- copy_fonts(
+    file.path(withr::local_tempdir(), "OneDrive - Acme, Inc {fonts}"),
+    c("regular.ttf", "bold.ttf"),
+    c("Some-Regular.ttf", "Some-Bold.ttf")
+  )
+  withr::local_options(indiedown.font_path = dir)
+
+  expect_error(
+    skeleton$apply_default_yaml(list(
+      mainfont = "Some-Regular",
+      mainfontoptions = "BoldFont=Some-Bold"
+    )),
+    paste0(
+      'The font folder "',
+      dir,
+      '" contains "," "{" and "}", ',
+      "which LaTeX does not accept in the path of a font.\n",
+      "Copy the font files to another folder, ",
+      "set the option `indiedown.font_path` to it,\n",
+      "and choose a folder without"
+    ),
+    fixed = TRUE
+  )
+})
+
+test_that("a font folder that breaks LaTeX but lacks the font is no error", {
+  skeleton <- local_skeleton()
+  skeleton$installed_font_names <- function() character()
+  dir <- file.path(withr::local_tempdir(), "OneDrive - Acme, Inc")
+  dir.create(dir)
+  withr::local_options(indiedown.font_path = dir)
+
+  expect_message(
+    args <- skeleton$apply_default_yaml(list(mainfont = "Some-Regular")),
+    "was not found"
+  )
+  expect_true("mainfont:regular.ttf" %in% args)
+})
+
+test_that("a package path that breaks LaTeX fails for the fallback font", {
+  skeleton <- local_skeleton()
+  skeleton$installed_font_names <- function() character()
+  # a copy of the package's files in a folder with `[`, `]` and `%`
+  bad <- file.path(withr::local_tempdir(), "R[1]", "50%")
+  dir.create(bad, recursive = TRUE)
+  stopifnot(file.copy(
+    list.files(skeleton$indiedown_path(), full.names = TRUE),
+    bad,
+    recursive = TRUE
+  ))
+  bad <- normalizePath(bad, "/")
+  skeleton$indiedown_path <- function(...) file.path(bad, ...)
+
+  expect_error(
+    skeleton$apply_default_yaml(list()),
+    paste0(
+      'The package folder "',
+      bad,
+      '" contains "%" "[" and "]", ',
+      "which LaTeX does not accept in the path of a font.\n",
+      "Install the package in a folder without"
+    ),
+    fixed = TRUE
+  )
+
+  # no error if the fallback font is not used
+  dir <- copy_fonts(
+    withr::local_tempdir(),
+    c("regular.ttf", "bold.ttf"),
+    c("Some-Regular.ttf", "Some-Bold.ttf")
+  )
+  withr::local_options(indiedown.font_path = dir)
+  expect_silent(
+    args <- skeleton$apply_default_yaml(list(
+      mainfont = "Some-Regular",
+      mainfontoptions = "BoldFont=Some-Bold"
+    ))
+  )
+  expect_true(
+    paste0("mainfontoptions:Path=", dir, "/,BoldFont=Some-Bold.ttf") %in% args
+  )
+})
